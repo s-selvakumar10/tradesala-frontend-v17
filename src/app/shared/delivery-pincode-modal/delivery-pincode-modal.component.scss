@@ -1,0 +1,60 @@
+.spacing-top-base {
+    margin-top: 12px !important;
+}
+.divider{
+    &.divider-break {
+        margin-bottom: 14px;
+        line-height: 0;
+        padding-top: 1px;
+        position: relative;
+        text-align: center;
+        top: 2px;
+        h5 {
+            background-color: #fff;
+            color: #565959;
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1;
+            padding: 0 8px 0 7px;
+            position: relative;
+            z-index: 2;
+        }
+        &::after {
+            background-color: transparent;
+            border-top: 1px solid #d5d9d9;
+            content: "";
+            display: block;
+            height: 1px;
+            margin-top: -1px;
+            position: absolute;
+            top: 50%;
+            z-index: 1;
+            width: 100%;
+        }
+    }
+}
+.address-block{
+    cursor: pointer;
+    &:hover, &.active{
+        outline: 1px solid #f41212;
+        background: #ffe9e9;
+    }
+    .shipping-address{
+        padding: 10px;
+    }
+    address{margin-bottom: 0;}
+}
+::ng-deep app-delivery-pincode-modal{
+    @media (max-width: 480px){
+        .modal-body{
+            button{
+                width: 100%!important;
+            }
+            input {
+                margin-bottom: 20px;
+            }
+        }
+    }
+    
+}

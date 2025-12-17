@@ -1,0 +1,79 @@
+<!-- <section class="section-pagetop bg border-top breadcrumb-wrapper">
+	<div class="container">
+		<div class="row justify-content-center align-items-center">
+			<app-breadcrumb></app-breadcrumb>
+		</div>
+		
+	</div>
+</section> -->
+
+<section class="login-block padding-y">
+	<div class="container">
+		<div class="row align-items-center justify-content-center">			
+			<div class="col-12 col-md-5 m-auto">
+				<div class="card card-border p-2">
+					<div class="card-header bg-transparent border-0">
+						<div class="col-12 p-0">
+							<h4 class="modal-title" id="modal-basic-title">Login</h4>
+							<p class="mb-0">New to Tradesala? <a [routerLink]="['/register']" class="font-weight-bold">Create an account</a></p>
+						</div>
+					</div>
+					<div class="card-body">						
+						<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="">
+							<div class="form-row">						
+		                        <div class="col-12 form-group ml-auto mr-auto">
+									<label for="username" class="font-weight-bold">Email / Mobile</label>
+									<input type="text" formControlName="username" class="form-control" placeholder="Email / Mobile" id="username" aria-describedby="userName">
+								</div> <!-- form-group end.// -->
+		                        
+		                        <div class="col-12 form-group ml-auto mr-auto">
+									<label for="password" class="d-flex justify-content-between font-weight-bold"><span>Password</span> <span> <a (click)="forgetPassword(content)" class="text-underline">Forgot Password?</a></span></label>
+									<input type="password" formControlName="password" required class="form-control" placeholder="Password" id="password">
+								</div> <!-- form-group end.// -->
+								
+								<div class="col-12 form-group ml-auto mr-auto"> 
+		                            <label class="custom-control custom-checkbox">
+		                                <input type="checkbox" class="custom-control-input" name="terms" checked=""> 
+		                                <div class="custom-control-label"> Remember Me </div> 
+		                            </label>
+		                        </div>
+
+		                        <div class="col-12 ml-auto mr-auto text-center">
+									<div class="text-center">
+										<button type="submit" [disabled]="!loginForm.valid" class="btn btn-primary w-100"> Login  </button>
+									</div> <!-- form-group// -->      
+									<!-- <p class="mt-2">Create an account? <a [routerLink]="['/register']" class="text-underline">Register</a></p> -->
+								</div> 
+														
+							</div> <!-- form-row end.// -->
+							                                 
+						</form>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+</section>
+<ng-template #content let-modal>
+  <div class="modal-header border-0">
+    <h4 class="modal-title" id="modal-basic-title">Forgot Password</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="w-100" [formGroup]="passwordForget" (ngSubmit)="onSubmitForget()">
+    	<div class="form-row">
+    		<div class="col-12 form-group ml-auto mr-auto">
+				<label for="email">Email</label>
+				<input type="email" class="form-control" id="email" formControlName="email">
+			</div> <!-- form-group end.// -->
+    	</div>
+		<div class="text-center">
+			<button type="submit" class="btn btn-outline-primary">Submit</button>
+		</div>   
+    </form>
+  </div>
+  
+</ng-template>

@@ -1,0 +1,51 @@
+.review-heading{
+	font-size: 18px;
+    font-weight: 600;
+    position: relative;
+    float: left;
+    text-align: left;
+    padding-bottom: 2px;
+    color: #000000;    
+	margin-bottom: 5px;
+}
+.rating-count{
+	font-size: 14px;
+}
+.review-list h6{
+    font-size: 14px;
+    font-weight: 600;
+}
+.rating-box{
+	background: #f5f5f5;
+	border-radius:10px;
+	padding: 15px;
+	p:last-child{
+		margin-bottom:0px;
+	}
+}
+@media screen and (max-width: 767px) {
+	.review-list li .d-flex{
+		flex-flow: column;
+	}
+}
+.rating-list {
+	li {
+    font-size: 20px;
+		float: right;
+		color: #ddd;
+		padding: 10px 5px;
+		&:hover {
+			color: #ffd700;
+			~ {
+				li {
+					color: #ffd700;
+				}
+			}
+		}
+	}
+	li.selected {
+		color: #ffd700;
+	}
+	display: inline-block;
+	list-style: none;
+}

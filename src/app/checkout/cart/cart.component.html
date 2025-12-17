@@ -1,0 +1,279 @@
+
+<!-- <div class="loader" *ngIf="isLoaded">
+    <img src="assets/images/icons/spinner.gif" alt="" class="img-fluid img-sm success-img">
+</div> -->
+
+<div *ngIf="isLoaded | async" class="loading-container flex-content-center">    
+    <img src="assets/images/icons/spinner.gif" alt="loading..." class="img-fluid img-sm success-img">
+</div>
+<section class="checkout-wrapper padding-y" *ngIf="cartItems.length && !(isLoaded | async)">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-border">
+                    <div class="checkout-table table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="product font-weight-bold" style="width:50%;">Product Summary</th>
+                                    <th class="size font-weight-bold"  style="width:15%;">Price</th>
+                                    <th class="quantity font-weight-bold text-center" style="width:15%;">Quantity</th>
+                                    <th class="price font-weight-bold text-center" style="width:15%;">Net Price</th>
+                                    <!-- <th class="action text-center font-weight-bold" style="width:15%;">Action</th> -->
+                                </tr>
+                            </thead>
+                            <tbody >
+                                <tr *ngFor="let product of cartItems">
+                                    <td>
+                                        <div class="product-cart d-flex">
+                                            <div class="product-thumb">
+                                                <img [src]="product.product.media.front_image" [alt]="" class="thumb">
+                                            </div>
+                                            <div class="product-content media-body">
+                                                <h5 class="title"><a [routerLink]="['/', product.product.product_url]" title="{{product.product.name}}" target="_blank">{{product.product.name}}</a></h5>
+                                                <!-- <span>SKU: {{product.product.slug}}</span> -->
+                                                <span class="clearfix" *ngIf="product.product.seller.name">Seller: {{product.product.seller.name}}</span>
+                                                <span class="tsid clearfix" *ngIf="product.product.tsid">TSID: {{product.product.tsid}}</span>
+                                                <!-- <span class="hsn-code" *ngIf="product.product.hsn">HSN: {{product.product.hsn}}</span> -->
+                                                <p class="text-muted small" [innerHTML]="product.customVariants" class="variant" *ngIf="product.customVariants"> </p>
+                                                <!-- <p class="text-muted small">Size: 256 GB  <br> Brand: ADATA </p> -->
+
+                                               
+                                                <!-- <p class="text-muted small text-right">
+                                                    SGST{{product.product?.taxes?.sgst?.percentage}}%:
+                                                    {{(product.product?.taxes?.sgst?.amount||0) |
+                                                    currency:'INR':'symbol-narrow':'1.2-2'}} </p>
+                                                <p class="text-muted small text-right">
+                                                    CGST{{product.product?.taxes?.cgst?.percentage}}%:
+                                                    {{(product.product?.taxes?.cgst?.amount||0) |
+                                                    currency:'INR':'symbol-narrow':'1.2-2'}} </p> -->
+                                                <span class="text-black small mb-1 price-fnt offer" *ngIf="product.coupon_type == 'combo_based' && product.product?.discount && product.product?.discount?.percentage !=0 ">
+                                                        Combo Offer {{product.product.discount.percentage}}% OFF
+                                                </span>
+                                                <ng-container *ngIf="product.product?.discount?.free_shipping">
+                                                    <span class="text-black small mb-1 price-fnt offer" >
+                                                       freeshipping
+                                                    </span>
+                                                    <span class="remove-coupon ml-3 mt-0" (click)="removeCoupon(product.cart_id, product.sellerId, product.product.slug, product.cart_session_id)">Remove Coupon</span>
+                                                </ng-container>
+                                                <ng-container *ngIf="!product.product?.discount?.free_shipping">
+                                                    <div class="mt-2" *ngIf="product.coupon_type == 'product_based' && (product.product.discount.has_percentage && product.product.discount.amount !=0)">
+                                                        <span class="text-black small mb-1 price-fnt offer" >
+                                                            Up to {{product.product.discount.percentage}}% OFF
+                                                        </span>
+                                                        <span class="remove-coupon ml-3 mt-0" (click)="removeCoupon(product.cart_id, product.sellerId, product.product.slug, product.cart_session_id)">Remove Coupon</span>
+                                                    </div>
+                                                    <div class="mt-2" *ngIf="product.coupon_type == 'product_based' && (!product.product.discount.has_percentage && product.product.discount.amount !=0)">
+                                                        <span class="text-black small mb-1 price-fnt offer">
+                                                            Extra {{product.product.discount.amount | currency:'INR':'symbol-narrow':'1.2-2' }} OFF
+                                                        </span>
+                                                        <span class="remove-coupon ml-3 mt-0" (click)="removeCoupon(product.cart_id, product.sellerId, product.product.slug, product.cart_session_id)">Remove Coupon</span>
+                                                    </div>
+                                                </ng-container>
+                                                
+                                                <div class="mt-2" *ngIf="product.coupon_type == 'qty_based' && product.product.discount">
+                                                    <span class="text-black small mb-1 price-fnt offer" *ngIf="product.coupon_type == 'qty_based' && product.product.discount.has_percentage">
+                                                        Up to {{product.product.discount.percentage}}% OFF
+                                                    </span>
+                                                    <span class="remove-coupon ml-3 mt-0" (click)="removeCoupon(product.cart_id, product.sellerId, product.product.slug, product.cart_session_id)">Remove Coupon</span>
+                                                </div>
+                                               
+                                                <div class="mt-2" *ngIf="product.coupon_type == 'referal_code' && product.product.discount.has_percentage">
+                                                    <span class="text-black small mb-1 price-fnt offer" >
+                                                        Up to {{product.product.discount.percentage}}% OFF
+                                                    </span>
+                                                    <span class="remove-coupon ml-3 mt-0" (click)="removeCoupon(product.cart_id, product.sellerId, product.product.slug, product.cart_session_id)">Remove Coupon</span>
+                                                </div>
+                                                <div class="mt-2" *ngIf="product.coupon_type == 'referal_code' && !product.product.discount.has_percentage">
+                                                    <span class="text-black small mb-1 price-fnt offer" >
+                                                        Extra {{product.product.discount.amount | currency:'INR':'symbol-narrow':'1.2-2' }} OFF
+                                                    </span>
+                                                    <span class="remove-coupon ml-3 mt-0" (click)="removeCoupon(product.cart_id, product.sellerId, product.product.slug, product.cart_session_id)">Remove Coupon</span>
+                                                </div>
+                                                <ng-container *ngIf="couponMsg.length">
+                                                    <div *ngFor="let message of couponMsg" >
+                                                        <div *ngIf="message.cartId == product.cart_id" class="alert-sm" role="alert" [class]="message.status ? 'alert-success' : 'alert-info'">{{message.msg}}</div>
+                                                    </div>
+                                                </ng-container>
+                                            </div>  
+                                        </div>
+                                    </td>
+                                    <td class="price-col">
+                                        <p class="text-muted small mb-1 price-fnt">Price: {{((product.sub_total) || 0)
+                                            | currency:'INR':'symbol-narrow':'1.2-2'}} </p>
+                                        <p class="text-muted small mb-1 price-fnt">
+                                            GST&#64;{{product.product?.taxes?.igst?.percentage}}% :
+                                            {{((product.tax_total)||0) |
+                                            currency:'INR':'symbol-narrow':'1.2-2'}} </p>
+                                        <ng-container >
+                                            <p class="text-muted small mb-1 price-fnt" *ngIf="product.coupon_type == 'combo_based' && product.product?.discount && product.product?.discount?.percentage !=0 ">
+                                                Discount {{product.product.discount.percentage}}%:
+                                                {{product.discount_amount | currency:'INR':'symbol-narrow':'1.2-2'}} </p>
+                                            <ng-container *ngIf="!product.product?.discount?.free_shipping">
+                                                <p class="text-muted small mb-1 price-fnt" *ngIf="product.coupon_type == 'product_based' && (product.product.discount.has_percentage && product.product.discount.amount !=0)">
+                                                    Discount {{product.product.discount.percentage}}%:
+                                                    {{product.discount_amount | currency:'INR':'symbol-narrow':'1.2-2'}} </p>
+                                                <p class="text-muted small mb-1 price-fnt" *ngIf="product.coupon_type == 'product_based' && (!product.product.discount.has_percentage && product.product.discount.amount !=0)">
+                                                    Discount :
+                                                    {{product.discount_amount | currency:'INR':'symbol-narrow':'1.2-2'}} </p>
+                                            </ng-container>
+                                            
+                                            <p class="text-muted small mb-1 price-fnt" *ngIf="product.coupon_type == 'referal_code' && product.product.discount.has_percentage">
+                                                Discount {{product.product.discount.percentage}}%:
+                                                {{product.discount_amount | currency:'INR':'symbol-narrow':'1.2-2'}} </p>
+                                            <p class="text-muted small mb-1 price-fnt" *ngIf="product.coupon_type == 'referal_code' && !product.product.discount.has_percentage">
+                                                Discount :
+                                                {{product.discount_amount | currency:'INR':'symbol-narrow':'1.2-2'}} </p>
+                                            <p class="text-muted small mb-1 price-fnt" *ngIf="product.coupon_type == 'qty_based' && product.product.discount && product.product.discount.has_percentage">
+                                                    Discount {{product.product.discount.percentage}}%:
+                                                    {{product.discount_amount | currency:'INR':'symbol-narrow':'1.2-2'}} </p>
+                                        </ng-container>
+                                        
+                                        <p class="text-muted small mb-1 price-fnt">Final Price: {{(product.amount||0) |
+                                            currency:'INR':'symbol-narrow':'1.2-2'}} </p>
+
+                                        <p class="text-muted small mb-1 price-fnt"
+                                            *ngIf="product.product.shipping?.has_shipping_charges">Shipping:
+                                            {{product.product.shipping?.shipping_cost|
+                                            currency:'INR':'symbol-narrow':'1.2-2'}}</p>
+                                        <p class="text-muted small mb-1 price-fnt"
+                                            *ngIf="!product.product.shipping?.has_shipping_charges"><i
+                                                class="fas fa-shipping-fast"> Free shipping </i></p>
+                                    </td>
+                                    <td class="text-center d-flex justify-content-center">
+                                        <div class="product-quantity d-inline-flex">
+                                            <button type="button" id="sub" class="sub"
+                                                (click)="decQnt(product, product.product.slug, product.qty);"><i
+                                                    class="icon-svg w-h-14 icon-xs minus"></i></button>
+                                            <input type="number" value="{{product.qty}}" readonly>
+                                            <button type="button" id="add" class="add"
+                                                (click)="incQnt(product, product.product.slug, product.qty);"><i
+                                                    class="icon-svg w-h-14 icon-xs plus"></i></button>
+                                        </div>
+                                        <ul class="action">
+                                            <li placement="bottom" ngbTooltip="Remove Cart"><i class="icon-svg w-h-14 icon-xs trash"
+                                                    (click)="deleteCartItem(product.product.slug, product.cart_id, product.cart_session_id, product.sellerId)"></i></li>
+                                            <!-- <li><i class="icon-svg w-h-14 icon-xs reload" (click)="loadCart()"></i></li> -->
+                                            <!-- <li><i class="icon-svg w-h-14 icon-xs heart" (click)="addToWishlist(product)"></i></li> -->
+                                            <!-- <li><i class="icon-svg w-h-14 icon-xs trash" (click)="updateCart(1,getCartDetail)"></i></li> -->
+                                        </ul>
+                                    </td>
+                                    <td class="text-center">
+                                        <p class="price price-fnt">{{product.sub_total | currency:'INR':'symbol-narrow':'1.2-2'}}</p>
+                                    </td>
+                                    <!-- <td class="text-center">
+                                        <ul class="action">
+                                            <li><i class="icon-svg w-h-14 icon-xs trash"
+                                                    (click)="deleteCartItem(product.product.slug)"></i></li> -->
+                                            <!-- <li><i class="icon-svg w-h-14 icon-xs reload" (click)="loadCart()"></i></li> -->
+                                            <!-- <li><i class="icon-svg w-h-14 icon-xs heart" (click)="addToWishlist(product)"></i></li> -->
+                                            <!-- <li><i class="icon-svg w-h-14 icon-xs trash" (click)="updateCart(1,getCartDetail)"></i></li> -->
+                                        <!-- </ul>
+                                    </td> -->
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="checkout-coupon-total checkout-coupon-total-2 d-flex flex-wrap">
+                        <div class="checkout-coupon">
+                            <form [formGroup]="couponForm" (ngSubmit)="applyCoupon()">
+                                <div class="form-group">
+                                    <label>Have coupon? <span>Apply Coupon to get discount!</span></label>
+                                    <div class="row">
+                                        <div class="input-group col-md-4">
+                                            <input type="text" class="form-control" formControlName="coupon_code" placeholder="Coupon code">
+                                            <span class="input-group-append">
+                                                <button type="submit" class="btn btn-primary" [disabled]="!couponForm.valid">Apply</button>
+                                            </span>
+                                           
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                        <div class="checkout-total">
+                            <!--<div class="single-total">
+                                    <p class="value mb-0">Subotal Price:</p>
+                                    <p class="price mb-0"> {{total | currency:'INR':'symbol-narrow':'4.2-2'}}</p>
+                                </div>
+                                 <div class="single-total">
+                                    <p class="value mb-0">Shipping Cost (+):</p>
+                                    <p class="price mb-0">{{shipping | currency:'INR':'symbol-narrow':'4.2-2'}}</p>
+                                </div>
+                                <div class="single-total">
+                                    <p class="value mb-0">Discount (-):</p>
+                                    <p class="price mb-0">{{discount | currency:'INR':'symbol-narrow':'4.2-2'}}</p>
+                                </div> -->
+                            <!-- <div class="single-total total-payable">
+                                    <p class="value mb-0">Sub Total:</p>
+                                    <p class="price mb-0">{{cartItemTotal | currency:'INR':'symbol-narrow':'1.2-2'}}</p>
+                                    <p class="value mb-0">Shipping Charges:</p>
+                                    <p class="price mb-0">{{shippingCharges | currency:'INR':'symbol-narrow':'1.2-2'}}</p>
+                                    <p class="value mb-0">Total Payable:</p>
+                                    <p class="price mb-0">{{finalTotal | currency:'INR':'symbol-narrow':'1.2-2'}}</p>
+                                </div> -->
+                               
+                            <table class="table total-payable">
+                                <tbody>                                    
+                                    <tr>
+                                        <td class="text-right">Sub-Total</td>
+                                        <td class="text-right price-fnt">{{cartSummary.sub_total | currency:'INR':'symbol-narrow':'1.2-2'}}</td>
+                                        <td class="empty-cell"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right">Taxes</td>
+                                        <td class="text-right price-fnt">{{cartSummary.tax_total | currency:'INR':'symbol-narrow':'1.2-2'}}</td>
+                                        <td class="empty-cell"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right">Shipping Charges</td>
+                                        <td class="text-right price-fnt">{{cartSummary.shipping.has_shipping_charges ? (cartSummary.shipping.shipping_cost |
+                                                currency:'INR':'symbol-narrow':'1.2-2') : 'Free'}}</td>
+                                        <td class="empty-cell"></td>
+                                    </tr>
+                                    <tr *ngIf="cartSummary.discounts > 0">
+                                        <td class="text-right">Discount(-)</td>
+                                        <td class="text-right price-fnt">{{cartSummary.discounts |
+                                                currency:'INR':'symbol-narrow':'1.2-2'}}</td>
+                                        <td class="empty-cell"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right total-txt"><strong>Total</strong></td>
+                                        <td class="text-right total-amt price-fnt"><strong>{{cartSummary.grand_total |
+                                                currency:'INR':'symbol-narrow':'1.2-2'}}</strong></td>
+                                        <td class="empty-cell"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="checkout-btn d-sm-flex justify-content-between">
+                        <div class="single-btn">
+                            <a href="#" class="btn btn-outline-primary">continue shopping</a>
+                        </div>
+                        <div class="single-btn">
+                            <a [routerLink]="['/checkout/checkoutDetails']" class="btn btn-primary">Proceed to
+                                Checkout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section>
+    <div *ngIf="!cartItems.length && !(isLoaded| async)">
+        <div class="empty-cart-content">
+            <p class="cart-empty-message empty">No products in the cart.</p>
+            <p class="empty-cart-icon">
+                <!-- <i class="icon icon-shopping-cart"></i> -->
+                <img src="assets/images/icons/png/100/icons-shopping-cart-100.png" />
+            </p>
+            <p class="btn-wraper justify-content-center">
+                <a class="btn btn-primary" [routerLink]="['/']">Return To Home</a>
+            </p>
+        </div>
+    </div>
+</section>

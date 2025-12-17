@@ -1,0 +1,146 @@
+.slide img{
+	border-radius: 1.5rem;
+}
+.owl-prev, .owl-next {
+    z-index: 9;
+    top:50%;
+    transform:translateY(-50%);
+    position: absolute;
+}
+
+.owl-prev{left:-30px; content:"<";}
+.owl-next{right:-30px; content:">";}
+
+/* slider main */
+::ng-deep{
+	.slider-main{
+		.owl-prev, .owl-next {padding:18px 7px; color: #FFF;  background-color:rgba(0,0,0,.4);}
+		.owl-nav [class*='owl-']:hover { background: #869791;  color: #FFF;  }
+		.owl-prev{left:0; }
+		.owl-next{right:0;}
+		.item-slide{
+			height:325px;
+			img{ min-width:100%; min-height:100%; object-fit:cover; }
+		}
+	}
+
+	/* slide items  */
+	.slide-items{
+		.owl-prev, .owl-next{top:42%; }
+	}
+
+	.slider-main{
+		.owl-item{
+			img{
+				border-radius: 1.5rem;
+				width: auto;
+			}
+		}
+	}
+	.slider-main .owl-carousel{
+		> .owl-nav {
+			>div{
+				color: #fff;
+				font-size: 20px;
+				margin: 0px;
+				padding: 0px;
+				background: #c92027;
+				border-radius: 25px;
+				display: inline-block;
+				cursor: pointer;
+				border: 2px solid #c92027;
+				transition: all 0.3s ease 0s;
+				opacity: 0;
+				text-align: center;
+				position: absolute;
+				top: 50%;
+				transform: translateY(-50%);
+			}
+			.owl-next{
+				right: 0px;
+				transition: all 0.3s ease 0s;
+			}
+			.owl-prev{
+				left: 0px;
+				transition: all 0.3s ease 0s;
+			}
+		}
+		&:hover{
+			> .owl-nav {
+				>div{
+					opacity: 1;
+					&:hover{
+						color: #c92027;
+						background: #fff;
+						border: 2px solid #fff;
+					}
+				}
+			}
+
+		}
+    > .owl-nav {
+			>div{
+				width: 40px;
+				height: 70px;
+				i{
+					font-size: 18px;
+					line-height: 60px;
+				}
+			}
+			.owl-next{
+				border-radius: 10px 0 0 10px;
+			}
+			.owl-prev{
+				border-radius: 0 10px 10px 0;
+			}
+		}
+		&:hover{
+			> .owl-nav {
+				.owl-next{
+					right: 0px;
+				}
+				.owl-prev{
+					left: 0px;
+				}
+			}
+		}
+	}
+
+	.slider-main .owl-carousel {
+		&.owl-theme {
+			.owl-nav.disabled + .owl-dots {
+				position: absolute;
+				bottom: 0px;
+				// left: calc(100% - 690px);
+        left: 50%;
+        transform: translateX(-50%);
+			}
+			.owl-dots .owl-dot {
+				span{
+					border: 1px solid #ffffff;
+					background: transparent;
+					width:12px;
+					height:12px;
+					position: relative;
+					&:after{
+						content: "";
+						position: absolute;
+						left: 2px;
+						top: 2px;
+						width: 6px;
+						height: 6px;
+						background: #ffffff;
+						border-radius: 30px;
+					}
+				}
+				&.active, &:hover{
+					span{
+						background: transparent;
+					}
+				}
+			}
+		}
+
+	}
+	
+}

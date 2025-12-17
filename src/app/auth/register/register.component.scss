@@ -1,0 +1,27 @@
+.register-block {
+	a{
+		text-decoration:underline;
+	}
+	.form-control{
+		height:42px;
+		border-radius: 8px;
+	}
+	.btn{
+		height:42px;
+		border-radius: 8px;
+	}
+}
+.otp-form {
+	.input-group {
+		i {
+		    position: absolute;
+		    left: 10px;
+		    font-size: 20px !important;
+		    color: #8a8a8a;
+		    z-index: 10;
+		    + input{
+		    	padding-left: 36px;
+		    }
+		}
+	}
+}

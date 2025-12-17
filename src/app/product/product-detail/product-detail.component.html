@@ -1,0 +1,348 @@
+<section class="section-pagetop bg breadcrumb-wrapper">
+    <div class="container">
+        <div class="row">
+            <app-breadcrumb [category]="breadcrumbCategory" [subcategory]="breadcrumbSubCategory"></app-breadcrumb>
+        </div>
+        
+    </div>
+</section>
+<section class="main-content padding-y bg-theme-light">
+    <div class="container">
+        <div class="row">           
+            <aside class="sidebar sidebar-right col-12 order-2 product__sidebar" [class]="{'col-lg-3' : isDesktop} " *ngIf="isDesktop && screenwidth > 1200">
+                <div id="sticky-start"></div>               
+                <div class="inner-content inner card-body p-0" [isMobile]="false" [stickyStartId]="'sticky-start'" [stickyClass]="'sticky'" [ieOnly]="false">
+                    <app-product-price-info
+                    [product]="product"
+                    [subTotal]="totalPrice"
+                    (productEmit)="updateProduct($event)"
+                    (stockStatus)="updateStockStatus($event)"
+                    (checkCoupon)="updateCoupon($event)"
+                    (quantityEmit)="updateQty($event)"
+                    ></app-product-price-info>
+                </div>                
+            </aside>
+            <main class="content col-12 order-1 product__main" [class]="{'col-lg-9' : isDesktop} ">           
+                <div class="inner-content inner card-body p-0">
+                    <div class="row mb-4 container-row" >                        
+                        <div class="col-12 images-gallery" [class]="{'col-md-6' : screenwidth > 767, 'fixed-gallery': isFixed && screenwidth > 767}" #target> 
+                            <div class="product-images" >
+                                <app-product-images [media]="product.media"></app-product-images>
+                            </div> 
+                        </div>
+                        <div class="col-12 scroll-element product-main-content" #scrollContainer [class]="{'col-md-6' : screenwidth > 767}">
+                            <article class="card-body p-0 product-content" >
+                                <div class="product-main-info">        
+                                    <div class="product-name-info">
+                                        <h2 class="title">{{ product.name }}</h2>
+                                        <img src="assets/images/svg/seller-choice.png" class="mb-2 seller-choice" alt="seller choice" *ngIf="product.is_bestseller" />
+                                        <!-- <span [class]="product.is_featured ? 'badge badge-success p-2 font-12 mb-2' : ''" *ngIf="product.is_featured">Featured</span> -->
+                                        <p class="sold-by">Sold by: {{ product.seller.name }}</p>
+                                        <p class="brand">Brand: <a *ngIf="product.brand" [routerLink]="['/brand', product.brand.slug]">{{ product.brand.name }}</a></p>                                        
+                                        <div class="rating-wrap my-1">
+                                            <ul class="rating-stars">
+                                                <li [style.width]="productAvgRating + '%'" class="stars-active">
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                </li>
+                                                <li>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                </li>
+                                            </ul>
+                                            <small class="label-rating text-muted">{{ product.rating_summary.review_count }} reviews</small>                                            
+                                        </div> <!-- rating-wrap.// -->
+                                        <div class="product-price pt-2">        
+                                            <p *ngIf="product.special_price" class="price-wrapper price mb-2">
+                                                <span class="sale-price price price-fnt">
+                                                    {{ product.special_price | currency:'INR':'symbol':'1.2-2'}}
+                                                </span>
+                                                <span class="regular-price price price-fnt">
+                                                    {{ product.price | currency:'INR':'symbol':'1.2-2'}}
+                                                </span>
+                                            </p>
+                                            <p *ngIf="!product.special_price" class="price-wrapper mb-2">
+                                                <span class="regular-price price price-fnt">
+                                                    {{ product.price | currency:'INR':'symbol':'1.2-2'}}
+                                                </span>
+                                            </p>
+                                            <p>Price inclusive of all taxes</p>
+                                            <div class="discount-label mb-2" *ngIf="discount > 0">
+                                                <span class="discount-price">{{ discountPercent }}</span>
+                                                <span class="save-price price-fnt"> Save {{ discount | currency:'INR':'symbol':'1.2-2' }} on this product</span>
+                                            </div>
+                                        </div>
+                                        <div class="availabilityCheck-pincode my-3">
+                                            <ng-container *ngIf="isLoading$ | async">
+                                                <div class="bg-loading" style="width: 100%; height:20px;"></div> 
+                                            </ng-container>                                            
+                                            <a (click)="openDeliveryModalPopup();" class="deliver-icon" *ngIf="isPincode === null || isPincode === ''">                                                    
+                                                <i class="fa fa-map-marker-alt"></i>Update your location
+                                            </a>
+                                            <ng-container *ngIf="(isPincode$ | async) as pincode">                                                                                                                                                                                                    
+                                                <div *ngIf="!product.shipping.smart_shipping && !product.shipping.has_shipping_charges">                                                
+                                                    <a (click)="openDeliveryModalPopup();" class="deliver-icon">                                                    
+                                                        <i class="fa fa-map-marker-alt"></i> <ng-container *ngIf="pincode === null">Update your location</ng-container><ng-container *ngIf="pincode !==null">Deliver to {{pincode}}</ng-container>
+                                                    </a>
+                                                    <ng-container *ngIf="pincode !== null">
+                                                        <span class="hr-line"></span>
+                                                        <span class="delivery-msg" >Shipping Free</span>
+                                                    </ng-container>                                           
+                                                </div>
+                                                <ng-container *ngIf="!product.shipping.smart_shipping && product.shipping.has_shipping_charges">
+                                                    <a (click)="openDeliveryModalPopup();" class="deliver-icon">                                                    
+                                                        <i class="fa fa-map-marker-alt"></i> <ng-container *ngIf="pincode === null">Update your location</ng-container><ng-container *ngIf="pincode !==null">Deliver to {{pincode}}</ng-container>                                                     
+                                                    </a>
+                                                    <ng-container *ngIf="pincode !== null">
+                                                        <span class="hr-line"></span>
+                                                        <span class="delivery-msg">Shipping Cost {{product.shipping.shipping_cost | currency:'INR':'symbol':'1.2-2'}}</span>
+                                                    </ng-container>
+                                                    
+                                                </ng-container>
+                                                <ng-container *ngIf="product.shipping.smart_shipping && (product.shipping.has_shipping_charges || !product.shipping.has_shipping_charges)">
+                                                    <a (click)="openDeliveryModalPopup();" class="deliver-icon" [class.d-none]="isLoading$ | async">                                                    
+                                                        <i class="fa fa-map-marker-alt"></i> <ng-container *ngIf="pincode === null">Update your location</ng-container><ng-container *ngIf="pincode !==null">Deliver to {{pincode}}</ng-container> 
+                                                    </a>
+                                                    <ng-container *ngIf="delivery.status && delivery.data">                                                   
+                                                        <span class="hr-line"></span>
+                                                        <span class="delivery-msg" *ngIf="delivery.status">
+                                                            <span *ngIf="delivery.data.message != ''"> {{delivery.data.message}}</span>
+                                                            <span *ngIf="delivery.data.courier_costs > 0"> {{delivery.data.courier_costs | currency:'INR':'symbol':'1.2-2'}}</span>
+                                                        </span>
+                                                    </ng-container>                                                                                
+                                                    <ng-container *ngIf="!deliveryErrMsg.status && deliveryErrMsg.msg !==''">
+                                                    <span class="hr-line"></span>
+                                                        <span class="delivery-msg">{{deliveryErrMsg.msg}}</span>   
+                                                    </ng-container> 
+                                                </ng-container>
+                                            </ng-container> 
+                                            
+                                                                                      
+                                        </div>
+                                        
+                                        
+                                        <div class="discounts" *ngIf="discountEnable" >
+                                            <div class="product_based_discount" *ngIf="product.discounts.product_based_discount.length != 0">                                               
+                                                <div class="discount-option">
+                                                    <div class="title"><h5>Coupon</h5></div> 
+                                                    <div class="discount-label " *ngIf="product.discounts.product_based_discount?.has_free_shipping">                                                        
+                                                        <label>
+                                                            <input type="checkbox" [(ngModel)]="coupon" (ngModelChange)="coupon = $event" [ngModelOptions]=" 
+                                                            {standalone: true}" name="additional_discount" class="additional_discount" (change)="couponApply(coupon)"/>
+                                                            <div class="save-price price-fnt w-100">
+                                                                
+                                                                <span class="small-txt"> Free-shipping</span>
+                                                            </div>
+                                                           
+                                                        </label>                                                       
+                                                    </div>
+                                                    <div class="discount-label " *ngIf="!product.discounts.product_based_discount?.discount?.has_percentage && product.discounts.product_based_discount?.special_price">                                                        
+                                                        <label>
+                                                            <input type="checkbox" [(ngModel)]="coupon" (ngModelChange)="coupon = $event" [ngModelOptions]=" 
+                                                            {standalone: true}" name="additional_discount" class="additional_discount" (change)="couponApply(coupon)"/>
+                                                            <div class="save-price price-fnt w-100">
+                                                                
+                                                                <span class="small-txt"> Extra {{ product.discounts.product_based_discount.discount.amount | currency:'INR':'symbol':'1.2-2' }} off</span>
+                                                            </div>
+                                                           
+                                                        </label>                                                       
+                                                    </div>
+                                                    <div class="discount-label" *ngIf="product.discounts.product_based_discount?.discount?.has_percentage && product.discounts.product_based_discount?.special_price">                                                       
+                                                        <label>
+                                                            <input type="checkbox" [(ngModel)]="coupon" (ngModelChange)="coupon = $event" [ngModelOptions]=" 
+                                                            {standalone: true}" name="additional_discount" class="additional_discount" (change)="couponApply(coupon)"/>
+                                                            <div class="save-price price-fnt w-100">                                                               
+                                                                <span class="small-txt"> Up to {{ product.discounts.product_based_discount.discount.percentage}}% OFF. Save {{ product.discounts.product_based_discount.discount.amount | currency:'INR':'symbol':'1.2-2' }} discount offer.</span>
+                                                            </div>
+                                                           
+                                                        </label>                                                       
+                                                    </div>
+                                                   
+                                                    <!-- <div class="terms" *ngIf="product.discounts.product_based_discount?.description">
+                                                        <a (click)="toggle(collpase)">Offers terms & condition.</a>
+                                                        <div class="collapse" #collpase>
+                                                            <div [innerHtml]="product.discounts.product_based_discount.description"></div>
+                                                        </div>
+                                                    </div>  -->
+                                                </div>
+                                            </div>
+                                            <div class="product_qty_discount" [class.slider]="isQtyDiscountSlider" *ngIf="product.discounts.quantity_based_discount.length != 0 && product.discounts.quantity_based_discount.has_percentage">
+                                                <ng-container *ngIf="!isQtyDiscountSlider">
+                                                    <div class="qty-grid-box">
+                                                        <div class="discount-item" *ngFor="let qtyDiscount of product.discounts.quantity_based_discount.discount">
+                                                            <div class="discount-label " >                                                        
+                                                                <span>Buy more {{qtyDiscount.start_quantity}}+. Up to {{qtyDiscount.percentage}}%.</span>                                                       
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </ng-container>
+                                                <ng-container *ngIf="isQtyDiscountSlider">
+                                                    <owl-carousel-o [options]="discountOpt">
+                                                        <ng-template carouselSlide *ngFor="let qtyDiscount of product.discounts.quantity_based_discount.discount" [width]="100">
+                                                            <div class="discount-item">
+                                                                <div class="discount-label " >                                                        
+                                                                    <span>Buy more {{qtyDiscount.start_quantity}}+. Up to {{qtyDiscount.percentage}}%.</span>                                                       
+                                                                </div>
+                                                            </div>
+                                                            
+                                                        </ng-template>
+                                                    
+                                                    </owl-carousel-o>
+                                                </ng-container>
+                                               
+                                            </div>
+                                        </div>
+                                    </div>
+                                                                      
+                                    <div class="product-stock mt-3">                                       
+                                        <div class="availabilty">
+                                            <strong>Availabilty: </strong> 
+                                            <span class="value" [class]="stockClass" id="stockText" #stockText>
+                                                {{ product.stock.stock_status }} 
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="price-wrapper" *ngIf="isMobile || isTablet && !isDesktop">
+                                        <app-product-price-info
+                                        [product]="product"
+                                        [subTotal]="totalPrice" 
+                                        (productEmit)="updateProduct($event)"
+                                        (stockStatus)="updateStockStatus($event)"
+                                        (checkCoupon)="updateCoupon($event)"
+                                        (quantityEmit)="updateQty($event)"
+                                        ></app-product-price-info>
+                                    </div>
+                                    <div class="short_desc pt-3 mb-2" [innerHTML]="product.summary"></div>  
+                                    <div class="benefits">
+                                        <h3 class="h6">Benefits</h3>
+                                        <div class="clearfix"></div>
+                                        <div class="benefit-box">
+                                            <div class="benefit-brd">
+                                                <owl-carousel-o [options]="benefitOpt">
+                                                    <ng-container *ngFor="let item of benefitsData">
+                                                        <ng-template carouselSlide [id]="item.id" [width]="100">
+                                                            <div class="icon-box">
+                                                                <div class="icon-img">
+                                                                    <img [src]="item.icon" />
+                                                                </div>
+                                                                <div class="icon-text">
+                                                                    {{item.text}}
+                                                                </div>
+                                                            </div>
+                                                        </ng-template>
+                                                    </ng-container>
+                                                </owl-carousel-o> 
+                                            </div>
+                                        </div>
+                                        
+                                        
+                                    </div> 
+                                    
+                                </div>
+                            </article>
+                        </div>
+                        
+                    </div>
+                    <div class="row product-detail-tabs scroll-element" >
+                        <div class="col-12 product-tab">
+                            <ul ngbNav #nav="ngbNav" class="nav-pills nav d-inline-flex light-bg">
+                                <li [ngbNavItem]="1">
+                                    <a ngbNavLink>Description</a>
+                                    <ng-template ngbNavContent>
+                                        <div *ngIf="product.description" [innerHTML]="product.description"></div>
+                                        <p *ngIf="!product.description">No Desciption given</p>
+                                    </ng-template>
+                                </li>
+                                <li [ngbNavItem]="2" *ngIf="product.dimensions.length_unit.length > 0 && product.dimensions.weight_unit.weight > 0">
+                                    <a ngbNavLink>Dimension</a>
+                                    <ng-template ngbNavContent>
+                                        <app-product-spec [product]="product"></app-product-spec>
+                                    </ng-template>
+                                </li>
+                                <li [ngbNavItem]="3" *ngIf="product.specification">
+                                    <a ngbNavLink>Technical Specification</a>
+                                    <ng-template ngbNavContent>
+                                        <ng-container >
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                        <table class="table w-75">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <th scope="row" class="border-0 pl-0 py-1">TSID</th> 
+                                                                    <td class="border-0 pr-0 py-1">{{product.tsid}}</td>
+                                                                </tr>
+                                                                <tr *ngFor="let spec of product.specification">
+                                                                    <ng-container *ngIf="spec[0] && spec[1]" >
+                                                                    <th *ngIf="spec[0]" scope="row" class="border-0 pl-0 py-1">{{ spec[0] }}: </th>
+                                                                    <td *ngIf="spec[1]" class="border-0 pr-0 py-1">{{ spec[1] }} </td>
+                                                                    </ng-container>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                        
+                                    </ng-template>
+                                </li>
+                            </ul>
+                            
+                            <div [ngbNavOutlet]="nav" class="mt-2"></div>                            
+                        </div>
+                    </div>
+                    <div class="row scroll-element">
+                        <div class="col-12 bg-white">
+                            <app-product-review 
+                            [product]="product" 
+                            [averageRating]="productAvgRating" 
+                            [totalReviews]="product.rating_summary.review_count"
+                            [reviews]="listReviews"
+                            ></app-product-review>
+                        </div>
+                    </div>
+                    
+                    <div id="sticky-bottom"></div>
+                </div>
+                
+            </main> <!-- col.// -->
+           
+        </div>
+    </div>
+</section>
+<section class="product-block padding-y" *ngIf="product.combo_offers.length !=0">
+    <div class="container">
+        <div class="row product-combo">
+            <div class="col-12">
+                <div class="combo-block">
+                    <div class="row">
+                        <div class="col-12">
+                            <h2 class="box-heading mt-3 pl-3 text-uppercase">Buy together & save more</h2>
+                        </div>
+                    </div>
+                    <app-product-combo-offer [product]="product" [option]="productOption" [showPopup]="false"></app-product-combo-offer>
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+</section>
+<section *ngIf="(recommendedProduct$ | async); let recommendedProduct$" class="product-block padding-y">
+    <div *ngIf="recommendedProduct$.length > 0" class="container">
+        <div class="row">
+            <div class="shop-by-cat fullwidth">
+                <div class="col-12 col-md-12 float-left">
+                    <h2 class="float-none box-heading">Related Products</h2>
+                    <app-product-grid-slider [options]="options" [products]="recommendedProduct$" [setWidth]="178.571"></app-product-grid-slider>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

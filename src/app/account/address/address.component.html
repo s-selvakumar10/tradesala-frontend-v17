@@ -1,0 +1,308 @@
+<div class="row account-area">
+	<div class="col-md-12 col-12">
+		<div class="address-info">
+			<ng-container *ngIf="listOfAddress?.length > 0">
+				<div class="mt-4">
+					<div class="card mb-3 list-address" *ngFor="let each of listOfAddress; let i = index">
+						<div class="card-body">
+							<div class="row">
+								<div class="col-md-9">
+									<div class="form-check custom-control custom-radio">
+										<input class="form-check-input custom-control-input" type="radio" name="shipping_ddress" id="shippingAddress-{{i+1}}" (change)="handleChange($event)" value="{{each.id}}" [attr.checked]="(each.default == 1) ? 'checked' : null">
+										<label class="form-check-label custom-control-label" for="shippingAddress-{{i+1}}">
+											<strong>{{each.shipping_address?.name}}</strong> {{each.shipping_address?.line1}},
+											{{each.shipping_address?.line2||''}}, {{each.shipping_address?.city}},
+											{{stateListMap[each.shipping_address?.state]}},
+											{{each.shipping_address?.pincode}},
+											{{countryListMap[each.shipping_address?.country]}} - Phone: {{each.shipping_address?.mobile_number}},
+										</label>
+										
+									</div>
+								</div>
+								<div class="col-md-1">
+									<span *ngIf="each.default == 1 " [class]= "(each.default == 1)? 'badge badge-primary default-badge mr-2': '' ">Primary</span>
+								</div>
+								<div class="col-md-2 text-right">									
+									<a class="address-btn" (click)="editAddress(each.id,'shipping')">Edit</a> | <a class="address-btn" (click)="removeAddress(each.id)">Delete</a>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+					<div class="text-center">
+						<button type="button" class="btn btn-sm btn-primary" (click)="addAddress()">+ Add Address</button>
+					</div>
+				</div>
+				
+			</ng-container>
+			<div class="card card-border mt-3" *ngIf="listOfAddress?.length < 1">
+				<div class="card-body text-center">
+					<button type="button" class="btn btn-sm btn-primary" (click)="addAddress()">+ Add Address</button>								
+				</div>
+			</div>
+			<div class="card mt-3 mb-3 address-form" *ngIf="showAddressForm">
+				<div class="card-body">
+					<h5 *ngIf="!isEdit">Add shipping address</h5>
+					<h5 *ngIf="isEdit">Edit shipping address</h5>
+					<form id="addressForm" class="mb-3" [formGroup]="addressShippingForm">
+						<div class="row">
+							<div class="form-group col-sm-3">
+								<label>Name</label>
+								<input type="text" placeholder="Name" class="form-control"
+									formControlName="name">
+								<span class="text-danger"
+									*ngIf="!addressShippingForm.get('name').valid && addressShippingForm.get('name').touched">
+									<small>Please enter name</small></span>
+							</div>
+							<div class="form-group col-sm-3">
+								<label>Phone</label>
+								<input type="text" class="form-control"
+									formControlName="mobile" placeholder="Mobile No">
+								<span class="text-danger"
+									*ngIf="!addressShippingForm.get('mobile').valid && addressShippingForm.get('mobile').touched">
+									<small>Please enter valid phone no</small></span>
+								
+							</div>
+							
+							<div class="form-group col-sm-3">
+								<label>Address Line1</label>
+								<input type="text" placeholder="Address Line1" class="form-control"
+									formControlName="address1">
+								<span class="text-danger"
+									*ngIf="!addressShippingForm.get('address1').valid && addressShippingForm.get('address1').touched">
+									<small>Please enter house / flat no</small></span>
+							</div>
+							<div class="form-group col-sm-3">
+								<label>Address Line2</label>
+								<input type="text" placeholder="Address Line2" class="form-control"
+									formControlName="address2">
+								<span class="text-danger"
+									*ngIf="!addressShippingForm.get('address2').valid && addressShippingForm.get('address2').touched">
+									<small>Please enter address</small></span>
+							</div>
+							<div class="form-group col-sm-3">
+								<label>City</label>
+								<input type="text" placeholder="City" class="form-control"
+									formControlName="city">
+								<span class="text-danger"
+									*ngIf="!addressShippingForm.get('city').valid && addressShippingForm.get('city').touched">
+									<small>Please enter city</small></span>
+							</div>
+							<div class="form-group col-sm-3">
+								<label>Postal Code</label>
+								<input type="text" placeholder="Postal Code" class="form-control"
+									formControlName="postalcode">
+								<span class="text-danger"
+									*ngIf="!addressShippingForm.get('postalcode').valid && addressShippingForm.get('postalcode').touched">
+									<small>Please enter valid postal code</small></span>
+							</div>
+							<div class="form-group col-sm-3">
+								<label>Region/State</label>
+								<select class="form-control" formControlName="state">
+									<option value="">--Select State--</option>
+									<option *ngFor="let sl of stateList" [value]="sl.id">{{sl.name}}
+									</option>
+									<span class="text-danger"
+										*ngIf="!addressShippingForm.get('state').valid && addressShippingForm.get('state').touched">
+										<small>Please select state</small></span>
+
+								</select>
+							</div>
+							<div class="form-group col-sm-3">
+								<label>Country</label>
+								<select class="form-control" formControlName="country"
+									placeholder="Country">
+									<option value="">--Select Country--</option>
+									<option *ngFor="let cl of countryList" [value]="cl.id"> {{cl.name}}
+									</option>
+									<span class="text-danger"
+										*ngIf="!addressShippingForm.get('country').valid && addressShippingForm.get('country').touched">
+										<small>Please select country</small></span>
+								</select>
+							</div>
+							<!-- <div class="form-group col" *ngIf="!isEdit">
+								<div class="form-check">
+									<input class="form-check-input" type="checkbox"
+										formControlName="copyToBilling" id="sameAsShippingAddressCtrl">
+									<label class="form-check-label" for="sameAsShippingAddressCtrl">
+										My delivery and mailing addresses are the same.
+									</label>
+								</div>
+							</div> -->
+							<!-- <div class="btn-wraper col-12 justify-content-end">
+								<button type="button" class="btn btn-sm btn-success" (click)="validateNextTab(addressShippingForm)">Save</button>
+							</div> -->
+							<div class="btn-wraper col-12 justify-content-end mt-3" *ngIf="!isEdit">
+								<button type="button" class="btn btn-sm btn-success" (click)="save()">Save</button>
+							</div>
+							<div class="btn-wraper col-12 justify-content-end mt-3" *ngIf="isEdit">
+								<button type="button" class="btn btn-sm btn-success" (click)="update()">Update</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<!-- <div class="row mb-3 mt-3">
+				<div class="col-md-12"> -->
+					
+					
+				<!-- </div> -->
+				
+				<!-- <div class="col-md-4" *ngFor="let each of listOfAddress">
+					
+					<div class="card">
+						<div class="card-body">
+							<h5> Shipping Address</h5>
+							<div>
+								<a *ngIf="each.default == 1" class="btn btn-sm btn-success">Primary</a>
+								<a *ngIf="each.default == 0" (click)="setDefaultAddress(each.id)" class="btn btn-sm btn-secondary">Set as Default</a>
+								<div class="address">
+									<p class="info">{{each.shipping_address?.name}}</p>
+									<p class="info">{{each.shipping_address?.mobile_number}}</p>
+									<p class="info">{{each.shipping_address?.email}}</p>
+									<p class="info">{{each.shipping_address?.line1}},
+										{{each.shipping_address?.line2||''}}, {{each.shipping_address?.city}}</p>
+									<p class="info">{{stateListMap[each.shipping_address?.state]}},
+										{{each.shipping_address?.pincode}},
+										{{countryListMap[each.shipping_address?.country]}}</p>
+								</div>
+
+								<div class="btn-wraper">
+									<a class="btn btn-sm btn-outline-success edit-btn"
+										(click)="editAddress(each.id,'shipping')">Edit</a>
+									<a class="btn btn-sm btn-outline-danger edit-btn ml-2"
+										(click)="removeAddress(each.id)">Delete</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div> -->
+			<!-- </div> -->
+			<!-- <div class="row mb-3">
+				<div class="col-md-4" *ngFor="let each of listOfAddress">
+					<div class="card">
+						<div class="card-body">
+							<h5> Billing Address</h5>
+							<div>
+								<a *ngIf="each.default == 1" class="btn btn-sm btn-success">Primary</a>
+								<a *ngIf="each.default == 0" (click)="setDefaultAddress(each.id)" class="btn btn-sm btn-secondary">Set as Default</a>
+								<div class="address">
+									<p class="info">{{each.billing_address?.name}}</p>
+									<p class="info">{{each.billing_address?.mobile_number}}</p>
+									<p class="info">{{each.billing_address?.email}}</p>
+									<p class="info">{{each.billing_address?.line1}},
+										{{each.billing_address?.line2||''}}, {{each.billing_address?.city}}</p>
+									<p class="info">{{stateListMap[each.billing_address?.state]}},
+										{{each.billing_address?.pincode}},
+										{{countryListMap[each.billing_address?.country]}}</p>
+								</div>
+
+								<div class="btn-wraper">
+									<a class="btn btn-sm btn-outline-success edit-btn"
+										(click)="editAddress(each.id,'billing')">Edit</a>
+									<a class="btn btn-sm btn-outline-danger edit-btn ml-2"
+										(click)="removeAddress(each.id)">Delete</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div> -->
+			<!-- <div class="row">
+				<div class="col-md-12"> -->
+					
+					<!-- <div class="card" *ngIf="showBillingForm" [ngClass]="{'d-none': !showBilling}">
+						<div class="card-body">
+							<h5>Billing Address Form</h5>
+							<form class="mb-3" [formGroup]="addressBillingForm">
+								<div class="row">
+									<div class="form-group col-sm-4">
+										<label>Name</label>
+										<input type="text" placeholder="Name" class="form-control"
+											formControlName="name">
+										<span
+											*ngIf="!addressBillingForm.get('name').valid && addressBillingForm.get('name').touched">Please
+											enter Name</span>
+									</div>
+									<div class="form-group col-sm-4">
+										<label>Phone</label>
+										<input type="text" value="+998" class="form-control"
+											formControlName="mobile" placeholder="Mobile No">
+										<span
+											*ngIf="!addressBillingForm.get('mobile').valid && addressBillingForm.get('mobile').touched">Please
+											enter Phone No</span>
+									</div>
+									<div class="form-group col-sm-4">
+										<label>Email</label>
+										<input type="email" placeholder="example@gmail.com" class="form-control"
+											formControlName="email">
+										<span
+											*ngIf="!addressBillingForm.get('email').valid && addressBillingForm.get('email').touched">Please
+											enter Email</span>
+									</div>
+									<div class="form-group col-sm-6">
+										<label>Address Line1</label>
+										<input type="text" placeholder="Address Line1" class="form-control"
+											formControlName="address1">
+										<span
+											*ngIf="!addressBillingForm.get('address1').valid && addressBillingForm.get('address1').touched">Please
+											enter House / Flat No</span>
+									</div>
+									<div class="form-group col-sm-6">
+										<label>Address Line2</label>
+										<input type="text" placeholder="Address Line2" class="form-control"
+											formControlName="address2">
+										<span
+											*ngIf="!addressBillingForm.get('address2').valid && addressBillingForm.get('address2').touched">Please
+											enter Address</span>
+									</div>
+									<div class="form-group col-sm-3">
+										<label>City</label>
+										<input type="text" placeholder="City" class="form-control"
+											formControlName="city">
+										<span
+											*ngIf="!addressBillingForm.get('city').valid && addressBillingForm.get('city').touched">Please
+											enter City</span>
+									</div>
+									<div class="form-group col-sm-3">
+										<label>Postal Code</label>
+										<input type="text" placeholder="Postal Code" class="form-control"
+											formControlName="postalcode">
+										<span
+											*ngIf="!addressBillingForm.get('postalcode').valid && addressBillingForm.get('postalcode').touched">Please
+											enter Postal Code</span>
+									</div>
+									<div class="form-group col-sm-3">
+										<label>Region/State</label>
+										<select class="form-control" formControlName="state">
+											<option value="">--Select State--</option>
+											<option *ngFor="let sl of stateList" [value]="sl.id">{{sl.name}}
+											</option>
+											<span
+												*ngIf="!addressBillingForm.get('state').valid && addressBillingForm.get('state').touched">Please
+												select state</span>
+
+										</select>
+									</div>
+									<div class="form-group col-sm-3">
+										<label>Country</label>
+										<select class="form-control" formControlName="country"
+											placeholder="Country">
+											<option value="">--Select Country--</option>
+											<option *ngFor="let cl of countryList" [value]="cl.id"> {{cl.name}}
+											</option>
+											<span
+												*ngIf="!addressBillingForm.get('country').valid && addressBillingForm.get('country').touched">Please
+												select country</span>
+										</select>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div> -->
+					
+				<!-- </div>
+			</div> -->
+		</div>
+	</div>
+</div>

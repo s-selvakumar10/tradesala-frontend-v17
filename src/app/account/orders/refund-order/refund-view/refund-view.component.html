@@ -1,0 +1,123 @@
+<section class="padding-y">
+	<div class="container">
+		<div class="row account-area">			
+			<div class="col-md-12 col-12">
+				<div class="card card-border">
+					<div class="card-header bg-transparent border-0 d-flex justify-content-between">
+						<h4 class="card-title"><strong>Return Order #{{orderNo}}</strong></h4>
+						<a (click)="backOrder($event)" class="btn btn-sm btn-primary text-left"> Back to orders</a>
+					</div>
+					<div class="card-body">
+
+						<form name="form" [formGroup]="returnForm">
+							<div class="table-responsive">
+								<table class="table w-50">
+									<tbody>										
+										<tr>
+											<th scope="row" class="border-0">Invoice</th>
+											<td class="border-0">
+												{{invoiceId}}
+											</td>
+										</tr>
+										<tr *ngIf="selectedInvoice?.items?.length>0">
+											<th scope="row" class="border-0">Reasons for return<span
+													class="required">*</span></th>
+											<td class="border-0">
+												<select class="form-control" formControlName="reason">
+													<option *ngFor="let each of reasons" [ngValue]="each">
+														{{each}}</option>
+												</select>
+												<span
+													*ngIf="!returnForm.get('reason').valid && returnForm.get('reason').touched">Please
+													select reason</span>
+											</td>
+										</tr>
+										<tr *ngIf="selectedInvoice?.items?.length>0">
+											<th scope="row" class="border-0">Product Conditions<span
+													class="required">*</span></th>
+											<td class="border-0">
+												<select class="form-control" formControlName="condition">
+													<option *ngFor="let each of conditions" [ngValue]="each">
+														{{each}}</option>
+												</select>
+												<span
+													*ngIf="!returnForm.get('condition').valid && returnForm.get('condition').touched">Please
+													select condition</span>
+											</td>
+										</tr>
+										
+
+									</tbody>
+								</table>
+							</div>
+							<div *ngIf="selectedInvoice?.items?.length>0">
+								<h4 class="card-title font-20"><strong>Select items</strong></h4>
+								<hr>
+								<div class="table-responsive" *ngIf="selectedInvoice?.items?.length>0">
+									<table class="table table-bordered table-striped">
+										<thead>
+											<tr>
+												<th scope="col">Select</th>
+												<th scope="col">Product Name </th>
+												<th scope="col">Price </th>
+												<th scope="col">Qty</th>
+											</tr>
+										</thead>
+										<tbody *ngFor="let prod of selectedInvoice?.items">
+											<tr>
+												<td>
+													<input type="checkbox" class="form-control" [value]="prod.isChecked"
+														[disabled]="!prod.has_return" (click)="selectProducts(prod)">
+												</td>
+												<td>
+													<p class="mb-1">{{prod.name}}</p>
+													<p class="mb-0">{{prod.tsid}}</p>
+												</td>
+												<td>{{prod.price | currency:'INR':'symbol':'1.2-2'}}</td>
+												<td>													
+													<div class="product-quantity d-inline-flex">
+														<button type="button" id="sub" class="sub"
+															(click)="decQnt(prod)"><i
+																class="icon-svg w-h-14 icon-xs minus"></i></button>
+														<input type="number" [(ngModel)]="prod.qty"
+															[ngModelOptions]="{standalone: true}" readonly>
+														<button type="button" id="add" class="add"
+															(click)="incQnt(prod)"><i
+																class="icon-svg w-h-14 icon-xs plus"></i></button>
+													</div>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for=""><strong>Comments</strong><span class="required">*</span></label>
+								<textarea id="" rows="3" class="form-control" formControlName="message"></textarea>
+							</div>
+
+							<h4 class="card-title font-20"><strong>Upload image/video</strong><span
+									class="required">*</span></h4>
+							<div class="form-group" *ngFor="let each of fileUploadArr;let i = index">
+								<div class="custom-file w-25">
+									<input id="customFile_{{i}}" type="file" accept="image/*,video/*,application/pdf"
+										(change)="onChange($event,i)">
+									<label class="custom-file-label" for="customFile_{{i}}">Choose file</label>
+									<br> {{each.name}}
+								</div> <br>
+							</div>
+							<button class="btn btn-sm btn-success w-20"
+								(click)="fileUploadArr.push({name:'',image:null	})">Add more images</button>
+							<br />
+							<label><small class="clearfix">Note: You can upload multiple files</small></label>
+							<div class="btn-wraper justify-content-center mt-2">
+								<button class="btn btn-sm btn-success w-20" (click)="submit(returnForm)">Submit</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

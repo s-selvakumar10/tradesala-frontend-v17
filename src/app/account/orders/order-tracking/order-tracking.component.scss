@@ -1,0 +1,30 @@
+
+ .itemside {
+     position: relative;
+     display: -webkit-box;
+     display: -ms-flexbox;
+     display: flex;
+     width: 100%
+ }
+
+ .itemside .aside {
+     position: relative;
+     -ms-flex-negative: 0;
+     flex-shrink: 0
+ }
+ ul.row,
+ ul.row-sm {
+     list-style: none;
+     padding: 0
+ }
+
+ .itemside .info {
+     padding-left: 15px;
+     padding-right: 7px
+ }
+
+ .itemside .title {
+     display: block;
+     margin-bottom: 5px;
+     color: #212529
+ }

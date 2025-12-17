@@ -1,0 +1,43 @@
+<div class="row account-area">			
+  	<div class="col-md-12 col-12">
+		
+		<ul class="responsive-table mt-4" *ngIf="reviewLength > 0">
+			<li class="table-header">
+				<div class="col col-1">#</div>
+				<div class="col col-4"><strong>Product Name</strong></div>
+				<div class="col col-2 text-center"><strong>Date</strong> </div>
+				<div class="col col-2 text-center"><strong>Rating</strong></div>
+				<div class="col col-2 text-center"><strong>Status</strong></div>
+			</li>
+			<li class="table-row" *ngFor="let review of reviews; index as i">
+				<div class="col col-1" data-label="#">{{ i+1 }}</div>
+				<div class="col col-4" data-label="Product Name"><b>{{ review.product_name }}</b></div>
+				<div class="col col-2 text-center" data-label="Date">{{ review.posted_date }} </div>
+				<div class="col col-2 text-center" data-label="Rating">
+					<ul class="rating-stars stars-lg">
+						<li [style.width]="ratingPercentCalc(review.rating) + '%'" class="stars-active p-0">
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+						</li>
+						<li class="p-0">
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+						</li>
+					</ul>
+				</div>				
+				<div class="col col-2 text-center" data-label="Action">{{ review.status }}</div>
+			</li>
+		</ul>
+		<div class="card card-border mt-3" *ngIf="reviewLength < 1">
+			<div class="card-body text-center">
+				<h4 class="card-title mb-0">You have not given any reviews yet.</h4>								
+			</div>
+		</div>
+  	</div>
+</div>

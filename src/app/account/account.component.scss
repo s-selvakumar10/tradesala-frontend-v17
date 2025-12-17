@@ -1,0 +1,28 @@
+.account-area{	
+	.nav-tabs {
+		border-bottom:0px;
+		li{
+			a{
+			    position: relative;
+			    display: block;
+			    padding: 0.75rem 1.25rem;
+			    margin-bottom: -1px;
+			    margin-right: 1px;
+			    background: #ebedec;
+			    border: 1px solid #ebedec;
+			    &:active, &.active{
+		    	    z-index: 2;
+				    color: #fff;
+			        background-color: #c92027;
+    				border-color: #c92027;
+			    }
+			}
+		}
+	}
+	.tab-content{
+		.card-header{
+			position: inherit;
+		}
+	}
+	
+}

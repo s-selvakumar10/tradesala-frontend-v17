@@ -1,0 +1,19 @@
+.order-info p{
+	margin-bottom: 8px;
+}
+.info.name{
+	font-size: 14px;
+}
+.buttons a{
+	min-width: 105px;
+}
+.item-info {
+	.card-body{
+		p:last-child{
+			margin-bottom:0px;
+		}
+	}
+}
+.btn-wrapper .btn:not(:last-child){
+	margin-right: 10px;
+}

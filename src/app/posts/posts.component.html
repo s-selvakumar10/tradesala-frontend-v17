@@ -1,0 +1,46 @@
+<div class="row">
+    <div class="col-md-4">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">Active</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+            </li>
+        </ul>
+
+        <ul ngbNav #nav="ngbNav" class="nav-tabs">
+            <li [ngbNavItem]="1">
+                <a ngbNavLink>Recent</a>
+                <ng-template ngbNavContent>
+                    <div class="col-md-12" *ngFor="let post of posts">
+                        <app-post-list [post]="post"></app-post-list>
+                    </div>
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="2">
+                <a ngbNavLink>Popular</a>
+                <ng-template ngbNavContent>
+                    <div class="col-md-12" *ngFor="let post of posts">
+                        <app-post-list [post]="post"></app-post-list>
+                    </div>
+                </ng-template>
+            </li>
+        </ul>
+        
+        <div [ngbNavOutlet]="nav" class="mt-2"></div>
+    </div>
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-12" *ngFor="let post of posts">
+                <app-post-list [post]="post"></app-post-list>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,25 @@
+<div class="specification">
+	<ng-container *ngIf="dimensions.length_unit || dimensions.weight_unit">
+		<div class="row mb-3">
+			<div class="col-md-12">				
+				<dl *ngIf="dimensions.length_unit.length">
+					<dt>Length: </dt>
+					<dd>{{ dimensions.length_unit.length }} {{ dimensions.length_unit.length_class.name }}</dd>
+				</dl>
+				<dl *ngIf="dimensions.length_unit.width">
+					<dt>Width: </dt>
+					<dd>{{ dimensions.length_unit.width }} {{ dimensions.length_unit.length_class.name }}</dd>
+				</dl>
+				<dl *ngIf="dimensions.length_unit.height">
+					<dt>Height: </dt>
+					<dd>{{ dimensions.length_unit.height }} {{ dimensions.length_unit.length_class.name }}</dd>
+				</dl>
+				<dl *ngIf="dimensions.weight_unit.weight">
+					<dt>Weight: </dt>
+					<dd>{{ dimensions.weight_unit.weight }} {{ dimensions.weight_unit.weight_class.name }}</dd>
+				</dl>
+			</div>
+		</div>
+	</ng-container>
+	
+</div>

@@ -1,0 +1,40 @@
+<section class="section-pagetop bg breadcrumb-wrapper">
+    <div class="container">
+        <div class="row">
+            <app-breadcrumb></app-breadcrumb>
+        </div>
+        
+    </div> <!-- container //  -->
+</section>
+<section class="main-content pt-2 pb-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-center font-32 ">All Brands</h1>
+
+                <div class="row mt-5">
+                    <div class="col-2 text-center mb-2" *ngFor="let brand of brands | paginate : {
+                        itemsPerPage: pageSize,
+                        currentPage: page,
+                        totalItems: count
+                        };">
+
+                        <div class="brand-img" [class]="brand.logo.class == 'is_default' ? 'default-logo' : 'brand-logo' ">
+                            <a [routerLink]="['/brand/', brand.slug]"><img [src]="brand.logo.logo" [alt]="brand.name"/></a>
+                        </div>                       
+                        
+                        <h5 class="brand-name"><a [routerLink]="['/brand/', brand.slug]">{{ brand.name }}</a></h5>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="float-right">
+                             <pagination-controls previousLabel="Prev" nextLabel="Next"
+                            (pageChange)="handlePageChange($event)" responsive="true"></pagination-controls>
+                        </div>                           
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

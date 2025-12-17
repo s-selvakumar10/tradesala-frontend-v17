@@ -1,0 +1,25 @@
+<div #template>
+    <ng-content></ng-content>
+</div>
+
+<nav *ngIf="template.children.length == 0">
+	<ol class="breadcrumb">
+		<li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+		<ng-container *ngIf="category.length > 0">
+			<ng-container *ngFor="let route of category">
+				<li *ngIf="!route.terminal" class="breadcrumb-item"><a [routerLink]="['/category/', route.url]">{{ route.displayName }}</a></li>
+				<li *ngIf="route.terminal" class="breadcrumb-item active" aria-current="page">{{ route.displayName }}</li>
+			</ng-container>
+		</ng-container>
+		<ng-container *ngIf="subcategory.length > 0">
+			<ng-container *ngFor="let route of subcategory">
+				<li *ngIf="!route.terminal" class="breadcrumb-item"><a [routerLink]="['/category/', route.url]">{{ route.displayName }}</a></li>
+				<li *ngIf="route.terminal" class="breadcrumb-item active" aria-current="page">{{ route.displayName }}</li>
+			</ng-container>
+		</ng-container>
+		<ng-container *ngFor="let route of (breadcrumbs | async)">
+		<li *ngIf="!route.terminal" class="breadcrumb-item"><a [routerLink]="[route.url]">{{ route.displayName }}</a></li>
+		<li *ngIf="route.terminal" class="breadcrumb-item active" aria-current="page">{{ route.displayName | truncateWords : 25 : false : '...'}}</li>
+		</ng-container>
+	</ol>
+</nav>

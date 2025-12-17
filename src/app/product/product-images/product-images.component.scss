@@ -1,0 +1,140 @@
+.gallery-wrap {
+   	margin-bottom: 10px;
+	border-radius: 0.37rem;
+    overflow: hidden;
+    background-color: #fff;
+	@media (min-width: 1200px) {
+		min-height: 360px;
+  		max-height: 360px;
+	}
+	
+    .vertical-gallery{
+    	display: -webkit-box;
+	    display: -ms-flexbox;
+	    display: flex;
+		@media (max-width:460px){
+			flex-flow: column;
+		}
+    }
+    #vertical-thumbnail-wrapper {
+	    width: 60px;
+		@media (max-width:460px){
+			order: 2;
+			position: relative;
+			width: 100%;
+		}
+	}
+	.gallery-vertical {
+	    width: calc(100% - 60px);
+	    padding-left: 15px;
+		@media (max-width:460px){
+			padding: 0;
+			order: 1;
+			width:100%;
+		}
+	}
+	.img-big-wrap{
+		a {
+		    text-align: center;
+		    display: block;
+		}
+	}
+	.thumbs-wrap {
+	    text-align: center;
+	    .item-thumb {
+		    width: 60px;
+		    height: 60px;
+		    border: 1px solid #ddd;
+		    border-radius: 6px;
+		    margin: 3px;
+		    display: inline-block;
+		    overflow: hidden;
+		    img {
+			    max-width: 100%;
+			    max-height: 100%;
+			    -o-object-fit: cover;
+			    object-fit: cover;
+			    border-radius: 4px;    
+				cursor: pointer;
+			}
+		}
+	}
+}
+:host {
+	::ng-deep .img-zoom-result{
+		border-radius: 10px;
+	}
+}
+#vertical-thumbnail-wrapper{
+	::ng-deep{
+		.owl-carousel{
+			transform: rotate3d(0, 0, 1, 90deg);
+			transform: rotate(90deg);
+			width: 325px;
+			margin-top: 145px;
+			left: -120px;
+			position: absolute;
+			top: unset;
+			display: flex;
+			justify-content: space-between;
+			@media (max-width: 460px){
+				transform: none;
+				position: relative;
+				width: 100%;
+				left: 0;
+				margin-top: 10px;
+			}
+		}
+		.owl-carousel .owl-stage {
+			display: flex;
+		}
+		.owl-carousel .owl-item{
+			transform: rotate3d(0, 0, 1, -90deg);
+			margin-right: 10px;
+			flex: 1 0 60px;
+			padding-top: 5px;
+			@media (max-width: 460px){
+				transform: none;
+			}
+		}
+		// .owl-carousel .owl-nav.disabled{
+		// 	display: none;
+		// }
+		.owl-carousel .owl-nav {
+			display: flex;
+			justify-content: space-between;
+			position: absolute;
+			width: 100%;
+			// top: calc(50% - 33px);
+		}
+		
+		div.owl-carousel .owl-nav .owl-prev,
+		div.owl-carousel .owl-nav .owl-next {
+			font-size: 14px;
+			top: unset;
+			bottom: 15px;
+			position: fixed;
+		}
+		div.owl-carousel .owl-nav .owl-prev{			
+			left: -30px;
+			bottom: 20px;
+			@media (max-width: 460px){
+				left: 14px;
+				bottom: inherit;
+			}
+		}
+		div.owl-carousel .owl-nav .owl-next {
+			left: calc(100% - 9px);
+			bottom: 20px;
+			@media (max-width: 460px){
+				left: calc(100% - 42px);
+				bottom: inherit;
+			}
+		}
+	}
+	
+}
+::ng-deep .ngxImageZoomContainer {
+	width: 400px!important;
+	height: 400px!important;
+}

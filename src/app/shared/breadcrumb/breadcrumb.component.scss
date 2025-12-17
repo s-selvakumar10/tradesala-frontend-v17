@@ -1,0 +1,33 @@
+::ng-deep{
+	.breadcrumb-wrapper{
+		background: #f7f7f7;
+		.title-page{
+			color:#fff;
+		}
+		.breadcrumb li a{
+			color:#000;
+		}
+	}
+	.breadcrumb .breadcrumb-item { font-size:12px; }
+	.breadcrumb-item + .breadcrumb-item::before {    
+		content:"\f0da";
+		font-family:Font Awesome\ 5 Free;
+		font-weight: 600;
+		font-size: 14px;
+		line-height: 18px;
+	}
+	
+	.breadcrumb{
+		background: none;
+		margin-bottom: 0px;
+		padding: 0.3rem 1rem;
+	}
+	@media (max-width:480px) {
+		.breadcrumb-item + .breadcrumb-item{
+			width: 200px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+}

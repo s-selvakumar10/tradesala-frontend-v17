@@ -1,0 +1,97 @@
+<div class="row account-area">
+	<div class="col-md-12 col-12">
+		<div class="personal-info">
+			<div class="row mt-3">
+				<div class="col-md-12 mb-3">
+					<div class="card h-100">
+						<div class="card-body">
+							<h5 class="mb-3">Personal Information</h5>
+							<div class="acc-info-details">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="row">
+											<p class="col"><strong>Name:</strong> <br/> {{ user.name }} </p>
+											<p class="col"><a (click)="editUserDetails()" class="btn btn-sm btn-outline-primary">Edit</a></p>								
+											
+										</div>
+										<div class="row">
+											<p class="col"><strong>Phone Number:</strong> <br/> {{ user.mobile }}</p>
+											<p class="col"><strong>Email:</strong> <br/>  {{ user.email }}</p>
+										</div>
+										
+									</div>
+									<div class="col-md-6">
+										<div class="row">
+											<p class="col"><strong>Password:</strong> <br/>********</p>
+											<p class="col"><a (click)="changePassword()" class="btn btn-sm btn-outline-primary">Change Password</a></p>
+										</div>
+										<div class="row">
+											<p class="col"><a class="btn btn-sm btn-outline-primary" (click)="onLogout()" *ngIf="isAuthenticated">Logout</a></p>
+										</div>
+									</div>
+									
+									
+								</div>
+								
+								
+							</div>
+							
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12" *ngIf="isEditForm">
+					<div class="card">
+						<div class="card-body">
+							<form class="mb-3" [formGroup]="userForm" (ngSubmit)="onSubmitUser()" autocomplete="off">
+								<div class="row">									
+									<div class="form-group col-sm-6">
+										<label>Name</label>
+										<input type="text"  class="form-control" formControlName="name">
+										
+									</div>
+									<div class="form-group col-sm-6">
+										<label>Mobile</label>
+										<input type="text" formControlName="mobile" class="form-control">
+									</div>
+									<div class="form-group col-sm-6">
+										<label>Email</label>
+										<input type="email" formControlName="email" class="form-control">
+									</div>									
+									<div class="btn-wraper col-12 justify-content-end">
+										<button type="submit" [disabled]="!userForm.valid" class="btn btn-sm btn-success">Save</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12" *ngIf="isEditPassword">
+					<div class="card">
+						<div class="card-body">
+							<form class="mb-3" [formGroup]="passwordForm" (ngSubmit)="onSubmit()" autocomplete="off">
+								<div class="row">									
+									<div class="form-group col-sm-6">
+										<label>Current Password</label>
+										<input type="text"  class="form-control" formControlName="current_password">
+										
+									</div>
+									<div class="form-group col-sm-6">
+										<label>New Password</label>
+										<input type="text" formControlName="password" class="form-control">
+									</div>
+									<div class="form-group col-sm-6">
+										<label>Confirm New Password</label>
+										<input type="text" formControlName="confirm_password" class="form-control">
+									</div>
+									<div class="btn-wraper col-12 justify-content-end">
+										<button type="submit" [disabled]="!passwordForm.valid" class="btn btn-sm btn-success">Save</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

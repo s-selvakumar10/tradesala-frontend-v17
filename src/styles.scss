@@ -1,0 +1,26 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Importing Bootstrap SCSS file. */
+@import './assets/scss/loader';
+
+@import './variables';
+
+@import './bootstrap';
+//@use "./bootstrap" as *;
+@import '../node_modules/ngx-owl-carousel-o/lib/styles/scss/owl.carousel';
+@import '../node_modules/ngx-owl-carousel-o/lib/styles/scss/owl.theme.default';
+@import '../node_modules/ngx-toastr/toastr';
+//@import '~ngx-toastr/toastr-bs4-alert';
+
+//@import '~perfect-scrollbar/css/perfect-scrollbar.css';
+
+// @import '~bootstrap/scss/bootstrap';
+
+@import './assets/scss/form';
+@import './assets/scss/element';
+@import './assets/scss/service';
+@import './assets/scss/rating';
+@import './assets/scss/custom-table';
+
+
+

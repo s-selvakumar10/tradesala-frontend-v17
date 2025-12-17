@@ -1,0 +1,77 @@
+
+
+<div class="modal-header border-0">
+    <div class="d-flex w-100 order-0">
+        <div class="col-12 p-0">
+            <h4 class="modal-title" id="modal-basic-title">Choose your location</h4>
+        </div>
+        
+    </div>
+    <button type="button" class="close" aria-label="Close" (click)="dismissModal()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body centered">
+    <div class="d-flex justify-content-center flex-column">
+        <div class="mb-3">
+            Select a delivery location to see product availability and delivery options
+        </div>
+        <div class="text-center" *ngIf="!isAuth">
+            <button type="button" class="btn btn-outline-primary w-75" (click)="loginPopup()">
+                Sign in to see your addresses
+            </button>
+        </div>
+        <div class="row d-block" *ngIf="isAuth && shipping_addresses?.length">
+            <div class="card address-block mb-2" *ngFor="let address of shipping_addresses" [class.active]="address.active" (click)="savePincode(address)">
+                <div class="card-body shipping-address" >
+                    <address>
+                        <strong>{{address.shipping_address.name}}</strong>
+                        <span class="space"></span>
+                        {{address.shipping_address.line1}}
+                        <span class="space"></span>
+                        {{address.shipping_address.line2}},    
+                        <span class="space"></span>
+                        {{address.shipping_address.city}}
+                        <span class="space"></span>
+                        {{address.shipping_address.state}}
+                        <span class="space"></span>
+                        {{address.shipping_address.country}}
+                        <span class="space"></span>
+                        {{address.shipping_address.pincode}}
+                    </address> 
+                    <div class="mt-2" *ngIf="address.set_default === 1">
+                        <strong>Default Address</strong>
+                    </div> 
+                                      
+                </div>
+            </div>
+        </div>
+       
+        <div class="divider divider-break spacing-top-base">
+            <h5>or enter your pincode</h5>
+        </div>
+        <div>
+            <form [formGroup]="pincodeForm" (submit)="submitDeliveryPincode()">
+                <div class="form-group row">
+                    <div class="col-md-8">
+                        <input type="text" formControlName="pincode" class="form-control" maxlength="6">                        
+                        <span class="text-danger"
+                        *ngIf="pincodeForm.get('pincode').errors?.required && submitted"
+                        > Enter your Pincode
+                        </span>
+                        <span class="text-danger"
+                        *ngIf="pincodeForm.get('pincode').errors?.pattern?.requiredPattern && (pincodeForm.get('pincode').touched || submitted)"
+                        > Only allowed numbers
+                        </span>                       
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary btn-rounded w-100">Apply</button>
+                    </div>
+                    
+                </div>
+            </form>
+        </div>
+       
+    </div>
+    
+</div>

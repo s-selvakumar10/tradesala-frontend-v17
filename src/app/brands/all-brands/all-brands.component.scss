@@ -1,0 +1,44 @@
+.brand-img {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 5px #0000000d;
+    padding: 10px;
+    margin-bottom: 10px;
+    min-height: 98px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.brand-name {
+    font-size: 16px;
+    text-transform: capitalize;
+}
+.brand-img.default-logo img {
+    opacity: 0.2;
+}
+:host{
+	::ng-deep {
+		
+		.ngx-pagination li:not(:last-child){
+			margin-right:10px;
+		}
+		.ngx-pagination .current{
+			background: #ebedec;
+			color: #6c757d;
+		}
+		.ngx-pagination li:not(.pagination-previous):not(.pagination-next){
+			border: 1px solid #f7f7f7;
+			border-radius:5px;
+		}
+		.ngx-pagination .pagination-next, .ngx-pagination .pagination-previous{
+			color: #6c757d;
+			background: #f7f7f7;
+			border-radius: 5px;
+		}
+		.ngx-pagination a:hover, .ngx-pagination button:hover{
+			border-radius:5px;
+		}
+	}
+	
+	
+}

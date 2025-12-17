@@ -1,0 +1,53 @@
+.table-order-history{
+    
+}
+.action-btn .dropdown-menu.show {
+    border: none;
+    box-shadow: 0 0 35px 0 rgb(73 80 87 / 15%);
+    border-radius: 0.5rem;
+    display: flex;
+    flex-flow: column;
+    left: -36px;
+    a{
+        
+        &:first-child{
+            margin-bottom: 10px;
+        }
+
+        &.btn {
+            line-height: 1;
+            border-color: #e1e1e1;
+            color: #000;
+        }
+        &.btn:hover{
+            color:#fff;
+        }
+    }
+}
+
+:host{
+	::ng-deep {
+		
+		.ngx-pagination li:not(:last-child){
+			margin-right:10px;
+		}
+		.ngx-pagination .current{
+			background: #ebedec;
+			color: #6c757d;
+		}
+		.ngx-pagination li:not(.pagination-previous):not(.pagination-next){
+			border: 1px solid #f7f7f7;
+			border-radius:5px;
+		}
+		.ngx-pagination .pagination-next, .ngx-pagination .pagination-previous{
+			color: #6c757d;
+			background: #f7f7f7;
+			border-radius: 5px;
+		}
+		.ngx-pagination a:hover, .ngx-pagination button:hover{
+			border-radius:5px;
+		}
+	}
+	
+	
+}

@@ -1,0 +1,93 @@
+<article class="gallery-wrap">
+    <div class="vertical-gallery">
+        <div id="vertical-thumbnail-wrapper" class="thumbs-wrap">
+            
+            <owl-carousel-o [options]="verticalImages" (change)="getData($event)" (translated)="getPassedData($event)">
+                <ng-container *ngFor="let image of images" >                
+                    <ng-template class="slide" carouselSlide [width]="60">
+                        <div class="slide" >
+                            <a *ngIf="image" (click)="bigImages(bigImage, image); videoEnabled == false" class="item-thumb">
+                                <img [src]='image' class="img-fluid">
+                            </a>
+                        </div>                  
+                    </ng-template>
+                </ng-container>
+                <ng-container *ngFor="let video of videos;">
+                    <ng-template class="slide" carouselSlide [width]="60"> 
+                        <div class="slide">
+                            <a *ngIf="video" (click)="bigVideo(video.url); videoEnabled == true" class="item-thumb">
+                                <img [src]="video.thumbnail" class="img-fluid"/>
+                            </a>
+                        </div>                       
+                    </ng-template>
+                </ng-container>
+            </owl-carousel-o>
+           
+        </div>
+        
+        <div class="gallery-vertical">
+            <!-- <div class="space-y-4" *ngIf="zoomType === 'wheel'">
+                <p>Scroll / Pinch inside the image to see zoom in-out effect</p>
+                <p>Current zoom: {{ getCurrentZoomImageValue() }}</p>
+                <div class="flex items-center gap-4">
+                <div class="mt-1 grid h-[300px] w-[300px] place-content-center bg-black">
+                    <div #imageWheelContainer class="h-[300px] w-[200px] cursor-crosshair duration-500">
+                    <img class="h-full w-full" alt="Large Pic" [src]="bigImage" />
+                    </div>
+                </div>
+                <img [src]="croppedImage" *ngIf="!!croppedImage" [class]="getCroppedImageClasses()" alt="Cropped placeholder" />
+                </div>
+                <div class="flex space-x-2">
+                <button (click)="zoomIn()" class="text-dark-500 rounded bg-gray-100 p-2 text-sm font-medium">Zoom in</button>
+                <button (click)="zoomOut()" class="text-dark-500 rounded bg-gray-100 p-2 text-sm font-medium">Zoom out</button>
+                <button class="text-dark-500 rounded bg-gray-100 p-2 text-sm font-medium" (click)="handleCropWheelZoomImage()">
+                    Crop image
+                </button>
+                <button (click)="rotate()" class="text-dark-500 rounded bg-gray-100 p-2 text-sm font-medium">Rotate</button>
+                </div>
+            </div> -->
+            
+            <ng-container *ngIf="!videoEnabled && isDesktop">
+                <img [src]="bigImage" *ngIf="beforeZoom"/>
+                <ng-container *ngIf="!beforeZoom && !isServer">
+                    <!-- <div style="width: 400px; height: 400px;">
+                    <lib-ngx-image-zoom
+                        [thumbImage]="bigImage"
+                        [fullImage]="bigImage"
+                        [magnification]="1"
+                        [enableScrollZoom]="true"
+                        [enableLens]="true"
+                        [lensWidth]="200"
+                        [lensHeight]="200"
+                        [zoomMode]="'hover'"
+                    ></lib-ngx-image-zoom>
+                    </div> -->
+                    <lib-img-zoom 
+                    [zoomImageSrc]="bigImage"
+                    [previewImageSrc]="bigImage"
+                    [imgStyle]="imgZoomOptions.imageStyle"
+                    [resultStyle]="imgZoomOptions.resultStyle"
+                    [enableZoom]="imgZoomOptions.enableZoom"
+                    [containerStyle]=""
+                    >
+                    </lib-img-zoom>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngIf="!videoEnabled && (isMobile || isTablet)">
+                <img [src]="bigImage" alt="">
+            </ng-container>
+            
+            <ng-container *ngIf="videoEnabled">
+                <youtube-player
+                #player
+                [videoId]="videoId"
+                [width]="360"
+                [height]="360"
+                (ready)="onReady($event)"
+                (stateChange)="onStateChange($event)"
+                ></youtube-player>
+            </ng-container>
+            
+        </div>
+    </div>
+</article> <!-- gallery-wrap .end// -->

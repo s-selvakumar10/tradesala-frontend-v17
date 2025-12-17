@@ -1,0 +1,70 @@
+
+<section class="main-content pt-2 pb-5">
+    <div class="container">
+        <div class="row no-gutters">
+            <aside class="sidebar sidebar-left col-3">
+                <div class="inner-content">
+                    <div class="mobile-filter" *ngIf="isMobile">
+                        <a (click)="closeFilter()" class="close-btn float-right">
+                            <i class="icon-svg icon-xs w-h-20 close-icon"></i>
+                        </a>
+                        <ng-scrollbar style="max-height: 700px;" class="scroll-container">                        
+                            <app-search-filter
+                            [filterAttributes]="filterAttributes"
+                            [prices]="prices"
+                            (filterSelected)=onFilterSelect($event)
+                            ></app-search-filter>
+                        </ng-scrollbar>
+                    </div>
+                    <div class="filter-div" *ngIf="!isMobile">
+                        <app-search-filter
+                            [filterAttributes]="filterAttributes"
+                            [prices]="prices"
+                            (filterSelected)=onFilterSelect($event)
+                            ></app-search-filter>
+                    </div>
+                </div>
+                
+            </aside>
+            <main class="content category-details col-9">
+                               
+                <div class="inner-content card-body">
+                    
+                   
+                    <div class="row justify-content-between">
+                        <div class="filter-icon d-md-none">
+                            <a (click)="mobileFilter()">
+                                <img src="assets/images/icons/png/50/slider.png" class="icon-slider"/>
+                            </a>
+                        </div>
+                        <!-- <div class="col-md-4">Sort by: <span class="mr-md-auto">{{ count }} Items found </span></div> -->
+                        <!-- col.// -->
+                        <div class="col-10">
+                            Search Results for : {{searchValue}}
+                        </div> <!-- col.// -->
+                    </div> <!-- row.// -->
+                   
+                   
+                    <div class="row mt-3">
+                        <div class="col-6 col-sm-4 col-md-4 col-lg-3" *ngFor="let product of products | paginate : {
+							itemsPerPage: pageSize,
+							currentPage: page,
+							totalItems: count
+							};">
+                            <app-product-card [product]="product"></app-product-card>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="float-right">
+                                 <pagination-controls previousLabel="Prev" nextLabel="Next"
+                                (pageChange)="handlePageChange($event)" responsive="true"></pagination-controls>
+                            </div>                           
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</section>

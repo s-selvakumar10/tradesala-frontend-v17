@@ -1,0 +1,88 @@
+<section class="section-pagetop bg breadcrumb-wrapper">
+    <div class="container">
+        <div class="row">
+            <app-breadcrumb></app-breadcrumb>
+        </div>
+        
+    </div> <!-- container //  -->
+</section>
+<section class="main-content pt-2 pb-5">
+    <div class="container">
+        <div class="row no-gutters">
+            <aside class="sidebar sidebar-left col-3">
+                <div class="inner-content">
+                    <div class="mobile-filter" *ngIf="isMobile">
+                        <a (click)="closeFilter()" class="close-btn float-right">
+                            <i class="icon-svg icon-xs w-h-20 close-icon"></i>
+                        </a>
+                        <ng-scrollbar style="max-height: 700px;" class="scroll-container">
+                            <app-brand-filter 
+                            [filterAttributes]="filterAttributes"
+                            [prices]="prices"
+                            (filterSelected)=onFilterSelect($event)
+                            ></app-brand-filter>
+                        </ng-scrollbar>
+                    </div>
+                    <div class="filter-div" *ngIf="!isMobile">
+                        <app-brand-filter 
+                            [filterAttributes]="filterAttributes"
+                            [prices]="prices"
+                            (filterSelected)=onFilterSelect($event)
+                            ></app-brand-filter>
+                    </div>
+                </div>
+                
+            </aside>
+            <main class="content category-details col-9">
+                               
+                <div class="inner-content card-body">
+                    
+                   
+                    <div class="row justify-content-between">
+                        <div class="filter-icon">
+                            <a (click)="mobileFilter()">
+                                <img src="assets/images/icons/png/50/slider.png" class="icon-slider"/>
+                            </a>
+                        </div>
+                        <div class="category-title pl-3">
+                            <h1 class="h4">{{ selectedBrand.brand.name }}</h1>
+                            <!-- <app-breadcrumb ngClass="pr-2 category-crumb"></app-breadcrumb> -->
+                        </div>
+                        <div class="form-inline d-inline-flex float-right sort-filter">
+                            <select #sortFilter (change)='onOptionsSelected(sortFilter.value)' class="mr-2 form-control sort-by">
+                                <option >Sort by</option>
+                                <option value="name_asc">Name (A - Z)</option>
+                                <option value="name_desc">Name (Z - A)</option>
+                                <option value="price_asc">Price (Low > High)</option>
+                                <option value="price_desc">Price (High > Low)</option>
+                                <!-- <option value="featured">Featured</option>
+                                <option value="new_items">New Items</option>
+                                <option value="on_sale_items">On Sale</option> -->
+                            </select>
+                        </div>
+                       
+                    </div>
+                   
+                    <div class="row mt-3">
+                        <div class="col-6 col-sm-4 col-md-4 col-lg-3" *ngFor="let product of products | paginate : {
+							itemsPerPage: pageSize,
+							currentPage: page,
+							totalItems: count
+							};">
+                            <app-product-card [product]="product"></app-product-card>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="float-right">
+                                 <pagination-controls previousLabel="Prev" nextLabel="Next"
+                                (pageChange)="handlePageChange($event)" responsive="true"></pagination-controls>
+                            </div>                           
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</section>

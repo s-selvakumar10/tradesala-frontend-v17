@@ -1,0 +1,136 @@
+<div class="d-flex"> 
+    <div class="d-grid" [class.no-slide]="!isComboSlider" [class.slider]="isComboSlider">
+        <ng-container *ngIf="!isComboSlider"> 
+            <div class="product-layout product-grid">
+                <span class="checkbox"><input type="checkbox" [(ngModel)]="product.selected" [value]="product.slug" (ngModelChange)="product.selected = $event" [ngModelOptions]="{standalone: true}" name="selected_product" (change)="onSelectedComboProduct(product, $event.target.checked, 'main-product')"></span>
+                <div class="product-thumb transition mb-0">
+                    <div class="image p-0">
+                        <img lazyLoad *ngIf="product.media.front_image" [src]="product.media.front_image" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive">				
+                    
+                        <div class="section-sale" *ngIf="discount > 0"><span class="sale-text">{{ discountPercent }} Off</span></div>
+                    </div>
+                    <div class="thumb-description">
+                        <div class="caption">
+                            <h4 class="product-title text-left mb-1">
+                                <span class="text-bold">This item: </span>
+                                <span>{{ product.name | truncate : 50 : false : '...'}}</span>
+                            </h4>
+                            <div class="brand-title text-left mb-1">
+                                <a *ngIf="product.brand" [routerLink]="['/brand', product.brand.slug]" target="_blank">{{ product.brand.name }}</a>
+                            </div>
+                            <div class="price text-left mb-1">
+                                <span *ngIf="product.special_price" class="price-new price-fnt">{{ product.special_price | currency:'INR':'symbol':'1.0'}}</span>
+                                <span class="price-old price-fnt">{{ product.price | currency:'INR':'symbol':'1.0'}}</span>
+                            </div>                         
+                        </div>
+                    </div>
+                </div>
+            </div>  
+            <div class="product-layout product-grid" *ngFor="let product of product.combo_offers; let last = last;">
+                <span class="add-prod">+</span>
+                <span class="checkbox"><input type="checkbox" [(ngModel)]="product.selected" [value]="product.slug" (ngModelChange)="product.selected = $event" [ngModelOptions]="{standalone: true}" name="selected_product" (change)="onSelectedComboProduct(product, $event.target.checked, 'combo-product')"></span>
+                <div class="product-thumb transition mb-0">
+                    <div class="image p-0">
+                        <a [routerLink]="['/', product.slug]" target="_blank">
+                            <img lazyLoad *ngIf="product.media.front_image" [src]="product.media.front_image" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive">				
+                        </a>
+                        
+                        <div class="section-sale" *ngIf="product.discount"><span class="sale-text">{{ product.discount.percent }}% Off</span></div>
+                        
+                    </div>
+                    <div class="thumb-description">
+                        <div class="caption">
+                            <h4 class="product-title text-left mb-1"><a [routerLink]="['/', product.slug]" target="_blank">{{ product.name | truncate : 50 : false : '...'}}</a></h4>
+                            <div class="brand-title text-left mb-1">
+                                <a *ngIf="product.brand" [routerLink]="['/brand', product.brand.slug]" target="_blank">{{ product.brand.name }}</a>
+                            </div>
+                            <div class="price text-left mb-1">
+                                <span *ngIf="product.discount" class="price-new price-fnt">{{ product.discount.amount | currency:'INR':'symbol':'1.0'}}</span>
+                                <span *ngIf="!product.discount" class="price-new price-fnt">{{ product.special_price | currency:'INR':'symbol':'1.0'}}</span>
+                                <span *ngIf="product.discount" class="price-old price-fnt">{{ product.special_price | currency:'INR':'symbol':'1.0'}}</span>
+                                <span *ngIf="!product.discount" class="price-old price-fnt">{{ product.price | currency:'INR':'symbol':'1.0'}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="isComboSlider">
+            <owl-carousel-o [options]="options">
+                <ng-template carouselSlide >
+                    <div class="product-layout product-grid">
+                        <span class="checkbox"><input type="checkbox" [(ngModel)]="product.selected" [value]="product.slug" (ngModelChange)="product.selected = $event" [ngModelOptions]="{standalone: true}" name="selected_product" (change)="onSelectedComboProduct(product, $event.target.checked, 'main-product')"></span>
+                        <div class="product-thumb transition mb-0">
+                            <div class="image p-0">
+                                <img lazyLoad *ngIf="product.media.front_image" [src]="product.media.front_image" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive">				
+                            
+                                <div class="section-sale" *ngIf="discount > 0"><span class="sale-text">{{ discountPercent }} Off</span></div>
+                            </div>
+                            <div class="thumb-description">
+                                <div class="caption">
+                                    <h4 class="product-title text-left mb-1">
+                                        <span class="text-bold">This item: </span>
+                                        <span>{{ product.name | truncate : 50 : false : '...'}}</span>
+                                    </h4>
+                                    <div class="brand-title text-left mb-1">
+                                        <a *ngIf="product.brand" [routerLink]="['/brand', product.brand.slug]" target="_blank">{{ product.brand.name }}</a>
+                                    </div>
+                                    <div class="price text-left mb-1">
+                                        <span *ngIf="product.special_price" class="price-new price-fnt">{{ product.special_price | currency:'INR':'symbol':'1.0'}}</span>
+                                        <span class="price-old price-fnt">{{ product.price | currency:'INR':'symbol':'1.0'}}</span>
+                                    </div>                         
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>               
+                <ng-template carouselSlide *ngFor="let product of product.combo_offers; let last = last;">
+                    <div class="product-layout product-grid">
+                        <span class="add-prod">+</span>
+                        <span class="checkbox"><input type="checkbox" [(ngModel)]="product.selected" [value]="product.slug" (ngModelChange)="product.selected = $event" [ngModelOptions]="{standalone: true}" name="selected_product" (change)="onSelectedComboProduct(product, $event.target.checked, 'combo-product')"></span>
+                        <div class="product-thumb transition mb-0">
+                            <div class="image p-0">
+                                <a [routerLink]="['/', product.slug]" target="_blank">
+                                    <img lazyLoad *ngIf="product.media.front_image" [src]="product.media.front_image" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive">				
+                                </a>
+                                
+                                <div class="section-sale" *ngIf="product.discount"><span class="sale-text">{{ product.discount.percent }}% Off</span></div>
+                                
+                            </div>
+                            <div class="thumb-description">
+                                <div class="caption">
+                                    <h4 class="product-title text-left mb-1"><a [routerLink]="['/', product.slug]" target="_blank">{{ product.name | truncate : 50 : false : '...'}}</a></h4>
+                                    <div class="brand-title text-left mb-1">
+                                        <a *ngIf="product.brand" [routerLink]="['/brand', product.brand.slug]" target="_blank">{{ product.brand.name }}</a>
+                                    </div>
+                                    <div class="price text-left mb-1">
+                                        <span *ngIf="product.discount" class="price-new price-fnt">{{ product.discount.amount | currency:'INR':'symbol':'1.0'}}</span>
+                                        <span *ngIf="!product.discount" class="price-new price-fnt">{{ product.special_price | currency:'INR':'symbol':'1.0'}}</span>
+                                        <span *ngIf="product.discount" class="price-old price-fnt">{{ product.special_price | currency:'INR':'symbol':'1.0'}}</span>
+                                        <span *ngIf="!product.discount" class="price-old price-fnt">{{ product.price | currency:'INR':'symbol':'1.0'}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+                
+            </owl-carousel-o> 
+        </ng-container>
+    </div>
+    <div class="cart-button">
+        <ng-container *ngIf="totalPrice == 0">
+            <div class="alert alert-info">
+                Choose items to buy together.
+            </div>
+        </ng-container>
+        <ng-container *ngIf="totalPrice > 0">
+            <div class="total-price">
+                Total Price: <span class="price-fnt">{{totalPrice | currency:'INR':'symbol':'1.2-2' }}</span>
+            </div>
+            <div class="btn-wrapper">					
+                <button type="button" class="btn btn-sm btn-outline-primary" (click)="addTocart()" title="Add to Cart" > Add to cart</button>
+            </div>
+        </ng-container>
+    </div>
+</div>

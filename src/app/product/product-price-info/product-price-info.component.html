@@ -1,0 +1,177 @@
+<form action="">
+    <div *ngIf="product?.has_variants" class="pt-3">
+        <div class="product-select-wrapper mt-10 flex-wrap" *ngFor="let eachAttributes of product.attributes">
+            <div class="select-item"
+                *ngIf="eachAttributes?.frontend_type=='radio' || eachAttributes?.frontend_type=='swatch'">
+                <h6 class="select-title">{{eachAttributes.name}}                   
+                </h6>
+                <ul class="color-select" *ngIf="eachAttributes.frontend_type == 'swatch'">
+                    <li *ngFor="let each of eachAttributes.items"
+                        [class.active]="each?.value==eachAttributes?.selectedValue?.value" data-color="{{each.value}}"
+                        [style.background-color]="each.value" (click)="changeVariants(eachAttributes,each)">
+                        <input type="hidden" [name]="each.name" [(ngModel)]="eachAttributes.selectedValue">
+                </ul>
+                <ul class="size-select" *ngIf="eachAttributes.frontend_type == 'radio'">
+                    <li *ngFor="let each of eachAttributes.items;let i = index"
+                        [class.active]="each?.value==eachAttributes?.selectedValue?.value"
+                        (click)="changeVariants(eachAttributes,each)">
+                        <input type="hidden" [name]="each.name" [(ngModel)]="eachAttributes.selectedValue">
+                        <span>{{each?.value}}</span>
+                </ul>
+            </div>
+            <div class="select-item" *ngIf="eachAttributes?.frontend_type=='select'">
+                <div class="size-select flex-item">
+                    <h6 class="select-title">{{eachAttributes.name}}
+                    </h6>
+                    <select [(ngModel)]="eachAttributes.selectedValue" [ngModelOptions]="{standalone: true}"
+                        (change)="changeVariants(eachAttributes,eachAttributes.selectedValue)"
+                        placeholder="Select {{eachAttributes.name}}">
+                        <option *ngFor="let each of eachAttributes.items" [ngValue]="each">{{each.value}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>   
+
+    <div class="product-select-wrapper mt-10 flex-wrap justify-content-center align-items-center">
+        
+        <div class="select-item flex-item">
+            <h6 class="select-title">Quantity </h6>
+
+            <div class="select-quantity">
+                <button type="button" id="sub" class="sub" (click)="decrementQty()">
+                    <i class="fa fa-minus"></i>
+                </button>
+                <input type="text" [(ngModel)]="productQty" name="productQty" (blur)="changeQty()">
+                <button type="button" id="add" class="add" (click)="incrementQty()">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="select-item flex-item subtotal"> 
+            <span class="text-left subtotal-text">Total</span>
+            <span class="text-right font-24 price-fnt">{{ subTotal |
+                currency:'INR':'symbol':'1.2-2'}}</span>
+        </div>
+        <div class="product-btn mt-3 mb-3 text-center">
+            <button type="submit" class="btn btn-primary ml-auto w-100" (click)="buyNow(product)"> Buy now </button>
+            <button type="submit" class="btn btn-outline-primary w-100 mt-3" (click)="addTocart(product)"> <span
+                    class="text">Add to cart</span> </button>
+        </div>
+       
+        
+    </div>
+    <div class="share text-center">
+        <a class="share-btn" [class.wishlistActive]="product?.wishlist?.has_wishlist" (click)="addTowishlist(product)"><i class="fas fa-heart"></i>Wishlist</a> | <a class="share-btn" (click)="sharePost(content)"><i class="fas fa-share-alt"></i>Share</a>        
+    </div>
+   
+    <div *ngIf="sellerDetails?.length>0">
+        <hr>
+        <div class="seller-price" >
+            <a (click)="toggle(viewSellerPrice)">
+                <i class="icon-control fa fa-chevron-down"></i>
+                <h6 class="title">View other sellers</h6>
+            </a>
+            <div class="collapse show" #viewSellerPrice>
+                <div class="product-select-wrapper mt-10 pb-3 flex-wrap justify-content-center align-items-center">
+                    <div *ngFor="let eachSeller of sellerDetails; let i=index;" class="select-item flex-fill px-0">
+                        <div class="text-left">
+                            <div class="seller-details"><strong>Sold by: </strong><span>{{eachSeller.name}}</span></div>
+                            <ng-container *ngIf="eachSeller.discounts">
+                                <div class="product_based_discount" *ngIf="eachSeller.discounts.product_based_discount.length != 0">                                               
+                                    <div class="discount-option">
+                                        <div class="title"><h5>Coupon</h5></div> 
+                                        <div class="discount-label " *ngIf="eachSeller.discounts.product_based_discount?.has_free_shipping">                                                        
+                                            <label>
+                                                <input type="checkbox" [(ngModel)]="eachSeller.applied_coupon.product_based" [ngModelOptions]=" 
+                                                {standalone: true}" name="additional_discount" class="additional_discount" (change)="sellerCouponApply($event.target.checked, eachSeller)"/>
+                                                <div class="save-price price-fnt w-100">                                                    
+                                                    <span class="small-txt"> Free-shipping</span>
+                                                </div>
+                                               
+                                            </label>                                                       
+                                        </div>
+                                        <div class="discount-label " *ngIf="!eachSeller.discounts.product_based_discount?.discount?.has_percentage && eachSeller.discounts.product_based_discount?.special_price">                                                        
+                                            <label>
+                                                <input type="checkbox" [(ngModel)]="eachSeller.applied_coupon.product_based" [ngModelOptions]=" 
+                                                {standalone: true}" name="additional_discount" class="additional_discount" (change)="sellerCouponApply($event.target.checked, eachSeller)"/>
+                                                <div class="save-price price-fnt w-100">
+                                                    
+                                                    <span class="small-txt"> Extra {{ eachSeller.discounts.product_based_discount.discount.amount | currency:'INR':'symbol':'1.2-2' }} off</span>
+                                                </div>
+                                               
+                                            </label>                                                       
+                                        </div>
+                                        <div class="discount-label" *ngIf="eachSeller.discounts.product_based_discount?.discount?.has_percentage && eachSeller.discounts.product_based_discount?.special_price">                                                       
+                                            <label>
+                                                <input type="checkbox" [(ngModel)]="eachSeller.applied_coupon.product_based" [ngModelOptions]=" 
+                                                {standalone: true}" name="additional_discount" class="additional_discount" (change)="sellerCouponApply($event.target.checked, eachSeller)"/>
+                                                <div class="save-price price-fnt w-100">                                                               
+                                                    <span class="small-txt"> Up to {{ eachSeller.discounts.product_based_discount.discount.percentage}}% OFF. Save {{ eachSeller.discounts.product_based_discount.discount.amount | currency:'INR':'symbol':'1.2-2' }} discount offer.</span>
+                                                </div>
+                                               
+                                            </label>                                                       
+                                        </div> 
+                                    </div>
+                                </div>
+                                <ng-container *ngIf="eachSeller.discounts.combo_offers.length != 0 || eachSeller.discounts.quantity_based_discount != 0">
+                                    <div class="more-offer my-2"><a class="link" (click)="offerPopup(eachSeller)">Click to see more offers</a></div>
+                                </ng-container>
+                            </ng-container>
+                            <div class="flex-item align-items-end">
+                                <div class="product-price">
+                                    <p *ngIf="eachSeller.special_price" class="price-wrapper price">
+                                        <span class="sale-price price price-fnt">
+                                            {{ eachSeller.special_price | currency:'INR':'symbol':'1.2-2'}}
+                                        </span>
+                                        <span class="regular-price price price-fnt">
+                                            {{ eachSeller.price | currency:'INR':'symbol':'1.2-2'}}
+                                        </span>
+                                    </p>
+                                    <p *ngIf="!eachSeller.special_price" class="price-wrapper mb-2">
+                                        <span class="regular-price price price-fnt">
+                                            {{ eachSeller.price | currency:'INR':'symbol':'1.2-2'}}
+                                        </span>
+                                    </p>
+                                    <div class="stock availabilty">
+                                        <span [class]="eachSeller.stock.stock_status === 'Out of Stock' ? 'badge-danger text-white' : 'text-white badge-success ' " class="value badge px-2 py-1">{{ eachSeller.stock.stock_status }}</span>                              
+                                    </div>
+                                </div>
+                                
+                                <div class="btn-flex text-right">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary ml-1 font-13"
+                                        (click)="sellerAddToCart(product,eachSeller)"> <span class="text">Add to cart</span>
+                                    </button>
+                                </div>
+                            </div>                            
+                           
+                            <!-- <div class="price-fnt"><i class="fa fa-rupee"></i> <strong>{{eachSeller.special_price |
+                                currency:'INR':'symbol':'1.2-2'}}</strong>
+                            </div> -->
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>        
+        <share-buttons [theme]="'modern-dark'"
+        [include]="['copy','whatsapp','facebook','x','linkedin','messenger','sms','email','print','pinterest','reddit','tumblr','mix','viber']"        
+        [icon]="['fab', 'fas', 'fa']"
+        [show]="5"
+        [showIcon]="true"
+        [showText]="true"
+        [url]="shareUrl"
+        [title]="product.name"
+        [description]="shareDesc"
+        [image]="shareImage"
+        [autoSetMeta]="true"        
+        ></share-buttons>
+    </div>
+</ng-template>

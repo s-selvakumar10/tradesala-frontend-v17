@@ -1,0 +1,193 @@
+/*Product Card */
+
+.sale-text {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: #fff;
+    text-transform: capitalize;
+    padding: 0px 5px;
+    font-size: 12px;
+    border: 2px solid #ffaa3d;
+    background: #ffaa3d;
+	border-radius: 6px;
+}
+
+.product-thumb{
+	margin-bottom: 30px;
+    position: relative;
+    transition: all .3s ease 0s;
+    margin-top: 10px;    
+    .image {
+	    text-align: center;
+	    position: relative;
+	    overflow: hidden;
+    	border-radius: 1.2rem;
+    	background: #fff;
+    	backface-visibility: hidden;
+    	overflow: hidden;
+    	box-shadow: 0 0 5px rgb(0 0 0 / 5%);
+	    a {
+		    display: block;
+		}
+		img {
+			object-fit: cover;
+			min-height: 148px;
+		    margin-left: auto;
+		    margin-right: auto;
+		}
+	}
+	&:hover{
+		.image {
+			box-shadow: 0px 0 10px rgb(0 0 0 / 32%);
+		}
+	}
+	&.transition{
+		img{
+			-webkit-transition: all 0.05s linear;
+			-moz-transition: all 0.05s linear;
+   		 	-ms-transition: all 0.05s linear;
+    		-o-transition: all 0.05s linear;
+    		transition: all 0.05s linear;
+		}
+		&:hover{			
+			img{
+				transition: all 0.05s ease;
+	    		-webkit-transition: all 0.05s ease;
+	    		-moz-transition: all 0.05s ease;
+	   		 	-ms-transition: all 0.05s ease;
+	    		-o-transition: all 0.05s ease;
+    		    transform: scale(calc(1.05));
+			}
+		}
+
+	}	
+	.caption {	    
+	    position: relative;
+	    -webkit-transition: all 0.3s ease 0s;
+	    -moz-transition: all 0.3s ease 0s;
+	    -ms-transition: all 0.3s ease 0s;
+	    -o-transition: all 0.3s ease 0s;
+	    transition: all 0.3s ease 0s;
+	    padding: 12px 12px 15px;
+	}
+	.product-title {
+	    margin: 8px 0 8px;
+	    font-size: 13px;
+	    line-height: 16px;
+    	min-height: 30px;
+	    a {
+		    text-transform: capitalize;
+		    color: #000000;
+		}
+	}
+	
+	.brand-title{
+		a{
+			font-size: 11.5px;
+		    font-weight: 600;
+		}
+	}
+	.thumb-description{
+		&:hover{
+			.brand-title a{color: #418490;}
+		}
+	}
+	.price .price-new{
+	    font-size: 20px;
+	}
+	
+	.add-cart {
+	    position: absolute;
+	    top: 10px;
+	    right: 10px;
+	    height: 32px;
+	    width: 32px;
+	    line-height: 32px;
+	    background: #6c757d;
+	    border: none;
+	    border-radius: 25px;
+	    color: #252525;
+	    i{
+	    	color: #fff;
+    		font-size: 25px;
+    		line-height: 30px;
+	    }
+	    &:hover, &:focus, &:active{
+	    	box-shadow:none;
+	    	outline:none;
+	    }
+	}
+	.button-group{
+		padding: 0;
+   		position: absolute;
+    	z-index: 99;
+    	right: 10px;
+    	transform: translateY(2%);
+    	top: 2%;
+    	.btn-button {
+		    border: 1px solid #e1e1e1;
+		    display: block;
+		    margin-top: 5px;
+		    padding: 0;
+		    background-color: #fff;
+		    border-radius: 3px;
+		    color: #464646;
+		    width: 35px;
+		    height: 35px;
+		    line-height: 35px;
+		    transform: all 0.3s ease 0s;
+		    position: relative;
+		    transition: all 0.3s ease-in-out 0s;
+		    -webkit-opacity: 0;
+		    -moz-opacity: 0;
+		    -ms-opacity: 0;
+		    -o-opacity: 0;
+		    opacity: 0;
+		    -webkit-transform: translate(50px, 0px);
+		    -moz-transform: translate(50px, 0px);
+		    -ms-transform: translate(50px, 0px);
+		    -o-transform: translate(50px, 0px);
+		    transform: translate(50px, 0px);
+		    &.addcart {
+			    transition-delay: 0.1s;
+			}
+			&.wishlist {
+			    transition-delay: 0.2s;
+			    margin-bottom: 5px;
+			}
+		}
+		
+	}
+	&:hover {
+		.button-group{
+			.btn-button {
+				opacity: 1;
+			    -webkit-transform: scale(1);
+			    -moz-transform: scale(1);
+			    -ms-transform: scale(1);
+			    -o-transform: scale(1);
+			    transform: scale(1);
+			    visibility: visible;
+			}
+		}
+	}
+		
+}
+::ng-deep{
+	.tooltip{
+		font-size:12px;
+		width:130px;
+		font-weight:600;      
+        .arrow:before{
+        	border-left-color: #ebedec;
+        }
+        .tooltip-inner{
+        	background-color: #ebedec;
+        	color: #333;
+        }
+	}
+}
+.wishlistActive{
+	color: #c92027 !important;
+}

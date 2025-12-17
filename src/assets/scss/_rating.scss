@@ -1,0 +1,56 @@
+/* ================= RATINGS ============== */
+.label-rating{margin-left:7px; display:inline-block; vertical-align:middle}
+
+/* rating-list */
+.rating-stars{display:inline-block; vertical-align:middle; list-style:none; margin:0; padding:0; position:relative; 
+    white-space: nowrap; clear:both;
+    i{ font-size:14px; color:#ccc; display:inline;}
+    img{ height: 14px; max-width:none;}
+    li{display:block;  text-overflow:clip;  white-space:nowrap; z-index:1; }
+  
+    li.stars-active{z-index:1; position:absolute; top:0; left:0; overflow: hidden;
+        i{color:orange;}
+    }
+
+    &.stars-lg{
+      img{ height:20px; max-width:none;}
+    }
+}
+.review-list li:not(:last-child){
+	margin-bottom:10px;
+}
+ .rating {
+    float:left;
+    border:none;
+}
+.rating:not(:checked) > input {
+    position:absolute;
+    // top:-9999px;
+    clip:rect(0, 0, 0, 0);
+}
+.rating:not(:checked) > label {
+    float:right;
+    width:1em;
+    padding:0 .1em;
+    overflow:hidden;
+    white-space:nowrap;
+    cursor:pointer;
+    font-size:200%;
+    line-height:1.2;
+    color:#ddd;
+}
+.rating:not(:checked) > label:before {
+    content:'★ ';
+}
+.rating > input:checked ~ label {
+    color: #f70;
+}
+.rating:not(:checked) > label:hover, .rating:not(:checked) > label:hover ~ label {
+    color: gold;
+}
+.rating > input:checked + label:hover, .rating > input:checked + label:hover ~ label, .rating > input:checked ~ label:hover, .rating > input:checked ~ label:hover ~ label, .rating > label:hover ~ input:checked ~ label {
+    color: #ea0;
+}
+.rating > label:active {
+    position:relative;
+}

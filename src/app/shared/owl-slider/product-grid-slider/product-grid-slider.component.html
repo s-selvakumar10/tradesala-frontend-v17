@@ -1,0 +1,9 @@
+<div (window:resize)="onResize()" (window:load)="onLoad()">
+<owl-carousel-o #carousel [options]="options" >
+    <ng-container *ngFor="let product of products">
+        <ng-template carouselSlide let-owlItem [id]="product.id" [width]="setWidth">
+            <app-product-card [product]="product" [contentLoaded]="isLoading" [@activeSlide]="owlItem.isCentered ? 'active' : 'inActive'" class="slide"></app-product-card>
+        </ng-template>
+    </ng-container>
+</owl-carousel-o> 
+</div>

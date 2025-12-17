@@ -1,0 +1,46 @@
+<div class="row account-area">
+	<div class="col-md-12 col-12">
+		<div *ngIf="orderLength > 0">
+			<ul class="responsive-table mt-4">
+				<li class="table-header">
+				<div class="col col-1">#</div>
+				<div class="col"><strong>Order Id</strong></div>
+				<div class="col text-center"><strong>Date</strong> </div>
+				<div class="col text-center"><strong>Total Price</strong></div>
+				<div class="col text-center"><strong>Action</strong></div>
+				</li>
+				<li #active class="table-row" *ngFor="let order of orders | paginate : {
+					itemsPerPage: pageSize,
+					currentPage: page,
+					totalItems: count
+					};let i = index">
+				<div class="col col-1" data-label="#">{{i+1}}</div>
+				<div class="col" data-label="Order Id">{{order.order_id}}</div>
+				<div class="col text-center" data-label="Amount">{{order.order_date | date}}</div>
+				<div class="col text-center" data-label="Total Price">{{order.total | currency:'INR':'symbol':'1.2-2'}}</div>
+				<div class="col action-btn text-center" data-label="Action">
+					<a (click)="toggle(orders,order)"><i class="fa fa-ellipsis-v"></i></a>
+					<div class="dropdown-menu" [class.show]="order.active" #dropdown>
+						<a [routerLink]="['/account/orders/details/'+order.id]"
+						class="btn btn-outline-info mx-2 btn-sm"> VIEW </a>
+						<a href="#" class="btn btn-outline-success mx-2 btn-sm">REORDER</a>
+					</div>
+				</div>
+				
+				</li>
+				
+			</ul>
+			<div class="float-right">
+				<pagination-controls previousLabel="Prev" nextLabel="Next"
+				(pageChange)="handlePageChange($event)" responsive="true"></pagination-controls>
+			</div>
+		</div>
+		
+		<div class="card card-border mt-3" *ngIf="orderLength < 1">
+			<div class="card-body text-center">
+				<h4 class="card-title mb-0">No Order History Found.</h4>								
+			</div>
+		</div>		
+	</div>
+
+</div>

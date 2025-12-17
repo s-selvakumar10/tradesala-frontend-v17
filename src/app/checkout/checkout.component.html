@@ -1,0 +1,497 @@
+<section class="padding-y checkout-wrapper">
+	<div class="container">
+		<div class="row">
+			
+			<div class="col-sm-9 checkout-sticky-sidebar" *ngIf="!isAuthenticated" >
+				<div id="sticky-start"></div>
+				<!-- <div class="inner-content inner" [isMobile]="false" [stickyStartId]="'sticky-start'" [stickyClass]="'sticky'" [ieOnly]="false"></div> -->
+				<div class="inner-content inner">			
+					<div class="card card-border mb-3 checkout-field login">
+					<div class="card-header">
+						<h3 class="title text-center">Login </h3>
+					</div>
+					<div class="checkout-form customer-info">
+						<div class="card-body">
+							<form class="mb-3" [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
+								<div class="form-row">						
+			                        <div class="col-9 form-group ml-auto mr-auto">
+										<label for="username">Email / Mobile</label>
+										<input type="text" class="form-control" placeholder="Email / Mobile" id="username" formControlName="username">
+									</div> <!-- form-group end.// -->
+			                        
+			                        <div class="col-9 form-group ml-auto mr-auto">
+										<label for="password">Password</label>
+										<input type="password" class="form-control" placeholder="Password" id="password" formControlName="password">
+									</div> <!-- form-group end.// -->
+									
+									<div class="col-9 form-group ml-auto mr-auto"> 
+			                            <label class="custom-control custom-checkbox">
+			                                <input type="checkbox" class="custom-control-input" name="terms" checked=""> 
+			                                <div class="custom-control-label"> Remember Me </div> 
+			                            </label>
+			                        </div>
+
+			                        <div class="col-9 ml-auto mr-auto text-center">
+										<div class="text-center">
+											<button type="submit" class="btn btn-success"> Login  </button>
+										</div> <!-- form-group// -->      
+										<p class="mt-2">Create an account? <a [routerLink]="['/register']" class="text-underline">Register</a></p>
+	                    				
+									</div> 
+															
+								</div> <!-- form-row end.// -->
+							</form>
+						</div>
+					</div>					
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-9 checkout-form checkout-sticky-sidebar" *ngIf="isAuthenticated">
+				<!-- <div id="sticky-start"></div> -->
+				<!-- <div class="inner-content inner" [isMobile]="false" [stickyStartId]="'sticky-start'" [stickyClass]="'sticky'" [ieOnly]="false">			 -->
+				<div class="inner-content inner">			
+					
+					<div class="card-border card mb-3 checkout-field personal">
+						<div class="card-header">
+							<a (click)="toggle(customerInfo)" >
+								<i class="icon-control fa fa-chevron-down"></i>
+								<h6 class="title float-left w-50">GST Info </h6>								
+							</a>
+						</div>
+						<div class="checkout-form customer-info collapse show" #customerInfo>
+							<div class="card-body py-0">
+								<form class="mb-3" [formGroup]="checkoutForm" class="checkout-form">
+									<div class="row">
+										<div class="form-group col-md-12">
+											<div class="form-check">
+											<input class="form-check-input" type="checkbox" formControlName="enable_gst" id="enableGst" (change)="isChecked($event, billingAddress)" #enableGst >
+											<label class="form-check-label" for="enableGst" (click)="onGstEnable(enableGst, billingAddress)" >
+												Get GST Invoice<br>
+												<small>Claim your TAX</small>
+											</label>
+											</div>
+										</div>
+										<div class="form-group col-md-6" *ngIf="isGstEnable">
+											<label class="sr-only">GST No</label>
+											<input type="text" placeholder="GST No" class="form-control" formControlName="gst_no">
+											<span *ngIf="!checkoutForm.get('gst_no').valid && checkoutForm.get('gst_no').touched" class="error invalid-feedback">Invalid GST Number</span>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>					
+					</div>
+					
+
+					<div class="card-border card mb-3 checkout-field">
+						<div class="card-header">
+							<a (click)="toggle(shippingAddress)">
+								<i class="icon-control fa fa-chevron-down"></i>
+								<h6 class="title">Shipping Address </h6>
+							</a>
+						</div>
+						<div class="checkout-form customer-info collapse show" #shippingAddress>
+							<div class="card-body">
+								<form class="mb-3" [formGroup]="addressShippingForm" class="shipping-form">
+								<div class="row mb-3">
+									<div class="form-group col-md-12" *ngFor="let each of listOfAddress; let i = index">
+										<div class="card">
+											<div class="card-body">
+												<div class="form-check">
+													<input class="form-check-input" type="radio" formControlName="shipping_address" id="shippingAddress-{{i+1}}" value="{{each.id}}" (change)="changeShipping(each, $event)" [attr.checked]="each.default == 1">
+													<label class="form-check-label" for="shippingAddress-{{i+1}}">
+														<strong>{{each.shipping_address?.name}}</strong> {{each.shipping_address?.line1}},
+														{{each.shipping_address?.line2||''}}, {{each.shipping_address?.city}}
+														{{stateListMap[each.shipping_address?.state]}},
+														{{each.shipping_address?.pincode}},
+														{{countryListMap[each.shipping_address?.country]}}
+													</label>
+												</div>
+											</div>
+										</div>
+									</div>
+									
+									
+									<div class="btn-wraper col-12 justify-content-between">
+										<button type="button" class="btn btn-sm btn-primary" (click)="addAddress()">+ Add Address</button>										
+									</div>
+								</div>
+								</form>
+								<div *ngIf="showShippingForm">
+									<h5>Add Shipping Address</h5>
+									<form class="mb-3" [formGroup]="addressShippingAddForm" (ngSubmit)="shippingAddressOnSubmit()">
+										<div class="row">
+											<div class="form-group col-sm-6">
+												<label>Name</label>
+												<input type="text" placeholder="Name" class="form-control" formControlName="name">
+												<span class="error invalid-feedback" *ngIf="!addressShippingAddForm.get('name').valid && addressShippingAddForm.get('name').touched">Please enter name</span>
+											</div>
+											<div class="form-group col-sm-6">
+												<label>Mobile</label>
+												<input type="text" placeholder="Mobile Number" class="form-control" formControlName="mobile">
+												<span class="error invalid-feedback" *ngIf="!addressShippingAddForm.get('mobile').valid && addressShippingAddForm.get('mobile').touched">Please enter valid mobile no</span>
+											</div>								
+											<div class="form-group col-sm-6">
+												<label>Address Line1</label>
+												<input type="text" placeholder="Address Line1" class="form-control" formControlName="address1">
+												<span class="error invalid-feedback" *ngIf="!addressShippingAddForm.get('address1').valid && addressShippingAddForm.get('address1').touched">Please enter house / flat no</span>
+											</div>
+											<div class="form-group col-sm-6">
+												<label>Address Line2</label>
+												<input type="text" placeholder="Address Line2" class="form-control" formControlName="address2">
+												<span class="error invalid-feedback" *ngIf="!addressShippingAddForm.get('address2').valid && addressShippingAddForm.get('address2').touched">Please enter address</span>
+											</div>
+											<div class="form-group col-sm-6">
+												<label>City</label>
+												<input type="text" placeholder="City" class="form-control" formControlName="city">
+												<span class="error invalid-feedback" *ngIf="!addressShippingAddForm.get('city').valid && addressShippingAddForm.get('city').touched">Please enter city</span>
+											</div>
+											<div class="form-group col-sm-6">
+												<label>Postal Code</label>
+												<input type="text" placeholder="Postal Code" class="form-control" formControlName="postalcode">
+												<span class="error invalid-feedback" *ngIf="!addressShippingAddForm.get('postalcode').valid && addressShippingAddForm.get('postalcode').touched">Please enter valid postal code</span>
+											</div>
+											<div class="form-group col-sm-6">
+												<label>Region/State</label>
+												<select class="form-control" formControlName="state">
+													<option value="">--Select State--</option>
+													<option *ngFor="let sl of stateList" [value]="sl.id">{{sl.name}}</option>
+													
+												</select>
+												<span class="error invalid-feedback" *ngIf="!addressShippingAddForm.get('state').valid && addressShippingAddForm.get('state').touched">Please select state</span>
+											</div>
+											<div class="form-group col-sm-6">
+												<label>Country</label>
+												<select class="form-control" formControlName="country" placeholder="Country">
+													<option value="">--Select Country--</option>
+													<option *ngFor="let cl of countryList" [value]="cl.id"> {{cl.name}}</option>
+												</select>
+												<span class="error invalid-feedback" *ngIf="!addressShippingAddForm.get('country').valid && addressShippingAddForm.get('country').touched">Please select country</span>
+											</div>											
+											<div class="btn-wraper col-12 justify-content-end">
+												<button type="submit" [disabled]="!addressShippingAddForm.valid" class="btn btn-sm btn-success">
+													Save
+												</button>
+											</div>
+											
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>					
+					</div>
+
+					<div class="card-border card mb-3 checkout-field" [ngClass]="{'d-none': !showBillingForm}">
+						<div class="card-header">
+							<a (click)="toggle(billingAddress)">
+								<i class="icon-control fa fa-chevron-down"></i>
+								<h6 class="title">Billing Address </h6>
+							</a>
+						</div>
+						<div class="checkout-form customer-info collapse" #billingAddress >
+							<div class="card-body">
+								
+								<h5>Add Billing Address</h5>
+								<form class="mb-3" [formGroup]="addressBillingForm" class="billing-form">
+									<div class="row">
+										<div class="form-group col-sm-6">
+											<label>Business/Company Name</label>
+											<input type="text" placeholder="Business/Company Name" class="form-control" formControlName="name">
+											<span class="error invalid-feedback" *ngIf="!addressBillingForm.get('name').valid && addressBillingForm.get('name').touched">Please enter name</span>
+										</div>
+										<div class="form-group col-sm-6">
+											<label>Mobile Number</label>
+											<input type="text" placeholder="Mobile Number" class="form-control" formControlName="mobile">
+											<span class="error invalid-feedback" *ngIf="!addressBillingForm.get('mobile').valid && addressBillingForm.get('mobile').touched">Please enter valid mobile no</span>
+										</div>									
+										<div class="form-group col-sm-6">
+											<label>Address Line1</label>
+											<input type="text" placeholder="Address Line1" class="form-control" formControlName="address1">
+											<span class="error invalid-feedback" *ngIf="!addressBillingForm.get('address1').valid && addressBillingForm.get('address1').touched">Please enter house / flat no</span>
+										</div>
+										<div class="form-group col-sm-6">
+											<label>Address Line2</label>
+											<input type="text" placeholder="Address Line2" class="form-control" formControlName="address2">
+											<span class="error invalid-feedback" *ngIf="!addressBillingForm.get('address2').valid && addressBillingForm.get('address2').touched">Please enter address</span>
+										</div>
+										<div class="form-group col-sm-6">
+											<label>City</label>
+											<input type="text" placeholder="City" class="form-control" formControlName="city">
+											<span class="error invalid-feedback" *ngIf="!addressBillingForm.get('city').valid && addressBillingForm.get('city').touched">Please enter city</span>
+										</div>
+										<div class="form-group col-sm-6">
+											<label>Postal Code</label>
+											<input type="text" placeholder="Postal Code" class="form-control" formControlName="postalcode">
+											<span class="error invalid-feedback" *ngIf="!addressBillingForm.get('postalcode').valid && addressBillingForm.get('postalcode').touched">Please enter valid postal code</span>
+										</div>
+										<div class="form-group col-sm-6">
+											<label>Region/State</label>
+											<select class="form-control" formControlName="state">
+												<option value="">--Select State--</option>
+												<option  *ngFor="let sl of stateList" [value]="sl.id"> {{sl.name}}</option>
+											</select>
+											<span class="error invalid-feedback" *ngIf="!addressBillingForm.get('state').valid && addressBillingForm.get('state').touched">Please select state</span>
+										</div>
+										<div class="form-group col-sm-6">
+											<label>Country</label>
+											<select class="form-control" formControlName="country" placeholder="State">
+												<option value="">--Select Country--</option>
+												<option *ngFor="let cl of countryList" [value]="cl.id"> {{cl.name}}</option>
+												
+											</select>
+											<span class="error invalid-feedback" *ngIf="!addressBillingForm.get('country').valid && addressBillingForm.get('country').touched">Please select country</span>
+										</div>
+									</div>
+								</form>
+								
+							</div>
+						</div>					
+					</div>
+
+					
+					<div *ngIf="payment_method.length < 2">
+						<form class="mb-3" [formGroup]="paymentMethodForm">
+							<div class="form-group d-none">
+								<div class="form-check">
+									<input class="form-check-input" type="radio" formControlName="paymentMethod" id="onlinepayment" value="onlinepayment">
+									<label class="form-check-label" for="onlinepayment">
+								Online Payment
+									</label>
+								</div>
+							</div>
+							<div class="btn-wraper col-12 justify-content-center">								
+								<button type="button" [disabled]="!isLoadingBtn || isLoading" (click)="onFormSubmit()"class="btn btn-sm btn-success">
+									<i class="" [ngClass]="{'fa fa-spin fa-spinner': isLoading, '': !isLoading}"></i>Proceed to Payment
+								</button>
+							</div>
+						</form>
+					</div>
+					<div class="card-border card mb-3 checkout-field" *ngIf="payment_method.length > 1">
+						<div class="card-header">
+							<a (click)="toggle(paymentMethod)">
+								<i class="icon-control fa fa-chevron-down"></i>
+								<h6 class="title">Payment Method </h6>
+							</a>
+						</div>
+						<div class="checkout-form customer-info collapse" #paymentMethod>
+							<div class="card-body">
+								<form class="mb-3" [formGroup]="paymentMethodForm">
+									<div class="form-group">
+										
+										<div class="form-check"  *ngFor="let method of payment_method">
+											<input class="form-check-input" type="radio" formControlName="paymentMethod" id="onlinepayment-{{method.value}}" value="{{method.value}}">
+											<label class="form-check-label" for="onlinepayment-{{method.value}}">
+											{{method.name}}
+											</label>
+										</div>
+										
+									</div> <!-- form-group end.// -->
+									
+									<div class="btn-wraper col-12 justify-content-center">
+										<button type="button" [disabled]="isLoadingBtn" (click)="onFormSubmit()"class="btn btn-sm btn-success">
+											<i class="" [ngClass]="{'fa fa-spin fa-spinner': isLoadingBtn, '': !isLoadingBtn}"></i>Proceed to Payment
+										</button>
+									</div>
+								</form>
+							</div>
+						</div>					
+					</div>
+				
+				</div>	
+			</div>
+			<aside class="col-sm-3" >
+				
+				<div class="inner-content inner">
+					<div class="card card-border mb-3 checkout-field">
+						<div class="card-header">
+							<a (click)="toggle(couponApply)">
+								<i class="icon-control fa fa-chevron-down"></i>
+								<h6 class="title">Have coupon? </h6>
+							</a>
+						</div>
+						<div class="checkout-form apply-coupon collapse show" #couponApply>
+							<div class="card-body">
+								<form [formGroup]="couponForm" (ngSubmit)="applyCoupon()">
+									<div class="form-group">
+										<label>Apply Coupon to get discount!</label>
+										<div class="input-group input-group-sm">
+											<input type="text" class="form-control" formControlName="coupon_code" placeholder="Coupon code">
+											<span class="input-group-append">
+												<button type="submit" class="btn btn-success" [disabled]="!couponForm.valid">Apply</button>
+											</span>
+										   
+										</div>
+	
+									</div>
+								</form>
+								
+							</div>
+						</div>					
+					</div>
+					<div class="card card-border mb-3 checkout-field checkout-sidebar-accordion">
+						<div class="card-header">
+							<a (click)="toggle(orderSummary)">
+								<i class="icon-control fa fa-chevron-down"></i>
+								<h6 class="title">Order Summary </h6>
+							</a>
+						</div>
+						<div class="checkout-form apply-coupon collapse show" #orderSummary>						
+							<div class="card-body">
+								<div class="checkout-table table-responsive">
+									<table class="table">
+										<tbody *ngIf="cartItems.length > 0">
+											<tr *ngFor="let product of cartItems">
+												<td class="checkout-product">
+													<div class="product-cart d-flex">
+														<div class="product-thumb">
+															<img [src]="product.product.media.front_image" [alt]="" class="thumb">
+														</div>
+														<div class="product-content media-body">
+															<h5 class="title"><a [routerLink]="['/', product.product.product_url]" title="{{product.product.name}}" target="_blank">{{product.product.name}}</a></h5>
+															<p class="text-muted small mb-0 variant" [innerHTML]="product.customVariants" *ngIf="product.customVariants"> </p>
+															<ul class="list-unstyled">															
+																<li>
+																	<span>
+																		{{product.qty}} x {{product.price | currency:'INR':'symbol-narrow':'1.2-2'}}
+																	</span>
+																</li>
+																
+																<li class="text-muted small price-fnt">
+																	Price: {{((product.sub_total) || 0)
+																	| currency:'INR':'symbol-narrow':'1.2-2'}} 
+																</li>
+																<!-- <li class="text-muted small">
+																	SGST{{product.product?.taxes?.sgst?.percentage}}%:
+																	{{(product.product?.taxes?.sgst?.amount||0) |
+																	currency:'INR':'symbol-narrow':'1.2-2'}}
+																</li>
+																<li class="text-muted small">
+																	CGST{{product.product?.taxes?.cgst?.percentage}}%:
+																	{{(product.product?.taxes?.cgst?.amount||0) |
+																	currency:'INR':'symbol-narrow':'1.2-2'}}
+																</li> -->
+																<li class="text-muted small price-fnt">
+																	GST&#64;{{product.product?.taxes?.igst?.percentage}}% :
+																	{{((product.tax_total)||0) |
+																	currency:'INR':'symbol-narrow':'1.2-2'}}
+																</li>
+																<!-- <li class="text-muted small">Final Price: {{(product.amount||0) |
+																	currency:'INR':'symbol-narrow':'1.2-2'}} </li> -->
+
+																<li class="text-muted small price-fnt mt-1 mb-1" *ngIf="product.coupon_type == 'combo_based' && product.product?.discount && product.product?.discount?.percentage !=0 ">
+																	<span class="discount-tag">Discount {{product.product.discount.percentage}}%</span>
+																	<span>: {{product.product.discount.amount | currency:'INR':'symbol-narrow':'1.2-2'}}</span>
+																</li>
+																<ng-container *ngIf="!product.product?.discount?.free_shipping">
+																	<li class="text-muted small price-fnt mt-1 mb-1" *ngIf="product.coupon_type == 'product_based' && product.product?.discount.has_percentage && product.product?.discount?.amount !=0">
+																		<span class="discount-tag">Discount {{product.product.discount.percentage}}%</span>
+																		<span>: {{product.product.discount.amount | currency:'INR':'symbol-narrow':'1.2-2'}}</span>
+																		<div class="remove-coupon mt-2" (click)="removeCoupon(product.sellerId, product.product.slug, product.cart_session_id)">Remove Coupon</div>
+																	</li>
+																	<li class="text-muted small price-fnt mt-1 mb-1" *ngIf="product.coupon_type == 'product_based' && (!product.product?.discount?.has_percentage && product.product?.discount?.amount !=0)">
+																		<span class="discount-tag">Discount</span>
+																		<span>: {{product.product.discount.amount | currency:'INR':'symbol-narrow':'1.2-2'}}</span>
+																		<div class="remove-coupon mt-2" (click)="removeCoupon(product.sellerId, product.product.slug, product.cart_session_id)">Remove Coupon</div>
+																	</li>
+																</ng-container>
+																<ng-container *ngIf="product.product?.discount?.free_shipping">
+																	<li class="text-muted small price-fnt mt-1 mb-1">
+																		<div class="remove-coupon mt-2" (click)="removeCoupon(product.sellerId, product.product.slug, product.cart_session_id)">Remove Coupon</div>
+																	</li>
+																</ng-container>
+																
+																<li class="text-muted small price-fnt mt-1 mb-1" *ngIf="product.coupon_type == 'qty_based' && product.product?.discount?.has_percentage">
+																	<span class="discount-tag">Discount {{product.product.discount.percentage}}%</span>
+                                                					<span>: {{product.product.discount.amount | currency:'INR':'symbol-narrow':'1.2-2'}}</span>
+																	<div class="remove-coupon mt-2" (click)="removeCoupon(product.sellerId, product.product.slug, product.cart_session_id)">Remove Coupon</div>
+																</li>
+																<li class="text-muted small price-fnt mt-1 mb-1" *ngIf="product.coupon_type == 'referal_code' && product.product?.discount?.has_percentage">
+																	<span class="discount-tag">Discount {{product.product.discount.percentage}}%</span>
+                                                					<span>: {{product.product.discount.amount | currency:'INR':'symbol-narrow':'1.2-2'}}</span>
+																	<div class="remove-coupon mt-2" (click)="removeCoupon(product.sellerId, product.product.slug, product.cart_session_id)">Remove Coupon</div>
+																</li>
+																<li class="text-muted small price-fnt mt-1 mb-1" *ngIf="product.coupon_type == 'referal_code' && !product.product?.discount?.has_percentage">
+																	<span class="discount-tag">Discount </span>
+                                                					<span>: {{product.product.discount.amount | currency:'INR':'symbol-narrow':'1.2-2'}}</span>
+																	<div class="remove-coupon mt-2" (click)="removeCoupon(product.sellerId, product.product.slug, product.cart_session_id)">Remove Coupon</div>
+																</li>
+																<li class="text-muted small price-fnt" *ngIf="product.product.shipping?.shipping_cost">
+																	Shipping:
+																	{{product.product.shipping?.shipping_cost| currency:'INR':'symbol-narrow':'1.2-2'}}
+																</li>
+																<li class="text-muted small price-fnt" *ngIf="!product.product.shipping?.shipping_cost">
+																	<i class="fas fa-shipping-fast">
+																	Free shipping </i>
+																</li>
+															</ul>
+														</div>
+													</div>
+												</td>
+												<td class="checkout-price">
+													<p class="price price-fnt">
+														<!-- {{(product.qty * product.price)  | currency:'INR':'symbol-narrow':'1.2-2'}} -->
+														{{(product.sub_total||0) | currency:'INR':'symbol-narrow':'1.2-2'}}
+													</p>
+												</td>
+											</tr>
+																				
+										</tbody>
+									</table>
+								</div>
+								<div class="pricing-table" *ngIf="cartSummary">
+									<div class="sub-total-price">
+										
+										<table class="table single-total total-payable">
+											<tbody>
+												<tr *ngIf="cartSummary?.sub_total > 0">
+													<td class="text-right"><strong>Sub-Total</strong></td>
+													<td class="text-right price-fnt"><strong>{{cartSummary.sub_total | currency:'INR':'symbol-narrow':'1.2-2'}}</strong></td>
+												</tr>
+												<tr *ngIf="cartSummary?.tax_total > 0">
+													<td class="text-right"><strong>Tax</strong></td>
+													<td class="text-right price-fnt"><strong>{{(cartSummary.tax_total) | currency:'INR':'symbol-narrow':'1.2-2'}}</strong></td>
+												</tr>
+												<tr *ngIf="cartSummary?.shipping?.has_shipping_charges">
+													<td class="text-right"><strong>Shipping Charges</strong></td>
+													<td class="text-right price-fnt"><strong>{{cartSummary.shipping.shipping_cost | currency:'INR':'symbol-narrow':'1.2-2' }}</strong></td>
+												</tr>
+												<tr *ngIf="!cartSummary?.shipping?.has_shipping_charges">
+													<td class="text-right"><strong>Shipping Charges</strong></td>
+													<td class="text-right price-fnt"><strong>Free</strong></td>
+												</tr>
+												<tr *ngIf="cartSummary?.discounts > 0">
+													<td class="text-right"><strong>Discount(-)</strong></td>
+													<td class="text-right price-fnt"><strong>{{(cartSummary.discounts) | currency:'INR':'symbol-narrow':'1.2-2'}}</strong></td>
+												</tr>
+												
+												<tr *ngIf="cartSummary?.grand_total > 0">
+													<td class="text-right"><strong>Total Payable</strong></td>
+													<td class="text-right price-fnt"><strong>{{cartSummary.grand_total | currency:'INR':'symbol-narrow':'1.2-2'}}</strong></td>
+												</tr>
+											</tbody>
+										</table>
+									
+									</div>
+		
+									<div class="price-table-btn">
+										<a class="btn btn-sm btn-block btn-outline-primary" [routerLink]="['/checkout/cart']">Edit Cart Items</a>
+									</div>
+								</div>
+							</div>
+						</div>					
+					</div>
+				</div>
+				<!-- <div id="sticky-bottom"></div> -->
+			</aside>
+		</div>
+	</div>
+</section>
+<ng-template  #loginContent let-modal>							
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Login Your Account</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+	<app-modal-login></app-modal-login>
+</ng-template>

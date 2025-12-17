@@ -1,0 +1,67 @@
+<div class="sidebar-minicart">
+    <div class="xs-overlay bg-dark"></div>
+    <div class="xs-minicart-widget">
+        <div class="widget-heading media">
+            <h3 class="widget-title align-self-center d-flex">Shopping cart</h3>
+            <div class="media-body">
+                <a (click)="closeMiniCart()" class="close-side-widget">
+                    X
+                </a>
+            </div>
+        </div>
+        <div class="widget widget_shopping_cart" *ngIf="cartItems.length > 0">
+            <div class="widget_shopping_cart_content">
+                <ul class="xs-miniCart-menu" >
+                    <li *ngFor="let product of cartItems" class="mini_cart_item media">
+                        <a href="#" class="d-flex mini-product-thumb xs-cart-img">
+                            <img [src]="product.product.media.front_image" class="img-xs" alt="">
+                        </a>
+                        <div class="media-body">
+                            <h4 class="mini-cart-title">{{product.product.name}}</h4>
+                            <ul class="quantity-bar">
+                                <li class="qntindc inc_1" (click)="decQnt(product.product.slug, product.qty)">-</li>
+                                <li class="qty-value">{{product.qty}}</li>
+                                <li class="qntindc inc_2" (click)="incQnt(product.product.slug, product.qty)">+</li>
+                                <li><span><i class="icon-svg w-h-14 icon-xs trash" (click)="deleteCartItem(product.product.slug)"></i></span></li>
+                            </ul>
+                            <span class="quantity">{{product.qty}} x
+                                <span class="amount">
+                                    {{ product.price | currency:'INR':'symbol':'1.2-2'}}
+                                </span>
+
+                                <span class="amount ml-4">
+                                    {{ product.amount | currency:'INR':'symbol':'1.2-2'}}
+                                </span>
+                            </span>
+                        </div>
+                    </li>
+                    <li class="mini-cart-btn">
+                        <p class="total">
+                            Subtotal:
+                            <span class="amount font-weight-bold">
+                               {{cartItemTotal | currency:'INR':'symbol-narrow':'1.2-2'}}
+                            </span>
+                        </p>
+                    </li>
+                    <li>
+                        <p class="buttons btn-wraper">
+                            <a (click)=closeMiniCart() [routerLink]="['/checkout/cart']" class="btn btn-md btn-primary wc-forward mr-2">View cart</a>
+                            <a (click)=closeMiniCart() [routerLink]="['/checkout/checkoutDetails']" class="btn btn-md btn-primary checkout wc-forward ml-2">Checkout</a>
+                        </p>
+                    </li> 
+                </ul>
+                
+            </div>
+        </div>
+
+        <div class=" container empty-cart-content" *ngIf="cartItems.length == 0">
+            <p class="cart-empty-message empty">No products in the cart.</p>
+            <p class="empty-cart-icon">
+                <i class="icon icon-shopping-cart"></i>
+            </p>
+            <p class="btn-wraper justify-content-center">
+                <a class="btn btn-primary" href="shop.html">Return To Shop</a>
+            </p>
+        </div>
+    </div>
+</div>

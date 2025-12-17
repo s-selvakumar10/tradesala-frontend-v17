@@ -1,0 +1,15 @@
+.specification dl{
+    width: 100%;
+    float: left;
+    margin-bottom: 5px;
+    dt, dd{
+        float: left;
+    }
+    dt{
+        font-weight: 600; 
+    }
+    dd{
+        margin-bottom: 0;
+        margin-left: 10px;
+    }
+} 

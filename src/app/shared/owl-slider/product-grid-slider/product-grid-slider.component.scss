@@ -1,0 +1,14 @@
+
+owl-carousel-o {
+    ::ng-deep{
+        .owl-carousel{
+            > div.owl-nav{
+                position: absolute;
+                top:-65px;
+                right:10px;
+
+            }
+        }
+
+    }
+}

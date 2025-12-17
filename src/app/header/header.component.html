@@ -1,0 +1,180 @@
+<!-- <app-cart-mini (closeMiniCart)="closeMiniCart($event)" [openMiniCart]="isMiniCartOpen"></app-cart-mini> -->
+
+<header id="header" class="section-header" (scroll)="onWindowScroll($event);">
+	<section class="header-main" id="navbar">
+		<div class="container">
+			<div class="row align-items-center justify-content-center">
+				
+				<div class="col-lg-3 col-xl-2 logo-div">
+					<a (click)="setTitle('')" routerLink="/" class="brand-wrap">
+						<img class="logo" src="assets/images/logo.svg" alt="{{ title }}">
+					</a>
+				</div>
+				<!-- <div class="col-lg-4 col-xl-6 col-sm-4 col d-none d-md-block search-div">
+					<div class="all-category-menu">
+						<app-collapse-cat-menu [show]="isCategoryOpen"></app-collapse-cat-menu>
+					</div>
+					<div class="search-box">
+						<app-search [selectedCategory]="selectedCategory"></app-search>
+					</div>
+				</div> 
+				<div class="col-lg-5 col-xl-3 col col-sm-4 col tools-div">-->
+				<div class="col-lg-9 col-xl-10 tools-div" [class.logged-in]="isAuthenticated">
+					<div class="all-category-menu">
+						<app-collapse-cat-menu [show]="isCategoryOpen"></app-collapse-cat-menu>
+					</div>
+					<div class="search-box">
+						<button type="button" class="collapse-search-btn" (click)="openSearchBox(collapsesearch);"
+						[attr.aria-expanded]="isSearchCollapsed" aria-controls="collapseSearch"> 
+						<span class="icon">
+							<i class="icon-xs search-icon"></i>
+						</span>	
+						</button>
+						<div id="collapseSearch" class="collapse" #collapsesearch>
+							<button type="button" class="close" aria-label="Close" (click)="closeSearchBox(collapsesearch);">
+								<span aria-hidden="true">&times;</span>
+							  </button>							
+							<app-search  [selectedCategory]="selectedCategory"></app-search>
+						</div>
+					</div>
+					<div class="widgets-wrap float-right">
+						<app-dropdown-cart ngClass="widget-header"></app-dropdown-cart>
+						<div class="hr-line"></div>
+						<a class="widget-header mr-2" *ngIf="isAuthenticated" (click)="showWishlist(event)">
+			          		<span class="icon">
+								<i class="icon-xs heart-icon"></i>
+							</span>	
+							<span class="badge notify" *ngIf="totalWishlistItems > 0"> {{ totalWishlistItems }}</span>
+									
+			          	</a>
+						
+						
+						<a class="widget-header btn btn-sm btn-outline-primary btn-login d-none d-md-block" (click)="loginPopup()" *ngIf="!isAuthenticated">
+							Login
+							<!-- <span class="icon">
+								<i class="icon-xs user-icon"></i>
+							</span>	 -->
+						</a>
+						<a class="widget-header btn btn-sm btn-primary btn-register mr-0 d-none d-md-block" [routerLink]="['/register']" *ngIf="!isAuthenticated">
+							Register	
+						</a>
+						<a class="widget-header" routerLink="account/dashboard" *ngIf="isAuthenticated">
+							<span class="icon">
+								<i class="icon-xs user-icon"></i>
+							</span>
+						</a>
+						<button class="navbar-toggler menu-btn" type="button" data-toggle="collapse" (click)="openSidebarMenu()">
+							<span class="navbar-toggler-icon"></span>
+						</button>
+						
+		          	</div>
+					
+		      	</div>				
+				
+		  	</div> <!-- row.// -->
+			<div class="row justify-content-end align-items-baseline">
+				<div class="col-lg-10 col-xl-10 col trend-link additional-menu">
+					<div class="collapse navbar-collapse" id="main_nav5" (closeSidebarMenu)="closeSidebar($event)" (openSidebarMenu)="isSidebarMenuOpen" [ngClass]="{'isActive': isSidebarMenuOpen}">
+						<div id="main-menu">
+							<a (click)="closeSidebarMenu()" class="close-btn float-right">
+							   <i class="icon-svg icon-xs w-h-20 close-icon"></i>
+							</a>
+							<div class="btn-wrapper d-block d-md-none">
+								<a class="widget-header btn btn-sm btn-outline-primary btn-login" (click)="loginPopup()" *ngIf="!isAuthenticated">
+									Login
+									<!-- <span class="icon">
+										<i class="icon-xs user-icon"></i>
+									</span>	 -->
+								</a>
+								<a class="widget-header btn btn-sm btn-primary btn-register mr-0" [routerLink]="['/register']" *ngIf="!isAuthenticated">
+									Register	
+								</a>
+								<a class="widget-header" routerLink="account/dashboard" *ngIf="isAuthenticated">
+									<span class="icon">
+										<i class="icon-xs user-icon"></i>
+									</span>
+								</a>
+							</div>
+							<ul class="nav list-unstyled">
+								<li><a [routerLink]="['/category/womens-clothing']" title="Women's clothing">Women's clothing</a></li>
+								<li><a [routerLink]="['/category/mens-clothings']" title="Men's clothing">Men's clothing</a></li>
+								<li><a [routerLink]="['/category/home-appliance']" title="Home Appliance">Home Appliance</a></li>
+								<li><a [routerLink]="['/category/home-decor-furniture']" title="Furniture">Furniture</a></li>
+								<li><a [routerLink]="['/category/toys']" title="Toys">Toys</a></li>
+							</ul>
+							
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-2 col-xl-2 col trend-link pincode-area">
+					<a class="d-flex delivery-location align-items-center justify-content-start px-0" (click)="openPincodeModal()">
+						
+						<div class="icon-map ml-1">
+							<i class="fa fa-map-marker-alt"></i>
+						</div>						
+						<div class="d-flex flex-column flex-grow-1" *ngIf="!emptyPincode">
+							<span class="flex-fill" id="displayPincode">Deliver to <strong>{{deliveryPincode}}</strong></span>							
+						</div>
+						<div class="d-flex flex-column flex-grow-1" *ngIf="emptyPincode">
+							<span class="flex-fill" id="displayPincode">Update your location</span>							
+						</div>			
+					</a>
+				</div>
+			</div>
+		</div> <!-- container.// -->
+	</section> <!-- header-main .// -->
+	<section class="header-bottom d-none">
+		<div class="container">
+			<div class="row align-items-center justify-content-center">
+				<!-- <div class="all-category-menu">
+					<app-collapse-cat-menu [show]="isCategoryOpen"></app-collapse-cat-menu>
+				</div> -->
+				<!-- <div class="d-block d-md-none search-mobile">
+					<app-search [selectedCategory]="selectedCategory"></app-search>
+				</div> -->
+				<div class="main-menu"> 
+					<nav class="navbar navbar-main navbar-light navbar-expand-lg px-0 py-0">
+						<!-- <div class="container"> -->
+							<!-- <button class="navbar-toggler" type="button" data-toggle="collapse" (click)="openSidebarMenu()">
+								<span class="navbar-toggler-icon"></span>
+							</button> -->
+							<div class="collapse navbar-collapse" id="main_nav5" (closeSidebarMenu)="closeSidebar($event)" (openSidebarMenu)="isSidebarMenuOpen" [ngClass]="{'isActive': isSidebarMenuOpen}">
+								<!-- <div class="xs-overlay bg-dark"></div> -->								
+						        <div id="main-menu">
+						        	<a (click)="closeSidebarMenu()" class="close-btn float-right">
+							           <i class="icon-svg icon-xs w-h-20 close-icon"></i>
+							        </a>
+						        	<ul class="navbar-nav">			
+										<li class="nav-item">
+											<a class="nav-link" href="https://vendor.tradesala.com" target="_blank">Sell on Tradesala</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link" href="javascript:void(0);">Post your requirements</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link" href="javascript:void(0);">Flash Deals</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link" href="javascript:void(0);">Your Recomendation</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link" href="javascript:void(0);">Your History</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link" href="javascript:void(0);">Deals</a>
+										</li>
+									
+									</ul>
+						        </div>
+								
+							</div> <!-- collapse .// -->
+						<!-- </div> --> <!-- container .// -->
+					</nav> <!-- navbar main end.// -->
+				</div>
+
+			</div>
+		</div>
+	</section>
+	
+	
+</header>

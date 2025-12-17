@@ -1,0 +1,117 @@
+.home-slider{
+    background: #fff;
+	padding-top:25px;
+}
+app-home-slider {
+	owl-carousel-o{
+		::ng-deep{
+			.owl-carousel{
+				.owl-item {
+					opacity: 0;
+				}
+				.owl-item.active {
+					opacity: 1;
+				}
+			}
+		}	
+	}
+	@media screen and (max-width:991px) {
+		padding-top: 15px;
+	}
+}
+
+.product-block, .promo-banner-block, .category-block {
+    background: #fff;
+}
+
+// :host ::ng-deep{
+// 	.product-block, .category-block{
+// 		.owl-carousel{
+// 			.owl-nav {
+// 				[class*=owl-]{
+// 					background: transparent;
+// 					color: #6c757d;
+// 					border:1px solid #D6D6D6;
+// 					:hover{
+// 						color: #c92027;
+// 					}
+// 				} 
+// 			}
+// 		}
+// 	}
+// }
+.quote-section{
+    background: #f9f9f9;
+    .container > .row > div {
+	    border: 1px solid #757373;
+    	border-radius: 10px;
+    	&:first-child {
+		    border-right: 1px solid transparent;
+		    background: #ddd;
+		    border-top-right-radius: 0;
+    		border-bottom-right-radius: 0;
+		}
+		&:last-child {
+		    border-left: 1px solid transparent;
+	        border-top-left-radius: 0;
+    		border-bottom-left-radius: 0;
+		}
+    }
+    .title{background:#ececec}
+	.form-row{
+		textarea{height:100px;}
+	}
+}
+.product-tabs {
+    position: relative;
+    width: 100%;
+}
+.promo-banner-block{
+	.banner-effect{
+		img{
+			border-radius:1.25rem;
+			box-shadow: 0 0 10px rgb(0 0 0 / 20%)
+		}
+	}
+}
+.firstbanner {
+    padding-right: 10px;
+}
+.cbanner {
+    padding: 0 5px;
+    .banner-effect:first-child {
+	    margin-bottom: 20px;
+	}
+}
+.secondbanner {
+    padding-left: 10px;
+}
+
+@media(min-width: 992px){
+	.banner-effect {
+		position: relative;
+        overflow: hidden;
+		img{
+			max-width:100%;
+		    width: 100%;
+			height:auto;
+		}
+		.ads-banner{height:150px;}
+		.full-banner{
+	    	height: 210px;
+	    }
+        
+    }
+}
+.service-box .icontext{
+	border-left:4px solid #c92027;
+	padding: 0.5rem 0.8rem;
+	@media (max-width: 480px) {
+		h4{ font-size: 16px; }
+		p{ font-size: 14px; }
+	}
+}
+
+.icon-india:before {
+	 background-image: url('/assets/images/icons/png/50/india-map.png');
+}

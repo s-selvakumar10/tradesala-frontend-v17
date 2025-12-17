@@ -1,0 +1,188 @@
+<div class="back-to-top">
+  <a
+    (click)="backToTop()"
+    id="back-to-top"
+    [ngClass]="{ 'show-back-to-top': windowScrolled }"
+  >
+    <i class="fa fa-angle-double-up"></i>
+  </a>
+</div>
+
+<footer class="section-footer">
+  <section class="footer-top padding-y">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 m-auto">
+          <div class="row">
+            <aside class="col-md-3 col mb-3">
+              <h5 class="title">Know About Us</h5>
+              <ul class="list-unstyled">
+                <li *ngFor="let footer_page_link of footer_page_links">
+                  <a
+                    *ngIf="footer_page_link.link_url"
+                    [attr.target]="[
+                      footer_page_link.target == '_blank' ? '_blank' : null
+                    ]"
+                    [routerLink]="[footer_page_link.link_url]"
+                    >{{ footer_page_link.name }}</a
+                  >
+                  <a
+                    *ngIf="footer_page_link.href_url"
+                    [attr.target]="[
+                      footer_page_link.target == '_blank' ? '_blank' : null
+                    ]"
+                    href="{{ footer_page_link.href_url }}"
+                    >{{ footer_page_link.name }}</a
+                  >
+                </li>
+              </ul>
+            </aside>
+            <aside class="col-md-3 col mb-3">
+              <h5 class="title">Connect With Us</h5>
+              <ul *ngIf="social_links" class="list-unstyled">
+                <li *ngFor="let social_link of social_links">
+                  <a href="{{ social_link.link_url }}" target="_blank">{{
+                    social_link.name
+                  }}</a>
+                </li>
+              </ul>
+            </aside>
+            <aside class="col-md-3 col mb-3">
+              <h5 class="title">Join With Us</h5>
+              <ul class="list-unstyled">
+                <li>
+                  <a href="https://vendor.tradesala.com" target="_blank"
+                    >Sell with Us</a
+                  >
+                </li>
+                <li><a href="javascript:void(0);">Partner with Us</a></li>
+                <li><a href="javascript:void(0);">Affiliate Program</a></li>
+                <li><a href="javascript:void(0);">Advertise with Us</a></li>
+              </ul>
+            </aside>
+            <aside class="col-md-3 col mb-3">
+              <h5 class="title">My Account</h5>
+              <ul class="list-unstyled">
+                <li><a (click)="showDashboard()"> My Account </a></li>
+                <li><a (click)="showOrderHistory()"> Order History </a></li>
+                <li><a (click)="showWishlist()"> Wish List </a></li>
+                <li><a href="javascript:void(0);"> Newsletter </a></li>
+              </ul>
+            </aside>
+            <aside class="col-md-3 col mb-3 customer_care">
+              <h5 class="title">Help Desk</h5>
+              <div class="d-flex mb-2">
+                <span class="icon"
+                  ><i class="icon-xs ftr_title_icon ftr_help_desk"></i
+                ></span>
+                <div class="content">
+                  <h6 class="m-0">Call us</h6>
+                  <p>0-8045691533</p>
+                </div>
+              </div>
+              <h6>Branch Address:</h6>
+              <address>
+                Tradesala Technologies Pvt Ltd, <br />
+                Lakshmanaswamy salai, KK Nagar, <br />
+                Chennai - 600078.<br />
+                CIN : U74999TN2020PTC137626
+              </address>
+              <h6>Reach out to us through email</h6>
+              <p>
+                <a href="mailto:customercare@tradesala.com"
+                  >customercare&#64;tradesala.com</a
+                >
+              </p>
+            </aside>
+          </div>
+        </div>
+      </div>
+      <!-- row.// -->
+    </div>
+    <!-- //container -->
+  </section>
+  <!-- footer-top.// -->
+  <section class="play_app_store_shortinfo py-3">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-12 text-center m-auto">
+          <a href="https://play.google.com/store/apps/details?id=com.tradesala.android&hl=en_IN" target="_blank"><img src="assets/images/get-google-play.png" class="img-fluid" /></a>
+          <a href="https://apps.apple.com/us/app/tradesala-shop-indian-brands/id6470025097" target="_blank"><img src="assets/images/app-store.png" class="img-fluid" /></a>
+        </div>
+
+        <div class="col-md-12 col-sm-12 col-12 m-auto">
+          <div class="card card-border mb-3">
+            <div class="card-header text-center">
+              <a (click)="toggle(ftrknowmore)">
+                <i class="icon-control fa fa-chevron-down"></i>
+                <h6 class="title">Know more about us</h6>
+              </a>
+            </div>
+            <div class="ftr-know-more collapse" #ftrknowmore>
+              <div class="card-body" *ngIf="footerContent?.content !=null">
+                <div [innerHTML]="footerContent.content"></div>
+              </div>
+			  <div class="card-body" *ngIf="isBrowser">
+				
+				<ng-container *ngFor="let category of categories">
+					<div class="category-container">
+						<!-- <h3>{{category.name}}</h3> -->
+						<ng-container *ngFor="let sub_cat of category.children">
+							<div class="category-row">
+								<div class="category-title">
+									<h4>{{sub_cat.name}} </h4>
+								</div>
+								<ul class="category-menu">
+									<li *ngFor="let sub_child of sub_cat.children; let c_last=last;">
+										<a [routerLink]="['/category',sub_child.slug]"> {{sub_child.name}}</a>
+										<span *ngIf="!c_last" class="seperator">|</span>
+									</li>
+								</ul>
+							</div>
+						</ng-container>
+						
+					</div>
+				</ng-container>
+				
+				
+			  </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- <section class="newsletter py-3">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6 col-sm-6 col-12 m-auto">
+
+					<form action="#" class="subscribe">
+						<img src="assets/images/svg/footer/newsletter.svg" class="newsletter-bg" alt="">
+						<div class="input-group w-md-75 m-auto">						
+							<input type="text" class="form-control border-0 shadow" placeholder="Subscribe to our newsletter...">
+							<button class="btn btn-sm btn-newsletter py-0 font-24" type="submit">
+								<span class="icon icon-img-xs">								
+									<img src="assets/images/icons/png/50/sent.png" class="img-xs arrow-icon"/>
+								</span>
+							</button>						
+						</div>						
+					</form>
+					<p class="text-center my-2 font-12">Stay in touch with us.</p>
+				</div>
+			</div>
+		</div>
+	</section> -->
+  <section class="footer-copyright py-2">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6 col-sm-6 col-12 m-auto text-center">
+          <p class="py-md-2">
+            Copyright © {{ copyright() }} Tradesala.com. All Rights Reserved.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</footer>

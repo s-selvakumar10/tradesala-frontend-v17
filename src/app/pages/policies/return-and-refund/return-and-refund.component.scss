@@ -1,0 +1,37 @@
+.privacy-content{
+	background: #fbfbfb;
+}
+.privacy-content h3{
+	font-weight:600;
+    font-size: 18px;
+}
+.privacy-content h4{
+	font-weight:600;
+    font-size: 16px;
+}
+.privacy-content h5{
+	font-weight:600;
+    font-size: 15px;
+}
+.privacy-content p{
+	text-align:justify;
+}
+.list-dots{
+	li{
+		margin-bottom: 10px;
+		list-style:inside;
+	}
+}
+.privacy-content {
+    ol {
+        padding-left: 15px;
+        li {
+            list-style-type: revert;
+        }
+    } 
+}
+.privacy-content { 
+    a {
+        color: #ce0001;
+    }
+}    

@@ -1,0 +1,65 @@
+<ng-container *ngIf="!contentLoaded">
+	<article class="col-lg"> 
+		<div class="bg-loading" style="height:150px;"></div> 
+		<div class="bg-loading" style="width: 150px; height:20px;"></div> 
+		<div class="bg-loading" style="width: 120px; height:20px;"></div> 
+	</article>
+</ng-container>
+<ng-container *ngIf="contentLoaded">
+	<div class="product-layout product-grid col-12">
+		<div class="product-thumb transition">
+			<div class="image p-0">
+				<a [routerLink]="['/', product.slug]" target="_blank">
+					<img lazyLoad *ngIf="product.media.front_image" [src]="product.media.front_image" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive">				
+				</a>
+				
+				<div class="section-sale" *ngIf="discount > 0"><span class="sale-text">{{ discountPercent }} Off</span></div>
+				
+				<div class="button-group">
+					<!-- <button type="button" class="addcart btn-button" placement="left-top" ngbTooltip="Add to Cart" data-original-title="Add to Cart" (click)="addTocart(product)"><i class="fa fa-shopping-basket"></i></button> -->
+					<!-- <button type="button" data-toggle="tooltip" class="btn btn-default quickview-button" title=""  data-original-title="Quickview"></button> -->
+					<!-- 
+					<button type="button" class="addcart" title="Add to Cart" >Add to Cart</button> -->
+					<!-- <button type="button" class="wishlist btn-button" placement="left-top" data-toggle="tooltip" ngbTooltip="Add to Wish List" data-original-title="Add to Wish List" (click)="addTowishlist(product)"><i class="fa fa-heart"></i></button> -->
+					<button type="button" class="wishlist btn-button" placement="left-top" data-toggle="tooltip" ngbTooltip="Add to Wish List" data-original-title="Add to Wish List" *ngIf="!isWishlistPage" (click)="addTowishlist(product)"><i class="fa fa-heart" [class.wishlistActive]="product?.wishlist?.has_wishlist == true"></i></button>
+					<button type="button" class="wishlist btn-button" placement="left-top" data-toggle="tooltip" ngbTooltip="Remove from Wish List" data-original-title="Remove from Wish List" *ngIf="isWishlistPage" (click)="removeFromWishList(product.wishlist)"><i class="fa fa-heart" [class.wishlistActive]="product?.wishlist?.has_wishlist == true"></i></button>
+					
+				</div>
+			</div>
+			<div class="thumb-description">
+				<div class="caption">
+					<h4 class="product-title text-left mb-1"><a [routerLink]="['/', product.slug]" target="_blank">{{ product.name | truncate : 25 : false : '...'}}</a></h4>
+					<div class="brand-title text-left mb-1">
+						<a *ngIf="product.brand" [routerLink]="['/brand', product.brand.slug]" target="_blank">{{ product.brand.name }}</a>
+					</div>
+					<div class="price text-left mb-1">
+						<span *ngIf="product.special_price" class="price-new price-fnt">{{ product.special_price | currency:'INR':'symbol':'1.0'}}</span>
+						<span class="price-old price-fnt">{{ product.price | currency:'INR':'symbol':'1.0'}}</span>
+					</div> 
+					<ul *ngIf="product.rating_summary.average_rating" class="rating-stars">
+						<li [style.width]="ratingPercentCalc(product.rating_summary.average_rating, product.rating_summary.review_count) + '%'" class="stars-active"> 
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+						</li>
+						<li>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i> 
+						</li>
+					</ul>
+				</div>
+				<!-- <div class="btn-wrapper">
+					<a routerLink="{{product.slug}}">{{ product.name | truncate : 35 : false : '...'}}</a>		
+					<button type="button" class="btn btn-sm btn-outline-primary" (click)="addTocart(product)" title="Add to Cart" >Add to Cart</button>
+				</div> -->
+			</div>
+		</div>
+	</div>
+</ng-container>
+
+

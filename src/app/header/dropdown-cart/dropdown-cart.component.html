@@ -1,0 +1,124 @@
+<div id="cart" ngbDropdown #open="ngbDropdown" placement="bottom-end" [autoClose]="false"  (mouseenter)="$event.stopPropagation(); open.open();" (mouseleave)="$event.stopPropagation(); hideDrop($event, open);">
+	<a ngbDropdownToggle id="cartDropdown" data-toggle="dropdown" class="cart-drop">		
+		<span class="icon">
+			<i class="icon-xs cart-icon"></i>
+		</span>
+		<span class="badge notify" *ngIf="totalCartItem > 0">{{totalCartItem}}</span>
+	</a>
+	<ul ngbDropdownMenu aria-labelledby="cartDropdown" class="dropdown-menu dropdown-menu-right cart-menu" (mouseleave)="$event.stopPropagation(); open.close();">
+		<ngContainer *ngIf="cartItems.length > 0">
+			<li class="scroll-content">
+				<ng-scrollbar style="max-height: 400px;" class="scroll-container">
+						<table class="table">
+			                <tbody>
+			                	<tr *ngFor="let product of cartItems">
+									<td class="p-0">
+										<table class="mb-0">
+											<tr>
+												<td class="text-center size-img-cart"> 
+													<a routerLink="{{ product.product.product_url }}">
+														<img [src]="product.product.media.front_image" class="img-fluid" alt="">
+													</a> 
+												</td>
+												<td class="text-left">
+													<div>
+														<a routerLink="{{ product.product.product_url }}">{{product.product.name}}</a>
+													</div>
+													<div>
+														<p *ngIf="product.customVariants" [innerHTML]="product.customVariants" class="variant mb-0"></p>
+													</div>
+													<div class="mt-1 d-flex flex-row justify-content-between align-items-center">									
+														<ng-container *ngIf="product.product.discount?.length != 0">
+															<ng-container *ngIf="!product.product?.discount?.free_shipping">
+																<span class="offer" *ngIf="product.coupon_type == 'product_based' && (!product.product?.discount?.has_percentage  && product.product.discount.amount !=0)">													
+																	Extra {{ product.product?.discount?.amount | currency:'INR':'symbol':'1.2-2' }} OFF													
+																</span>
+																<span class="offer" *ngIf="product.coupon_type == 'product_based' && (product.product?.discount?.has_percentage && product.product.discount.amount !=0)">													
+																	{{ product.product?.discount?.percentage }}% OFF													
+																</span>
+															</ng-container>
+															
+															<span class="offer" *ngIf="product.coupon_type == 'qty_based' && product.product?.discount?.has_percentage">													
+																{{ product.product?.discount?.percentage }}% OFF													
+															</span>
+															<span class="offer" *ngIf="product.coupon_type == 'combo_based' && product.product?.discount?.percentage > 0">													
+																{{ product.product?.discount?.percentage }}% OFF													
+															</span>
+															<span class="offer" *ngIf="product.coupon_type == 'referal_code' && product.product?.discount?.has_percentage">													
+																{{ product.product?.discount?.percentage }}% OFF													
+															</span>
+															<span class="offer" *ngIf="product.coupon_type == 'referal_code' && !product.product?.discount?.has_percentage">													
+																Extra {{ product.product?.discount?.amount | currency:'INR':'symbol':'1.2-2' }} OFF													
+															</span>	
+																									
+														</ng-container>
+														
+													</div> 
+												</td>
+												
+												<td class="text-right amount price-fnt">
+													<span class="base-price">
+														{{product.qty}} x <span class="price-fnt">{{ product.price | currency:'INR':'symbol':'1.2-2'}}</span>
+													</span>
+													{{ product.amount | currency:'INR':'symbol':'1.2-2'}}
+												</td>
+												<td class="text-center">
+													<span class="icon"><i class="icon icon-svg icon-xs trash" (click)="deleteCartItem(product.product.slug, product.cart_id, product.cart_session_id, product.sellerId)"></i></span>
+												</td>
+											</tr>
+											<tr *ngIf="product.shipping_charges > 0 || product.discount_amount > 0">
+												<td></td>
+												<td colspan="3" class="pt-0">
+													<div class="mt-1 d-flex flex-row align-items-center me-2">
+														<span class="mr-2" *ngIf="product.discount_amount > 0 ">Discount: {{product.discount_amount | currency:'INR':'symbol':'1.2-2'}}</span>	<span *ngIf="product.shipping_charges > 0 ">Shipping cost : {{product.shipping_charges | currency:'INR':'symbol':'1.2-2'}}</span>
+													</div>
+												</td>
+											</tr>
+										</table>
+									</td>
+			          				
+			        			</tr>
+			                
+			              	</tbody>
+							
+			          	</table>
+	          	</ng-scrollbar>
+			</li>
+			<li *ngIf="cartSummary">
+		      	<div>
+			        <table class="table table-bordered total-table">
+	                    <tbody>
+							<tr *ngIf="cartSummary.shipping.has_shipping_charges">
+								<td class="text-right total-text amount">Shipping Charge </td>
+								<td class="text-right total-amt amount price-fnt">{{cartSummary.shipping.shipping_cost | currency:'INR':'symbol-narrow':'1.2-2'}}</td>
+							</tr>
+							<tr *ngIf="cartSummary.discounts > 0">
+								<td class="text-right total-text amount">Discount(-) </td>
+								<td class="text-right total-amt amount price-fnt">{{cartSummary.discounts | currency:'INR':'symbol-narrow':'1.2-2'}}</td>
+							</tr>	                    	
+		                    <tr>
+			            		<td class="text-right total-text amount">Total</td>
+								<td class="text-right total-amt amount price-fnt">{{cartSummary.grand_total | currency:'INR':'symbol-narrow':'1.2-2'}}</td>
+			          		</tr>
+		                  </tbody>
+	              	</table>
+			        
+			      	<div class="buttons btn-wraper justify-content-center mb-0">
+                        <a [routerLink]="['/checkout/cart']" class="btn btn-sm btn-primary wc-forward mr-2">View cart</a>
+                        <a [routerLink]="['/checkout/checkoutDetails']" class="btn btn-sm btn-primary checkout wc-forward ml-2">Checkout</a>
+					</div>
+		      	</div>
+		    </li>
+		</ngContainer>
+		<ngContainer *ngIf="cartItems.length == 0">
+			<li>
+				<p class="cart-empty-message empty text-center">No products in the cart.</p>
+            	<p class="empty-cart-icon icon">
+	                <i class="icon-shopping-cart"></i>
+	            </p>
+			</li>
+		</ngContainer>
+	</ul>
+	
+	
+</div>

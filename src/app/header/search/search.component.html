@@ -1,0 +1,49 @@
+<form class="search" >   
+    <div class="input-group search-input-border">        
+        
+        <span class="input-group-append">
+            <button class="btn btn-primary search-btn" type="button" (click)="onSubmit()">
+                <span class="icon-xs">
+                    <i class="fa fa-search"></i>
+                </span>
+               
+            </button>
+        </span>
+        <input type="hidden" name="search_param" value="all" id="search_param">         
+        <input id="searchInput" type="text" #searchBarInput class="form-control" [(ngModel)]="search_value" [ngModelOptions]="{standalone: true}" [value]="search_value" (keydown.enter)='onSubmit()' (focusout)="closeSearchResultWithDelay()" placeholder="Search..."  *ngIf="!isMobile"/>
+        <input id="searchInput" type="text" #searchBarInput class="form-control" [(ngModel)]="search_value" [ngModelOptions]="{standalone: true}" [value]="search_value" placeholder="Search..." *ngIf="isMobile"/>
+        
+    </div>
+</form>
+<div id="search-result" *ngIf="searchResultState">
+    <div class="card">
+        <div class="card-body">
+            <ng-container *ngIf="isMobile"> 
+                <ng-scrollbar style="max-height: 400px;" class="scroll-container">
+                    <div class="row mb-2 align-items-center" *ngFor="let result of searchResults">
+                        <div class="col-2 col-sm-1 icon-img-xs h-50 pr-0">
+                            <img [src]="result.image" class="img-fluid img-xs" alt="result.product_name"/>
+                        </div>
+                        <div class="col-10 col-sm-9 pr-0">
+                            <a routerLink="{{result.product_slug}}" (click)="closeSearchResult()" title="result.product_name">{{ result.product_name }} </a>
+                        </div>
+                    </div>
+                </ng-scrollbar>
+            </ng-container>
+            <ng-container *ngIf="!isMobile">
+                <div class="row mb-2 align-items-center" *ngFor="let result of searchResults">
+                    <div class="col-2 col-sm-1 icon-img-xs h-50 pr-0">
+                        <img [src]="result.image" class="img-fluid img-xs" alt="result.product_name"/>
+                    </div>
+                    <div class="col-10 col-sm-9 pr-0">
+                        <a routerLink="{{result.product_slug}}" (click)="closeSearchResult()" title="result.product_name">{{ result.product_name }} </a>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+        <div class="card-body" *ngIf="!searchResults">
+            <p>No search result found.</p>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,12 @@
+<nav>
+	<ul class="list-group">
+	  <li class="list-group-item active account"><a [routerLink]="['/account/dashboard']" class="active">Account Setting</a></li>
+	  <li class="list-group-item order-history"><a [routerLink]="['/account/orders/history']">Order History</a></li>
+	  <li class="list-group-item transaction"><a [routerLink]="['/account/payment/history']" >Transactions History</a></li>
+	  <!-- <li class="list-group-item payment-setting"><a [routerLink]="['/account/payment/setting']" >Payment Setting</a></li> -->
+	  <li class="list-group-item refunds"><a [routerLink]="['/account/orders/refund-list']" >Return Refunds</a></li>
+	  <li class="list-group-item recieved-order"><a [routerLink]="['/affiliate/referal']" >Referral</a></li>
+	  <li class="list-group-item whislist"><a [routerLink]="['/account/whislist']" >Whislist</a></li>
+	  <li class="list-group-item review"><a [routerLink]="['/account/review/list']" >Review</a></li>
+	</ul>
+</nav>

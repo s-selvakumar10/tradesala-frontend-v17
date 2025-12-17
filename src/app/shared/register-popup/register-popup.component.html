@@ -1,0 +1,14 @@
+<div class="modal-header border-0">
+    <div class="d-flex w-100 order-0">
+        <div class="col-12 p-0">
+            <h4 class="modal-title" id="modal-basic-title">Create Your Account</h4>
+            <p class="mb-0">Already have an account? <a (click)="loginPopup()" class="font-weight-bold">Log In</a></p>
+        </div>
+    </div>
+    <button type="button" class="close order-1" aria-label="Close" (click)="dismissModal()">
+    <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body centered">
+    <app-modal-register></app-modal-register>
+</div>

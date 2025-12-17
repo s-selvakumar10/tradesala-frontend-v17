@@ -1,0 +1,35 @@
+.bg-loading {
+	position: static;
+	margin-right: 10px;
+	overflow: hidden;
+	margin-bottom: 10px;
+	border-radius: 5px;
+	-webkit-animation: placeholderSkeleton 2s linear;
+	animation: placeholderSkeleton 2s linear;
+	-webkit-animation-iteration-count: infinite;
+	animation-iteration-count: infinite;
+	background-image: linear-gradient(
+	  to right,
+	  rgba(0, 0, 0, 0.08) 0,
+	  rgba(0, 0, 0, 0.15) 15%,
+	  rgba(0, 0, 0, 0.08) 30%
+	);
+	background-size: 800px 100%;
+	max-width: 30rem;
+  }
+  @-webkit-keyframes placeholderSkeleton {
+	0% {
+	  background-position: -800px 0;
+	}
+	100% {
+	  background-position: 800px 0;
+	}
+  }
+  @keyframes placeholderSkeleton {
+	0% {
+	  background-position: -800px 0;
+	}
+	100% {
+	  background-position: 800px 0;
+	}
+  }

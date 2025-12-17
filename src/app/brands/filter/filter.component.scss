@@ -1,0 +1,77 @@
+::ng-deep{
+	app-filter{
+		background:#fff;
+	}
+	.ngx-slider .ngx-slider-bar-wrapper{
+		height: 26px!important;
+	}
+	.ngx-slider .ngx-slider-pointer{
+		width: 20px!important;
+		height: 20px!important;
+		top: -9px!important;
+		background-color: #c92027!important;
+	}
+	.ngx-slider .ngx-slider-pointer:after{
+		top: 6px!important;
+    	left: 6px!important;
+	}
+	.ngx-slider .ngx-slider-selection{
+		background: #c92027!important;
+	}
+	.ngx-slider .ngx-slider-pointer.ngx-slider-active:after {
+		background-color: #ffffff!important;
+	}
+  }
+.filter-group {
+	margin-bottom: 20px;
+	background:#fff;
+	header {
+		position: relative;
+		padding-top:8px;
+		padding-bottom:8px;
+	    border-top-left-radius: 0.8rem;
+    	border-top-right-radius: 0.8rem;
+		i {
+		    position: absolute;
+		    right: 15px;
+		    margin-top: 5px;
+		}
+		.title{
+			margin-bottom:0;
+			font-size: 15px;
+		}
+	}
+	.filter-content{
+		// background: #fff;
+		// border-bottom-left-radius: 0.8rem;
+    	// border-bottom-right-radius: 0.8rem;
+	    // box-shadow: 0 0 5px rgb(0 0 0 / 5%);
+    	.list-menu{
+    		a{
+    			font-size: 14px;
+			    line-height: 16px;
+			    padding: 5px 0px;
+			    display: inline-block;
+    		}
+    	}
+	}
+	span.btn{padding: 0.175rem 0.45rem;}
+	.search{
+		padding:0px 5px;
+	}
+}
+
+.filter-content .was-validated .custom-control-input:valid ~ .custom-control-label::before, 
+.filter-content .custom-control-input.ng-valid.ng-touched ~ .custom-control-label::before {
+    border-color: #17a2b8;
+}
+.filter-content .custom-control-input:checked ~ .custom-control-label::before,
+.filter-content .was-validated .custom-control-input:valid:checked ~ .custom-control-label::before, 
+.filter-content .custom-control-input.ng-valid.ng-touched:checked ~ .custom-control-label::before {
+    border-color: #17a2b8;
+    background-color: #17a2b8;
+}
+.filter-content .was-validated .custom-control-input:valid:focus ~ .custom-control-label::before, 
+.filter-content .custom-control-input.ng-valid.ng-touched:focus ~ .custom-control-label::before {
+    box-shadow: 0 0 0 0.2rem rgb(23 162 184 / 25%);
+}

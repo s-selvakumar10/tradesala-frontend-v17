@@ -1,0 +1,17 @@
+
+.otp-form {
+	.input-group {
+		i {
+		    position: absolute;
+		    left: 10px;
+		    font-size: 20px !important;
+		    color: #8a8a8a;
+		    z-index: 10;
+		    + input{
+		    	padding-left: 36px;
+		    }
+		}
+	}
+}
+// :host ::ng-deep{
+// }

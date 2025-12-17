@@ -1,0 +1,88 @@
+<div class="category-wrap dropdown d-inline-block">
+	
+	<button type="button" class="btn btn-primary dropdown-toggle collapse-m collapse-btn" #collapseBtn (click)="showCollapse(collapse);"
+	[attr.aria-expanded]="!isCollapsed" aria-controls="collapseCategory" *ngIf="isMobile"> 
+		 Categories
+	</button>
+	<button type="button" class="btn btn-primary dropdown-toggle collapse-btn" #hideDrop
+		(mouseenter)="openDropDown($event);defaultShow($event);" (mouseout)="hideDropDown($event, hideDrop)" *ngIf="!isMobile"> 
+		 Categories
+	</button>
+	<!---->
+	<div id="collapseCategory" (mouseleave)="hideCollapse(collapse);defaultShow($event);" class="collapse" #collapse  >
+		<!-- <perfect-scrollbar 
+		class="scroll-container" 
+		[config]="config" 
+		[scrollIndicators]="true"
+		(psXReachEnd)="onScrollEvent($event, 'psXReachEnd')" 
+  		(psYReachEnd)="onScrollEvent($event, 'psYReachEnd')" 
+		(psXReachStart)="onScrollEvent($event, 'psXReachStart')" 
+		(psYReachStart)="onScrollEvent($event, 'psYReachStart')"> -->
+		<ng-scrollbar>
+			<div class="menu-overlay-container">
+				<ul class="nav" (mouseleave)="defaultShow($event);">
+					<ng-container *ngFor="let category of categories; let i=index">
+						<ng-container *ngIf="category.children.length">
+							<!-- {{i==0 && !isMobile ? 'show' : '' }} -->
+							<li class="dropdown moremenu" [trigger]="'hover'" ngbDropdown #drop="ngbDropdown" (mouseenter)="showDropDown($event, drop, i);"
+							(mouseleave)="closeDropDown($event, drop, i);" [ngClass]="{'additional-menu': i > maxVisibleCategory, 'show':showAllCategory || i===0}">
+								<!-- <div class="thumb_img float-left">
+									<i class="imind-T-Shirt"></i>
+								</div> -->
+								<a class="header-menu" data-toggle="dropdown" ngbDropdownToggle [id]="['categoryDropdown-'+ i]">
+									{{ category.name }} <i class="fa fa-angle-right"></i>
+								</a>
+								<div class="dropdown-menu mega-menu" ngbDropdownMenu [attr.aria-labelledby]="['categoryDropdown-'+ i]" #subDrop>
+									<!-- <perfect-scrollbar
+									style="max-height: 700px;" 
+									class="scroll-container" 
+									[config]="config"
+									[scrollIndicators]="true"
+									(psXReachEnd)="onScrollEvent($event, 'psXReachEnd')" 
+									(psYReachEnd)="onScrollEvent($event, 'psYReachEnd')" 
+									(psXReachStart)="onScrollEvent($event, 'psXReachStart')" 
+									(psYReachStart)="onScrollEvent($event, 'psYReachStart')"
+									> -->
+									<ng-scrollbar>
+										<div class="dropdown-inner scroll-content">
+											<h4><a [routerLink]="['/category', category.slug]" class="submenu-title pl-2">Shop all {{ category.name }}</a></h4>
+											<ul class="list-unstyled sub-child" *ngFor="let child of category.children">
+												<!--3rd level-->
+												<li class="dropdown-submenu">
+													<a [routerLink]="['/category', child.slug]" class="submenu-title"> {{ child.name }} </a>
+													<ul class="list-unstyled grand-child">
+														<li ngbDropdownItem *ngFor="let grandChild of child.children">
+															<a [routerLink]="['/category', grandChild.slug]"> {{ grandChild.name }} </a>
+														</li>
+													</ul>
+												</li>
+												<!--3rd level over-->
+											</ul>
+										</div>
+									</ng-scrollbar>
+									<!-- </perfect-scrollbar>  -->
+								</div>
+							</li>
+						</ng-container>
+
+						<ng-container *ngIf="! category.children.length">
+							<li class="moremenu" [ngClass]="{'additional-menu': i > maxVisibleCategory, 'show':showAllCategory}">
+								<div class="thumb_img float-left">
+									<i class="imind-T-Shirt"></i>
+								</div>
+								<a href="#">{{ category.name }}</a>
+							</li>
+						</ng-container>
+					</ng-container>
+					<!-- <li class="moremenu" (click)="showAllCategoryToggle()">
+						<div class="thumb_img float-left">
+							<i class="la" [ngClass]="(showAllCategory)?'la-minus-circle':'la-plus-circle'"></i>
+						</div>
+						<a href="#">{{ showAllCategory ? 'Less' : 'More' }} Categories</a>
+					</li> -->
+				</ul>
+			</div>
+		</ng-scrollbar>
+		<!-- </perfect-scrollbar> -->
+	</div>
+</div>

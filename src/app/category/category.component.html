@@ -1,0 +1,102 @@
+<section class="section-pagetop bg breadcrumb-wrapper">
+    <div class="container">
+        <div class="row">
+            <app-breadcrumb></app-breadcrumb>
+        </div>
+        
+    </div> <!-- container //  -->
+</section>
+<section class="main-content pt-2 pb-5">
+    <div class="container">
+        <div class="row no-gutters">
+            <aside class="sidebar sidebar-left col-3">
+                <div class="inner-content">
+                    
+                    <div class="mobile-filter" *ngIf="isMobile">
+                        <a (click)="closeFilter()" class="close-btn float-right">
+                            <i class="icon-svg icon-xs w-h-20 close-icon"></i>
+                        </a>
+                        <ng-scrollbar style="max-height: 700px;" class="scroll-container">                        
+                            <app-filter 
+                            (categorySelected)=onCategorySelect($event) 
+                            (filterSelected)=onFilterSelect($event) 
+                            [selected-category-slug]=generalCategorySlug 
+                            [categories]=categories 
+                            [filterAttributes]="filterAttributes" 
+                            [prices]="prices" >
+                            </app-filter>
+                        </ng-scrollbar>
+                    </div>
+                    <div class="filter-div" *ngIf="!isMobile">
+                        <app-filter 
+                        (categorySelected)=onCategorySelect($event) 
+                        (filterSelected)=onFilterSelect($event) 
+                        [selected-category-slug]=generalCategorySlug 
+                        [categories]=categories 
+                        [filterAttributes]="filterAttributes" 
+                        [prices]="prices" >
+                        </app-filter>
+                    </div>
+                </div>
+                
+            </aside>
+            <main *ngIf="selectedCategoryDetail" class="content category-details col-9">
+                <div *ngIf="selectedCategoryDetail.photo" class="category-banner mb-2">
+                    <img [src]="selectedCategoryDetail.photo" class="img-fluid" alt="">
+                </div>                
+                <div class="inner-content card-body">
+                    <div class="row justify-content-between">
+                        <div class="filter-icon">
+                            <a (click)="mobileFilter()">
+                                <img src="assets/images/icons/png/50/slider.png" class="icon-slider"/>
+                            </a>
+                        </div>
+                        <div class="category-title pl-3">
+                            <h1 class="h4">{{ selectedCategoryDetail.name }}</h1>
+                        </div>
+                        <div class="form-inline d-inline-flex float-right sort-filter">
+                            <select #sortFilter (change)='onOptionsSelected(sortFilter.value)' class="mr-2 form-control sort-by">
+                                <option >Sort by</option>
+                                <option value="name_asc">Name (A - Z)</option>
+                                <option value="name_desc">Name (Z - A)</option>
+                                <option value="price_asc">Price (Low > High)</option>
+                                <option value="price_desc">Price (High > Low)</option>
+                            </select>
+                        </div>
+                       
+                    </div>
+                    <div class="row mt-2" *ngIf="selectedCategoryDetail.description">                        
+                        <div class="category-desc px-3 text-justify" [innerHTML]="selectedCategoryDetail.description">
+                        </div>
+                    </div>
+                   
+                    <div class="row">                        
+                        <!-- col.// -->
+                        <div class="col-md-8">
+                            
+                        </div> <!-- col.// -->
+                    </div> <!-- row.// -->
+                   
+                    <div class="row mt-3">
+                        <div class="col-6 col-sm-4 col-md-4 col-lg-3" *ngFor="let product of products | paginate : {
+							itemsPerPage: pageSize,
+							currentPage: page,
+							totalItems: count
+							};">
+                            <app-product-card [product]="product" [contentLoaded]="isLoading"></app-product-card>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="float-right">
+                                 <pagination-controls previousLabel="Prev" nextLabel="Next"
+                                (pageChange)="handlePageChange($event)" responsive="true"></pagination-controls>
+                            </div>                           
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</section>

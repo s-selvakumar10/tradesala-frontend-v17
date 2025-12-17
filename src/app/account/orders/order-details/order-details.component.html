@@ -1,0 +1,321 @@
+<!-- <app-breadcrumb></app-breadcrumb> -->
+<section class="padding-y">
+	<div class="container">
+		<div class="row account-area" *ngIf="order?.order_id">
+			<div class="col-md-12 col-12">
+				<div class="card-border card">
+					<!-- <div class="card-header d-flex justify-content-between">
+						<h4 class="card-title">Order Details</h4>
+						<div class="btn-wraper">
+							<a routerLink="/account/dashboard/" class="btn btn-primary btn-sm mr-2">Back to
+								dashboard</a>
+						</div>
+
+					</div> -->
+					<div class="card-body">
+						<div class="d-flex justify-content-end">
+							<!-- <a [routerLink]="['/account/orders/invoice']"
+								class="btn btn-primary btn-sm mr-2">Invoice</a>
+							<a [routerLink]="['/account/orders/shipment']" class="btn btn-sm btn-primary">Shipment</a> -->
+						</div>
+						<div class="order-info">
+							<h3 class="text-center">Order Summary</h3>
+							
+							<div class="row mt-3">
+								<div class="col-md-4 mb-3">
+									<div class="card h-100">
+										<div class="card-body">
+											<div class="order-info">
+												<h5>Order #: {{order.order_id}}</h5>
+												<p><strong>Date: </strong>{{order.order_date}}</p>
+												<p><strong>Order Total: </strong>{{order.total | currency:'INR':'symbol':'1.2-2'}}</p>
+												
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4 mb-3">
+									<div class="card h-100">
+										<div class="card-body">
+											<div class="payment-method">
+												<h5 class="font-16">Payment Method</h5>
+												<p>{{order.payment_details?.paymentMode}}</p>
+												<!-- <p>Debit Card - Visa</p>
+												<p>Card Ends with ***********4281</p>
+												<p>Payment Successful</p>
+												<p>Transaction ID: #00001</p> -->
+											</div>
+											<div class="shipping-method">
+												<h5 class="font-16">Shipping Method</h5>
+												<p>Free Shipping</p>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4 mb-3">
+									<div class="card h-100">
+										<div class="card-body">
+											<h3 class="font-16">Action</h3>
+											<div class="buttons">
+												<!-- <a [routerLink]="['/account/orders/refund-view/'+order.id]"
+													class="btn btn-sm btn-primary mr-2 text-left" *ngIf="order.has_return">Return Order</a>
+													<br /> -->
+													<a (click)="printAllInvoice(order.id, order.order_id)"  class="btn btn-sm btn-primary mr-2 text-left"><i class="imind-Printer mr-2"></i> Print all</a>
+													<a (click)="backOrder($event)" class="btn btn-sm btn-primary text-left"> Back to orders</a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-6 mb-3">
+									<div class="card h-100">
+										<div class="card-body">
+											<div class="shipping-address address">
+												<h5>Shipping Details</h5>
+												<p class="info name"><strong>Name: {{order.shipping_address?.name}}</strong></p>
+												<p class="info"><strong>Email: </strong>{{order.customer_details?.email}}</p>
+												<p class="info"><strong>Mobile: </strong>{{order.shipping_address?.mobile}}</p>
+												<p class="info"><strong>Address: </strong>{{order.shipping_address?.line1}}</p>
+												<p class="info"><strong>City: </strong>{{order.shipping_address?.city}}</p>
+												<p class="info"><strong>State:</strong> {{order.shipping_address?.state}}</p>
+												<p class="info"><strong>Country:</strong> {{order.shipping_address?.country}}</p>
+												<p class="info"><strong>Pincode:</strong> {{order.shipping_address?.pincode}}</p>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6 mb-3">
+									<div class="card h-100">
+										<div class="card-body">
+											<div class="billing-address address">
+												<h5>Billing Details</h5>
+												<p class="info name"><strong>Name: {{order.billing_address?.name}}</strong></p>
+												<p class="info"><strong>Email:</strong> {{order.customer_details?.email}}</p>
+												<p class="info"><strong>Mobile:</strong> {{order.billing_address?.mobile}}</p>
+												<p class="info"><strong>Address:</strong> {{order.billing_address?.line1}}</p>
+												<p class="info"><strong>City:</strong> {{order.billing_address?.city}}</p>
+												<p class="info"><strong>State:</strong> {{order.billing_address?.state}}</p>
+												<p class="info"><strong>Country:</strong> {{order.billing_address?.country}}</p>
+												<p class="info"><strong>Pincode:</strong> {{order.billing_address?.pincode}}</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="item-info mt-4">
+							<h3 class="text-center">Product Information</h3>
+							
+							<div *ngFor="let eachProd of order.products;">
+								
+								
+								<div class="order-status">
+									<h5 class="text-center mt-3 mb-2">Order Status</h5>
+									
+									<!-- <ul id="progressbar">
+										<li [class.active]="eachProd.statusVal>=1">Order Placed</li>
+										<li [class.active]="eachProd.statusVal>=1" *ngIf="eachProd.statusVal>=1">{{ eachProd.status }}</li>
+										<li [class.active]="eachProd.statusVal>=2" *ngIf="eachProd.statusVal>=2">{{ eachProd.status }}</li>
+										<li [class.active]="eachProd.statusVal>=3">Processed</li>
+										<li [class.active]="eachProd.statusVal>=4">Ready To Delivery</li>
+										<li [class.active]="eachProd.statusVal>=5">In Transit</li>
+										<li [class.active]="eachProd.statusVal>=6">Pickup</li>
+										<li [class.active]="eachProd.statusVal>=7">Delivered</li>
+									</ul> -->
+									<ul id="progressbar">
+										<!-- <li class="active">Order Placed</li> -->
+										<ng-container *ngFor="let eachStatus of eachProd.order_status; let i=index;">
+											
+											<li [class.active]="eachProd.statusVal>=eachStatus.id" *ngIf="eachStatus.id != 8"> {{ eachStatus.name }}</li>
+										</ng-container>
+										<ng-container *ngIf="eachProd.return_status?.length">
+											<li *ngFor="let eachStatus of eachProd.return_status" [class.active]="eachProd.return_val>=eachStatus.id"> {{ eachStatus.display_name }}</li>
+										</ng-container>
+									</ul>
+									<!-- <ul id="progressbar" *ngIf="return_status.length && eachProd.return_status?.length">
+										<li *ngFor="let eachStatus of eachProd.return_status" [class.active]="eachProd.return_val>=eachStatus.id"> {{ eachStatus.display_name }}</li>
+									</ul> -->
+								</div>
+								<div class="row">
+									<div class="col-md-3 mb-3">
+										<div class="card">
+											<div class="card-body">
+												<p class="mb-1"><strong>Sold by </strong><br>{{eachProd.sold_by}}</p>
+												<p class="mb-1"><strong>GST Number </strong><br>{{eachProd.gst_no}}</p>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-3 mb-3">
+										<div class="card">
+											<div class="card-body">
+												<p class="mb-1"><strong>Invoice Number </strong><br>{{eachProd.invoice_no}}</p>
+												<p class="mb-1"><strong>Invoice Date </strong><br>{{eachProd.invoice_date}}</p>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-3 mb-3" *ngIf="eachProd.shipment_details">
+										<div class="card">
+											<div class="card-body">
+												<p class="mb-1"><strong>Shipment Id </strong><br>{{eachProd.shipment_details.shipment_id}}</p>
+												<p class="mb-1"><strong>Expected Delivery Date </strong><br>{{eachProd.shipment_details.expected_delivery_date}}</p>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-3 mb-3">										
+										<div class="card">
+											<div class="card-body">
+												<ng-container *ngIf="eachProd.shipment_details">
+													<ng-container *ngIf="eachProd.shipment_details.shipment_type === '1' ">
+														<p class="mb-1"><strong>Tracking Id<br> </strong>{{eachProd.shipment_details.tracking_id}}</p>
+														<p class="mb-1"><strong>Courier<br> </strong>{{eachProd.shipment_details.courier_partner}}</p>
+													</ng-container>
+												</ng-container>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-12 text-right">
+										<div class="btn-wrapper">
+											<a 
+											class="btn btn-sm btn-primary" *ngIf="eachProd.shipment_details && eachProd.shipment_details.shipment_type === '0' " [href]="eachProd.shipment_details.track_order_url" [target]="_blank">Track Order</a>
+											<a 
+											class="btn btn-sm btn-primary" *ngIf="eachProd.has_return" (click)="returnOrder(order.id, eachProd.invoice_no, order.order_id )">Return Order</a>
+											<a download  class="btn btn-sm btn-primary print-btn" (click)= "getPdf(order.id, eachProd.seller_id, eachProd.invoice_no)"><i class="imind-Printer mr-2"></i>Print Invoice</a>
+											<!-- <a href="{{eachProd.print_url}}" download class="btn btn-sm btn-primary print-btn"><i class="imind-Printer"></i>Print Invoice</a> -->
+											<button type="button" class="btn btn-sm btn-primary ml-3" *ngIf="eachProd.has_cancel == true" (click)="openSm(order.id, eachProd.seller_id,content)">Cancel Order</button>
+										</div>
+									</div>
+								</div>
+								
+								<div class="table-responsive">
+									<table class="table table-stripped table-bordered">
+										<thead>
+											<tr class="bg-dark text-white">
+												<th scope="col">S.No</th>
+												<th scope="col" width="30%">Product Description</th>
+												<th scope="col">Price</th>
+												<th scope="col">Qty</th>
+												<th scope="col">Net Price</th>
+												<th scope="col">Tax Type</th>
+												<th scope="col">Tax Amount</th>
+												<th scope="col">Shipping Charges</th>
+												<th scope="col">Total Amount</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr *ngFor="let product of eachProd.order_items;let i = index">
+												<td>{{product.sl_no}}</td>
+												<td>{{product.product_name}}
+													<br>
+													<strong>HSN Code : </strong>{{product.hsn_code}}
+													<br>
+													<strong>TSID : </strong>{{product.tsid}}
+												</td>
+												<td>{{product.product_price | currency:'INR':'symbol':'1.2-2'}}</td>
+												<td>{{product.order_qty}}</td>
+												<td>{{product.net_price | currency:'INR':'symbol':'1.2-2'}}</td>
+												<td>GST {{product.tax_rate}}%</td>
+												<td>{{product.tax_amount | currency:'INR':'symbol':'1.2-2'}}</td>
+												<td>{{product.shipping_charges | currency:'INR':'symbol':'1.2-2'}}</td>
+												<td>{{product.total_amount | currency:'INR':'symbol':'1.2-2'}}</td>
+											</tr>
+										</tbody>
+										<tfoot class="borderless">
+											<!-- <tr>
+												<td colspan=8 class="border-bottom-0 text-right"><strong>Subtotal</strong></td>
+												<td><strong>{{eachProd.sub_total| currency:'INR':'symbol':'1.2-2'}}</strong>
+												</td>
+											</tr> -->
+											<!-- <tr>
+												<td colspan=5 class="border-top-0 border-bottom-0"><strong>Coupon Discount
+														(10%)</strong></td>
+												<td><strong>70.00</strong></td>
+											</tr> -->
+											<tr>
+												<td colspan=8 class="border-top-0 text-right"><strong>Grand Total</strong></td>
+												<td><strong>{{eachProd.grand_total|
+														currency:'INR':'symbol':'1.2-2'}}</strong></td>
+											</tr>
+										</tfoot>
+									</table>
+								</div>
+							</div>
+
+						</div>
+						<div class="text-center">
+							<a (click)="backOrder($event)" class="btn btn-sm btn-primary"> Back to orders</a>
+						</div>
+						
+					</div>
+				</div>
+
+
+			</div>
+
+		</div>
+	</div>
+</section>
+<ng-template #content let-modal>
+	<div class="modal-header">
+	  <h4 class="modal-title">Comments</h4>
+	  <!-- <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button> -->
+	</div>
+	<div class="modal-body">
+	  <div>
+		<textarea name="" id="" rows="3" class="form-control" [(ngModel)]="cancelComments"></textarea>
+	  </div>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-success" (click)="cancelOrder(cancelComments);modal.close('Close click')">Cancel Order</button>
+	  <button type="button" class="btn btn-danger" (click)="modal.close('Close click')">Close</button>
+	</div>
+  </ng-template>
+<!-- <div class="row">
+	<div class="table d-table">
+		<div class="table-header">
+			<div class="row">
+				<div class="col item-image"></div>
+				<div class="col item-col">Item</div>
+				<div class="col item-sku">SKU</div>
+				<div class="col item-price">Price</div>
+				<div class="col item-qty">Qty</div>
+				<div class="col item-subtotal">Total</div>
+			</div>
+		</div>
+		<div class="table-body">
+			<div class="row">
+				<div class="col item-image">
+					<img alt="" class="img-xs" src="assets/images/product/7.jpg">
+				</div>
+				<div class="col item-col">Robert Cassidy Plays Debussy, Mozart & Noon</div>
+				<div class="col item-sku">CD67501558</div>
+				<div class="col item-price">1000.00</div>
+				<div class="col item-qty">2</div>
+				<div class="col item-subtotal">2000.00</div>
+			</div>
+			<div class="row">
+				<div class="col item-image">
+					<img alt="" class="img-xs" src="assets/images/product/7.jpg">
+				</div>
+				<div class="col item-col">Robert Cassidy Plays Debussy, Mozart & Noon</div>
+				<div class="col item-sku">CD67501558</div>
+				<div class="col item-price">1000.00</div>
+				<div class="col item-qty">2</div>
+				<div class="col item-subtotal">2000.00</div>
+			</div>
+		</div>
+		<div class="table-footer"> -->
+<!-- <div class="row">
+				<div class="col item-coupon" colspan="5">Total</div>
+				<div class="col item-total">50.00</div>
+				
+			</div> -->
+<!--<div class="row">
+				<colgroup span="5" class="col">Test</colgroup>
+				<colgroup class="col">50.00</colgroup>
+			</div>
+			
+			
+		</div>
+	</div>
+</div> -->

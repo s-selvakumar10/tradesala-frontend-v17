@@ -1,0 +1,127 @@
+<section class="review-block padding-y">
+    <div class="row">
+        <div class="col-12">
+            <div *ngIf="showToast && !isAuthenticated" class="alert alert-info">Only registered users can write reviews. Please Sign in or create an account</div>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <h2 class="review-heading">Reviews <strong class="rating-count"> ({{ total_reviews }})</strong></h2>
+                    <div class="rating-wrap">
+                        
+                        <ul class="rating-stars stars-lg">
+                            <li [style.width]="average_rating + '%'" class="stars-active">
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                            </li>
+                            <li>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                            </li>
+                        </ul>
+                        
+                    </div>
+                </div>
+                <div class="mt-2"><a class="write-a-review btn btn-outline-primary" (click)="showReviewForm($event)">Write a Review</a></div>
+            </div>
+            
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12">
+            <ul class="list-unstyled review-list">
+                <li *ngFor="let reviewItem of reviews">
+                    <div class="d-flex align-items-start flex-wrap">
+                        <div class="icontext col-sm-2 col-12 mb-3">
+                            <img src="assets/images/avatar/avatar.png" class="img-xs icon rounded-circle">
+                            <div class="text">
+                                <h6 class="mb-1">{{ reviewItem.name }}</h6>
+                                <ul class="rating-stars stars-lg">
+                                    <li [style.width]="ratingPercentCalc(reviewItem.rating) + '%'" class="stars-active">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div> <!-- icontext.// -->
+                        <div class="col-sm-10 col-12 mb-3 rating-box">
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <p>{{ reviewItem.review }}</p>
+                                </div>
+                                <div class="col-sm-3 col-12">
+                                    <span class="date text-muted"> {{ reviewItem.posted_date }} </span>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="offset-sm-3 col-sm-9 col-12 mb-3 rating-box">
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <p>{{ reviewItem.reply }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </li>
+                <li></li>
+            </ul>
+            <div class="review-form pt-2" *ngIf="isShowDivIf && isAuthenticated">                   
+                <form [formGroup]="reviewForm" >
+                    
+                    <div class="card card-border">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="form-group form-radio">
+                                        <label class="float-left w-100">Give your stars</label>
+                                        <fieldset class="rating">
+                                            <input type="radio" id="star5" formControlName="rating" value="5"/>
+                                            <label for="star5">5 stars</label>
+                                            <input type="radio" id="star4" formControlName="rating" value="4"/>
+                                            <label for="star4">4 stars</label>
+                                            <input type="radio" id="star3" formControlName="rating" value="3"/>
+                                            <label for="star3">3 stars</label>
+                                            <input type="radio" id="star2" formControlName="rating" value="2"/>
+                                            <label for="star2">2 stars</label>
+                                            <input type="radio" id="star1" formControlName="rating" value="1"/>
+                                            <label for="star1">1 star</label>
+                                        </fieldset>
+                                        <span *ngIf="!reviewForm.get('rating').valid && reviewForm.get('rating').touched">Please give the rating.</span>
+                                    </div>
+                                </div>
+                                <div class="col-8">                                            
+                                    <div class="form-group">
+                                        <label for="review">Write a review</label>
+                                        <textarea id="review" formControlName="review" class="form-control"></textarea>
+                                        <span *ngIf="!reviewForm.get('review').valid && reviewForm.get('review').touched">Please enter Review Message</span>
+                                    </div>
+                                    <div class="btn-wrapper float-right">
+                                        <button type="button" (click)="onSubmit()" class="btn btn-outline-primary">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

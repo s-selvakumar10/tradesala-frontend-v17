@@ -1,0 +1,45 @@
+<section class="padding-y dashboard account-area">
+	<div class="container">	
+		<div class="row ">
+			<div class="col-md-12">
+				<ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-pills nav d-inline-flex light-bg">
+					<li [ngbNavItem]="1">
+					    <a ngbNavLink>Account Setting</a>
+					    <ng-template ngbNavContent>
+					     	<app-personal-info></app-personal-info>
+					    </ng-template>
+					</li>
+					<li [ngbNavItem]="2">
+					    <a ngbNavLink>Addresses</a>
+					    <ng-template ngbNavContent>
+	    					<app-address></app-address>
+					    </ng-template>
+					</li>
+					<li [ngbNavItem]="3">
+					    <a ngbNavLink>Order History</a>
+					    <ng-template ngbNavContent>
+					      <app-orders></app-orders>
+					    </ng-template>
+					</li>
+					<li [ngbNavItem]="4">
+					    <a ngbNavLink>Wishlist</a>
+					    <ng-template ngbNavContent>
+					     <app-whislist></app-whislist>
+					    </ng-template>
+					</li>
+					<li [ngbNavItem]="5">
+					    <a ngbNavLink>Review</a>
+					    <ng-template ngbNavContent>
+					     <app-review></app-review>
+					    </ng-template>
+					</li>
+				</ul>
+
+				<div [ngbNavOutlet]="nav" class="mt-2"></div>
+				
+			</div>
+			
+		</div>
+	</div>
+</section>
+

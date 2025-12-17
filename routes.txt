@@ -1,0 +1,8 @@
+/
+/about-us
+/privacy-policy
+/terms-and-condition
+/return-refund-policy
+/shipping-policy
+/brands
+/contact
