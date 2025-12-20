@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import _ from 'lodash';
+import {size} from 'lodash-es'
 import { OwlOptions } from 'ngx-owl-carousel-o';
 
 @Component({
@@ -47,7 +47,7 @@ export class SellerOfferPopupComponent implements OnInit {
     
     // delete this.product.discounts.combo_offers;
    
-    if(_.size(this.product.discounts.quantity_based_discount.discount) > 4){
+    if(size(this.product.discounts.quantity_based_discount.discount) > 4){
       this.isQtyDiscountSlider = true;
     } else {
       this.isQtyDiscountSlider = false;

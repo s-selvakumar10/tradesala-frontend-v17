@@ -1,4 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { Component, ElementRef, Inject, Input, OnDestroy, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -11,6 +11,7 @@ import { SeoService } from '../shared/services/seo.service';
 import { Category } from './models/category';
 import { SessionFlow} from 'src/app/helper/session-flow';
 import { ResizeService } from '../core/services/resize.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-category',
@@ -58,20 +59,24 @@ export class CategoryComponent implements OnInit, OnDestroy {
   ) { 
     this.isBrowser = isPlatformBrowser(platformId);
     this.isMobile = this.mobileDetect.isMobile;
+   
   }
 
-  ngOnInit(): void {
-   
+  ngOnInit(): void {  
     
     this.route.data.pipe(map(({ category }) => category)).subscribe(category => {
+      this.setCategoryDetails(category.seo);
       this.selectedCategoryDetail = category;
+      this.breadcrumbService.changeBreadcrumb(
+          this.route.snapshot,
+          this.selectedCategoryDetail.name
+        );
     });
 
 
     this.categoriesSubs = this.categoryService.categories.subscribe(
       (categories) => {
         this.categories = categories;
-        this.setCategoryDetails();
       }
     );
 
@@ -91,26 +96,39 @@ export class CategoryComponent implements OnInit, OnDestroy {
     });
   }
  
-  setCategoryDetails() {
-    if (this.categories) {
+  setCategoryDetails(category) {
 
-      if (this.selectedCategoryDetail) {
-        const seoContent = this.selectedCategoryDetail.seo;
-        const metaTags = [
-          { name: 'description', content: seoContent.description },
-          { name: 'keywords', content: seoContent.keywords },
-          { name: 'title', content: seoContent.title },
-        ];
+    const metaInfo = environment.config.metaInfo;
+    const seoContent = category || {};
+    this.seoService.setTitle(seoContent.title);
+    const metaTags = [
+      { name: 'description', content: seoContent.description || '' },
+      { name: 'keywords', content: seoContent.keywords || '' },
+      { name: 'title', content: seoContent.title || '' },
+    ];
 
-        this.seoService.setTitle(seoContent.title);
-        this.seoService.setMetaTags(metaTags);
-
-        this.breadcrumbService.changeBreadcrumb(
-          this.route.snapshot,
-          this.selectedCategoryDetail.name
-        );
-      }
-    }
+    const metaGraph = [
+		  { property: 'og:title', content: seoContent.title || metaInfo.title },
+		  { property: 'og:site_name', content: metaInfo.og_sitename },
+		  { property: 'og:url', content: metaInfo.og_url },
+		  { property: 'og:locale', content: metaInfo.og_locale },
+		  { property: 'og:description', content: seoContent.description || metaInfo.description },
+		  { property: 'og:type', content: metaInfo.og_type},
+		  { property: 'og:image', content: metaInfo.og_image },
+		  { property: 'og:image:width', content: '600' },
+		  { property: 'og:image:height', content: '600' },		  
+		  { property: 'og:image:alt', content: '' },    
+		  { property: 'twitter:card', content: metaInfo.twt_card },
+		  { property: 'twitter:site', content: metaInfo.twt_site },
+		  { property: 'twitter:creator', content: metaInfo.twt_site },
+		  { property: 'twitter:url', content: metaInfo.twt_url },
+		  { property: 'twitter:title', content: seoContent.title || metaInfo.title},
+		  { property: 'twitter:description', content: seoContent.description || metaInfo.description},
+		  { property: 'twitter:image', content: metaInfo.twt_image }
+		];
+    
+    this.seoService.setMetaTags(metaTags);
+    this.seoService.setMetaGrapLd(metaGraph);
   }
   mobileFilter(){
     let sidebar = this.el.nativeElement.querySelector('.sidebar');
@@ -132,7 +150,6 @@ export class CategoryComponent implements OnInit, OnDestroy {
         this.page = metaData.current_page;
         this.count = metaData.total;
         this.pageSize = metaData.per_page;
-        this.setCategoryDetails();
       });
   }
 

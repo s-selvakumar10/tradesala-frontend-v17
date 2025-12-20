@@ -7,7 +7,7 @@ import {
 	PLATFORM_ID
 } from '@angular/core';
 import { OwlOptions } from 'ngx-owl-carousel-o';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { Product } from '../core/models/product';
 import { ProductService } from '../core/services/product.service';
@@ -15,7 +15,7 @@ import { CollapseCatMenuService } from '../header/collapse-cat-menu/collapse-cat
 import { ApiService } from '../shared/services/api.service';
 import { SessionFlow } from '../helper/session-flow';
 import { ResizeService } from '../core/services/resize.service';
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
 import { environment } from 'src/environments/environment';
 import { SeoService } from '../shared/services/seo.service';
@@ -33,14 +33,14 @@ import { DeliveryPincodeModalComponent } from '../shared/delivery-pincode-modal/
 export class HomeComponent implements OnInit, OnDestroy {
 	public allCategoryMenuOpen: boolean = true;
 
-	public trendingproducts$: Array<Product>;
-	public featuredproducts$: Array<Product>;
-	public newArraivalproducts$: Array<Product>;
-	public specialproducts$: Array<Product>;
+	public trendingproducts$: Observable<Product[]>;
+	public featuredproducts$: Observable<Product[]>;
+	public newArraivalproducts$: Observable<Product[]>;
+	public specialproducts$: Observable<Product[]>;
 	isLoading: boolean = false;
 	bestProduct: any = [];
-	public otherProducts$: Array<Product>;
-
+	public otherProducts$: Observable<Product[]>;
+	beforePreviewImages = 7;
 
 	public options1: OwlOptions = {
 		loop: false,
@@ -99,7 +99,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 		private route: ActivatedRoute,
 		private collapseCatMenuService: CollapseCatMenuService,
 		private productService: ProductService,
-		public restApi: ApiService,
 		private meta: Meta,
 		private title: Title,
 		private seoService: SeoService,
@@ -118,7 +117,12 @@ export class HomeComponent implements OnInit, OnDestroy {
 			ariaLabelledBy: 'modal-basic-title',
 			centered: true
 		}
-		
+		if(isPlatformServer(this.platformId)){
+			if(this.route.snapshot.data && this.route.snapshot.data['metaInfo']){
+				this.setMetaInfo(this.route.snapshot.data['metaInfo'].data);
+			} 
+			this.setJsonSchema();
+		}
 		
 	}
 	ngOnInit(): void {
@@ -146,7 +150,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 		// })
 		
 
-		this.setJsonSchema();
+		
 
 		let baseOptions = this.options1;
 
@@ -156,45 +160,18 @@ export class HomeComponent implements OnInit, OnDestroy {
 		this.options4 = { ...baseOptions };
 
 
-		this.productService.getTrendingProducts().subscribe((res) => {
-			if (res) {
-				this.trendingproducts$ = res;
-				this.isLoading = true;
+		this.trendingproducts$ = this.productService.getTrendingProducts();
+		this.featuredproducts$ = this.productService.getFeaturedProducts();
+		this.newArraivalproducts$ = this.productService.getNewArraivalProducts();
+		this.specialproducts$ = this.productService.getSpecialProducts()
+		this.otherProducts$ = this.productService.getOtherProducts();
+		this.otherProducts$.subscribe(products => {			
+			if(products && products.length > 0) {
+				this.bestProduct = products;
 			}
-
+			
 		});
-
-		this.productService.getFeaturedProducts().subscribe((res) => {
-			if (res) {
-				this.featuredproducts$ = res;
-				this.isLoading = true;
-			}
-
-		});
-
-		this.productService.getNewArraivalProducts().subscribe((res) => {
-			if (res) {
-				this.newArraivalproducts$ = res;
-				this.isLoading = true;
-			}
-
-		});
-
-		this.productService.getSpecialProducts().subscribe((res) => {
-			if (res) {
-				this.specialproducts$ = res;
-				this.isLoading = true;
-			}
-
-		});
-
-
-		this.restApi.getAll<any>(`v1/products/best`)
-			.pipe(map((resp) => resp))
-			.subscribe((resp) => {
-				this.bestProduct = resp;
-			});
-
+		this.calculateInnerWidth();
 		this.collapseCatMenuService.statusUpdated.emit(true);
 
 	}

@@ -4,6 +4,7 @@ export const environment = {
   production: true,
   staging: false,
   baseUrl: 'https://api.tradesala.com',
+  mediaUrl: 'https://admin.tradesala.com',
   frontEndUrl: 'https://tradesala.com',
   appName: 'Tradesala',
   config: DEFAULT_CONFIG,

@@ -10,7 +10,7 @@
 		<div class="product-thumb transition">
 			<div class="image p-0">
 				<a [routerLink]="['/', product.slug]" target="_blank">
-					<img lazyLoad *ngIf="product.media.front_image" [src]="product.media.front_image" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive">				
+					<img *ngIf="product.media.front_image" ngSrc="{{product.media.front_image}}" priority width="150" height="150" sizes="(min-width: 768px) 100vw, 100vw" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive">				
 				</a>
 				
 				<div class="section-sale" *ngIf="discount > 0"><span class="sale-text">{{ discountPercent }} Off</span></div>

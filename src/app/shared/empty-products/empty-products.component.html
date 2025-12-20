@@ -1,0 +1,16 @@
+<section class="product-block padding-y">
+	<div class="container">
+		<div class="row">
+            @if(title!==''){
+                <h2 class="float-none box-heading">{{title}}</h2>
+            }
+			@for (item of generateNumberArray(count); track $index) {
+				<article class="col-lg"> 
+					<div class="bg-loading" style="height:150px;"></div> 
+					<div class="bg-loading" style="width: 150px; height:20px;"></div> 
+					<div class="bg-loading" style="width: 120px; height:20px;"></div> 
+				</article>
+			}
+		</div>
+	</div>
+</section>

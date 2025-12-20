@@ -3,6 +3,7 @@ import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 
 import { DefaultComponent } from './layout/default/default.component';
 import { AuthGuard } from './auth/auth.guard';
+import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 
 const routes: Routes = [
   {
@@ -11,7 +12,8 @@ const routes: Routes = [
     children: [
       { path: '',
         loadChildren: () => import('./home/home.module').then((m) => m.HomeModule),
-        data: { breadcrumb: 'Home', preload: true, delay: false, page_slug: 'homepage' }       
+        data: { breadcrumb: 'Home', preload: true, delay: false, page_slug: 'homepage' },
+        pathMatch: 'full'      
       },
       {
         path: 'blog',
@@ -70,6 +72,8 @@ const routes: Routes = [
       
     ],
   },
+  { path: '',   redirectTo: '', pathMatch: 'full' },
+  { path: '**', redirectTo: '' },
 ];
 
 @NgModule({
@@ -77,7 +81,10 @@ const routes: Routes = [
     RouterModule.forRoot(
       routes,
       {
-        preloadingStrategy: PreloadAllModules
+        preloadingStrategy: PreloadAllModules,
+        useHash: false,
+        anchorScrolling: 'enabled',
+        scrollOffset: [0, 0]
       }
     )
   ],  

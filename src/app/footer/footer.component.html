@@ -120,7 +120,7 @@
             </div>
             <div class="ftr-know-more collapse" #ftrknowmore>
               <div class="card-body" *ngIf="footerContent?.content !=null">
-                <div [innerHTML]="footerContent.content"></div>
+                <div [innerHTML]="footerContent.content | sanitizeHtml"></div>
               </div>
 			  <div class="card-body" *ngIf="isBrowser">
 				

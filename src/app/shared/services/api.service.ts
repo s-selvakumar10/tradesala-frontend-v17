@@ -2,8 +2,7 @@ import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { Inject, Injectable, PLATFORM_ID } from "@angular/core";
 import { Observable } from "rxjs";
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
-import * as _ from 'lodash';
-
+import { get } from 'lodash-es';
 import { environment } from '../../../environments/environment';
 import { CookieService } from './cookie.service';
 
@@ -24,7 +23,7 @@ export class ApiService {
     
     if (isPlatformBrowser(this.platformId)){
 			const userData = JSON.parse(localStorage.getItem('userData'));
-      this.bearer_token = _.get(userData, '_token', null);
+      this.bearer_token = get(userData, '_token', null);
 		}
     
 
@@ -50,7 +49,7 @@ export class ApiService {
     if (isPlatformBrowser(this.platformId)){
 			const userData = JSON.parse(localStorage.getItem('userData'));
       if(userData){
-        headers = headers.append('Authorization', `Bearer ${_.get(userData, '_token', null)}`);
+        headers = headers.append('Authorization', `Bearer ${get(userData, '_token', null)}`);
       }      
       const sessionToken = sessionStorage.getItem('session_token') ?? null;
       if(sessionToken){

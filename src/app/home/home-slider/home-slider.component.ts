@@ -32,6 +32,7 @@ import { Image } from 'src/app/shared/owl-slider/image';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeSliderComponent implements OnInit {
+  sliderEnabled: boolean = false;
   loadImage = true;
   public _sliderImages: any = [];
   @Input('sliderImages') set sliderImages(value: any){
@@ -46,8 +47,8 @@ export class HomeSliderComponent implements OnInit {
 	
   activeSlides: SlidesOutputData;
   isLoading: boolean = false;
-  sliderEnabled: boolean = false;
-  imagesData: Image[];
+ 
+  //imagesData: Image[];
   homeSlideOptions: OwlOptions = {
     loop: true,
     animateOut: 'animate__animated animate__fadeOut',
@@ -105,33 +106,33 @@ export class HomeSliderComponent implements OnInit {
     // }
   }
   ngAfterContentInit(){
-    this.imagesData = [
-      {
-        src: 'assets/images/home-slider/new/2.jpg',
-        alt: 'slide 3',
-        title: 'slide 3'
-      },
-      {
-        src: 'assets/images/home-slider/new/3.jpg',
-        alt: 'slide 4',
-        title: 'slide 4'
-      },
-      {
-        src: 'assets/images/home-slider/new/4.jpg',
-        alt: 'slide 5',
-        title: 'slide 5'
-      },
-      {
-        src: 'assets/images/home-slider/new/5.jpg',
-        alt: 'slide 1',
-        title: 'slide 1'
-      },
-      {
-        src: 'assets/images/home-slider/new/1.jpg',
-        alt: 'slide 2',
-        title: 'slide 2'
-      } 
-    ];
+    // this.imagesData = [
+    //   {
+    //     src: 'assets/images/home-slider/new/2.jpg',
+    //     alt: 'slide 3',
+    //     title: 'slide 3'
+    //   },
+    //   {
+    //     src: 'assets/images/home-slider/new/3.jpg',
+    //     alt: 'slide 4',
+    //     title: 'slide 4'
+    //   },
+    //   {
+    //     src: 'assets/images/home-slider/new/4.jpg',
+    //     alt: 'slide 5',
+    //     title: 'slide 5'
+    //   },
+    //   {
+    //     src: 'assets/images/home-slider/new/5.jpg',
+    //     alt: 'slide 1',
+    //     title: 'slide 1'
+    //   },
+    //   {
+    //     src: 'assets/images/home-slider/new/1.jpg',
+    //     alt: 'slide 2',
+    //     title: 'slide 2'
+    //   } 
+    // ];
     //this.sliderEnabled = true;
     
   }

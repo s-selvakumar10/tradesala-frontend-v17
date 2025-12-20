@@ -1,5 +1,5 @@
-import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID, NgZone  } from '@angular/core';
-import { isPlatformBrowser, DOCUMENT } from '@angular/common';
+import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID, NgZone, afterNextRender, inject, Injector, afterRender, runInInjectionContext, AfterViewInit  } from '@angular/core';
+import { isPlatformBrowser, DOCUMENT, isPlatformServer } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -18,9 +18,10 @@ import { fab } from '@fortawesome/free-brands-svg-icons'; // Import brand icons
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   routerSubscription: Subscription;
   schema = {};
+  private readonly injector = inject(Injector);
 
   constructor(
     private ngZone: NgZone,
@@ -35,45 +36,56 @@ export class AppComponent implements OnInit, OnDestroy {
     library: FaIconLibrary
     //private geolocationService: GeolocationService
   ) { 
-    library.addIconPacks(fas, fab);
+      library.addIconPacks(fas, fab);
+      afterNextRender(() => { 
+          
+      });   
+      if(isPlatformServer(this.platformId)){
+        this.setPreconnect(environment.mediaUrl);
+        this.fontPreload();
+      }
+      if (isPlatformBrowser(this.platformId)) {
+        
+      }
   }
 
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
       this.authService.autoSignIn();
-      //this.getGeoLocation();
-      //this.geolocationService.getLiveLocation().subscribe(res=> console.log(res))
     }    
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         if (isPlatformBrowser(this.platformId)) {
           this.scrollPageToTop();
-        }
-        // this.addMetaInfo();
-        this.setMetaData();
-        //this.fontPreload();
-        //this.setJsonSchema();   
-
+          //this.setMetaData();       
+        }   
       });
   }
-  ngAfterViewInit(): void {
-    if(environment.production && isPlatformBrowser(this.platformId)) {
-      // this.ngZone.run(() => {       
+  ngAfterViewInit(): void {   
+    runInInjectionContext(this.injector, () => {
+      afterNextRender(() => {
+        if(environment.production && isPlatformBrowser(this.platformId)) {
+          this.setGTagManager();
+          this.setGoogleAnalytics();
+          this.zohoCRM();
+        }
+      });
+    })
+    // if(environment.production && isPlatformBrowser(this.platformId)) {
+    //   // this.ngZone.run(() => {       
      
-      // }); 
-      this.ngZone.runOutsideAngular(()=>{
-        setTimeout(() => {
-          this.ngZone.run(() => {
-            this.setGTagManager();
-            this.setGoogleAnalytics();
-            this.zohoCRM();
-          })
-        }, 3500); 
+    //   // }); 
+    //   this.ngZone.runOutsideAngular(()=>{
+    //     setTimeout(() => {
+    //       this.ngZone.run(() => {
+            
+    //       })
+    //     }, 3500); 
 
-      })
-    }
+    //   })
+    // }
   }
 
   // getGeoLocation() {
@@ -95,11 +107,7 @@ export class AppComponent implements OnInit, OnDestroy {
     link.as = "font";
     link.type = "font/woff2";
     link.crossOrigin = '';
-    if (environment.production) {
-      link.href = './fa-solid-900.62a2bfb1c5f5c263.woff2';
-    } else {
-      link.href = './fa-solid-900.woff2'
-    }
+    link.href = '/media/fa-solid-900.woff2'
     this.doc.head.appendChild(link);
   }
   private setGTagManager() {
@@ -142,26 +150,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.doc.head.appendChild(script);
   }
   setMetaData() {
-    const metaInfo = environment.config.metaInfo;
-    // this.router.events
-    //   .pipe(
-    //     filter((event) => event instanceof NavigationEnd),
-    //     map(() => {
-    //       const child: ActivatedRoute | null = this.route.firstChild;
-    //       let title = child && child.snapshot.data['title'];
-    //       if (title) {
-    //         return title;
-    //       }
-    //     })
-    //   )
-    //   .subscribe((title) => {
-    //     console.log('title', title);
-    //     if (title) {
-    //       this.metaTitle.setTitle(`App Prefix - ${title}`);
-    //     }
-    //  });
-  
-    //console.log(this.route.snapshot);
+    const metaInfo = environment.config.metaInfo;    
     if(this.route.snapshot.data['title'] != ''){
       this.metaTitle.setTitle(this.route.snapshot.data['title']);
     } else {      
@@ -197,6 +186,12 @@ export class AppComponent implements OnInit, OnDestroy {
     this.meta.updateTag({ name: 'title', content: metaInfo.title });
     
     this.metaTitle.setTitle(metaInfo.title);
+  }
+  setPreconnect(href: string): void {
+    const link = this.doc.createElement('link');
+    link.rel = 'preconnect';
+    link.href = href;
+    this.doc.head.appendChild(link);
   }
 
   scrollPageToTop() {

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -21,10 +21,14 @@ import { LazyLoadDirective } from './lazy-load-image/lazy-load.directive';
 import { StringReplacePipe } from '../helper/replace-text.pipe';
 import { DeliveryPincodeModalComponent } from './delivery-pincode-modal/delivery-pincode-modal.component';
 import { ShareButtons } from 'ngx-sharebuttons/buttons';
+import { SanitizeHtmlPipe } from '../helper/sanitize-html.pipe';
+import { EmptyProductsComponent } from './empty-products/empty-products.component';
 
 @NgModule({
   declarations: [
+    EmptyProductsComponent,
     ProductCardComponent,
+    SanitizeHtmlPipe,
     TruncatePipe,
     StringReplacePipe,
     ProductGridSliderComponent,
@@ -40,6 +44,7 @@ import { ShareButtons } from 'ngx-sharebuttons/buttons';
     CommonModule,
     NgbModule,
     RouterModule,
+    NgOptimizedImage,
     CarouselModule,
     ReactiveFormsModule,
     FormsModule,
@@ -57,7 +62,9 @@ import { ShareButtons } from 'ngx-sharebuttons/buttons';
     RouterModule,
     ReactiveFormsModule,
     FormsModule,
+    NgOptimizedImage,
     CarouselModule,
+    EmptyProductsComponent,
     ProductCardComponent,
     ProductGridSliderComponent,
     NgxPaginationModule,
@@ -65,6 +72,7 @@ import { ShareButtons } from 'ngx-sharebuttons/buttons';
     StickySidebarDirective,
     NgxSliderModule,
     LazyLoadDirective,
+    SanitizeHtmlPipe,
     TruncatePipe,
     StringReplacePipe,
     ShareButtons

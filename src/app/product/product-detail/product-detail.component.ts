@@ -1,26 +1,21 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, Inject, Input, NgZone, OnInit, PLATFORM_ID, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
-import { Meta, Title } from '@angular/platform-browser';
-import { ActivatedRoute, ActivatedRouteSnapshot, NavigationEnd, Router } from '@angular/router';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, Inject, Input, OnInit, PLATFORM_ID, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, take, tap } from 'rxjs/operators';
+import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { OwlOptions } from 'ngx-owl-carousel-o';
-import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map, take, tap } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
 import { Product, Review } from 'src/app/core/models/product';
 import { ProductService } from 'src/app/core/services/product.service';
 import { ResizeService } from 'src/app/core/services/resize.service';
-import { SessionFlow } from 'src/app/helper/session-flow';
 import { BreadcrumbService } from 'src/app/shared/breadcrumb/breadcrumb.service';
 import { CartService } from 'src/app/shared/services/cart.service';
-import { SeoService } from 'src/app/shared/services/seo.service';
-import { environment } from 'src/environments/environment';
-import _ from 'lodash';
-import { ToastrService } from 'ngx-toastr';
 import { WINDOW } from 'src/app/shared/services/window.service';
 import { MobileDeviceDetectorService } from 'src/app/core/services/device-detector.service';
-//import * as deviceDetect from 'src/app/helper/device-detect'
 import { DeliveryPincodeService } from 'src/app/shared/delivery-pincode.service';
-import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { DeliveryPincodeModalComponent } from 'src/app/shared/delivery-pincode-modal/delivery-pincode-modal.component';
+import {isEmpty, size} from 'lodash-es';
 
 @Component({
   selector: 'app-product-detail',
@@ -61,8 +56,7 @@ export class ProductDetailComponent implements OnInit {
   isMobile: boolean = false;
   isTablet: boolean = false;
   isDesktop: boolean = false;
-  screenwidth: any;
-
+  screenwidth: any = isPlatformBrowser(this.platformId) ? this.window.innerWidth : 0;
   breadcrumbData: { displayName: string, route: string, terminal: boolean, url: string } = {
     displayName: '',
     route: '',
@@ -78,7 +72,6 @@ export class ProductDetailComponent implements OnInit {
   breadcrumbCategory: any = [];
   breadcrumbSubCategory: any = [];
   categories: any = [];
-  schema: any;
   listReviews: Array<Review>;
   productOption: any = {};
   discountEnable = false;
@@ -187,109 +180,62 @@ export class ProductDetailComponent implements OnInit {
   pincodeUpdateQty = false;
   modalOptions:NgbModalOptions;
   constructor(
-    private render: Renderer2,
-    @Inject(DOCUMENT)
-    private _document: Document,
-    @Inject(WINDOW) private window: Window,
     private router: Router,
     private route: ActivatedRoute,
+    private render: Renderer2,
     private productService: ProductService,
     private cartService: CartService,
-    private meta: Meta,
-    private title: Title,
-    private el: ElementRef,
-    private mobileDetect: SessionFlow,
     private resizeService: ResizeService,
-    private seoService: SeoService,
     private modalService: NgbModal,
     private toastrService: ToastrService,
     private breadcrumbService: BreadcrumbService,
     public device: MobileDeviceDetectorService,
-    private cd: ChangeDetectorRef,
     private deliveryPincodeService: DeliveryPincodeService,
+    private cd: ChangeDetectorRef,
+    private el: ElementRef,
+    @Inject(WINDOW) private window: Window,
+    @Inject(DOCUMENT) private _document: Document,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { 
-      //this.isMobile = this.mobileDetect.isMobile;
-      // console.log(this.mobileDetect);
-      this.isMobile =  this.device.isMobile();
+      this.calculateInnerWidth();
+      this.isMobile =  this.device.isMobile() || this.screenwidth <= 992;
       this.isTablet = this.device.isTablet();
-      this.isDesktop = this.device.isDesktop();
+      this.isDesktop = this.device.isDesktop() || this.screenwidth >= 1024;
       this.modalOptions = {
         backdrop:'static',
         backdropClass:'loginBackdrop',
         ariaLabelledBy: 'modal-basic-title', 
         centered: true
       }
-      // console.log('Device Info',this.device.getDeviceInfo());
-      // console.log('Device Info',deviceDetect.useDevice());
+     
   }
-  
-  // @HostListener('window:scroll', ['$event']) onScroll(){
-  //   return this.isScrolledIntoView();
-  // }
+ 
   @HostListener('window:scroll', ['$event']) onscroll(event) {
     return this.isScrolledIntoView(event);
   }
   isScrolledIntoView(event) {
-        console.log('scrolling element',event.target.scrollingElement.scrollTop);
-        console.log('document',event.target.documentElement.scrollTop);
-        console.log('inner Height',window.innerHeight);
-        // console.log('client top',event.target.clientTop);
-        // console.log('client Height',event.target.clientHeight);
-        // console.log('offset top',event.target.offsetTop);
-        // console.log('offset width',event.target.offsetWidth);
-        // console.log('offset Height',event.target.offsetHeight);
-        console.log('body scrolltop',event.target.body.scrollTop);
-        console.log('body get rect',event.target.body.getBoundingClientRect());
-        console.log('document',event.target.body.getBoundingClientRect().top + event.target.body.scrollTop);
-        console.log('document',event.target.body.getBoundingClientRect().top + event.target.body.scrollTop - event.target.documentElement.scrollTop);
-        console.log('document',event.target.body.getBoundingClientRect().top + event.target.body.scrollTop - event.target.documentElement.scrollTop);
-        console.log('document',event.target.body.getBoundingClientRect().top + event.target.body.scrollTop - event.target.documentElement.scrollTop + window.innerHeight);
-        console.log('document',event.target.body.getBoundingClientRect().top + event.target.body.scrollTop - event.target.documentElement.scrollTop + window.innerHeight - 200);
-        console.log('document',event.target.body.getBoundingClientRect().top + event.target.body.scrollTop - event.target.documentElement.scrollTop + window.innerHeight - 200 < 0);
+        const scrollTop = event.target.documentElement.scrollTop || event.target.scrollingElement.scrollTop;
+        const bodyScrollTop = event.target.body.scrollTop || 0;
+        const bodyBox = event.target.body.getBoundingClientRect() || 0;
+        const bodyTop = bodyBox.top || 0;
+        const windowHeight = this.window.innerHeight;
+        const offsetY = bodyTop + bodyScrollTop - scrollTop + windowHeight - 200 < 0;
         const header = document.getElementById("navbar");
-        const sticky = header.offsetHeight;     
+        const sticky = header.offsetHeight;
         const t = this.scrollElement.nativeElement.getBoundingClientRect()
-          , e = t.top >= 0
-          , n = t.bottom <= this.window.innerHeight
           , o = this.targetElement.nativeElement.getBoundingClientRect()
-          , i = o.top >= 0
-          , r = o.bottom  <= this.window.innerHeight
-          , b = t.bottom <= o.bottom
           , $imageContainer = this._document.querySelector('.images-gallery');
        
-        // if((e && n || !e && n) && (i && r || !i && r) && b){
-        //   this.isFixed = false;
-        //   this.render.addClass($imageContainer, 'align-self-end');
-        //   this.render.removeClass($imageContainer, 'align-self-start');
-        // } else {
-        //   this.isFixed = true;
-        //   this.render.removeClass($imageContainer, 'align-self-end');
-        //   this.render.addClass($imageContainer, 'align-self-start');
-        // }
-        //&& (this.window.scrollY < t.bottom - 25) 
-        //console.log('scrolly = ', this.window.scrollY + ' sticky = ', sticky + ' height = ', t.height + ' bottom = ', t.bottom);
-        
-        if ( (this.window.scrollY > sticky ) && this.window.scrollY < t.height - 200){
+        if (this.window.scrollY > sticky && !offsetY && (this.window.scrollY < scrollTop + t.height - 200)) {
           this.isFixed = true;
           this.render.setStyle($imageContainer, 'top', sticky + 'px');
           this.render.setStyle($imageContainer, 'width', t.width + 'px');
           this.render.removeClass($imageContainer, 'align-self-end');
           
-        } else {
-         
+        } else {         
           this.isFixed = false;
           this.render.removeStyle($imageContainer, 'top');
           this.render.removeStyle($imageContainer, 'width');
-          // //(Math.abs(t.top) < t.height) && 
-          // if(this.window.scrollY > t.bottom){
-          //   //this.render.setStyle($imageContainer, 'align-self', 'flex-center');
-          //   this.render.addClass($imageContainer, 'align-self-end');
-           
-          // } else {
-          //   //this.render.setStyle($imageContainer, 'align-self', 'flex-start');
-          //   this.render.removeClass($imageContainer, 'align-self-end');
-          // }
           
         }
         const productSticky = this.el.nativeElement?.querySelector('.product__sidebar .inner-content');
@@ -314,11 +260,10 @@ export class ProductDetailComponent implements OnInit {
     //   this.isShowPincode = false;
     //   this.loadingPincode = false;
     // }
-    this.addMetaInfo(this.product);
-    this.setJsonSchema(this.product);
+   
     this.initData();
     this.intiOwlCarousel();    
-    this.calculateInnerWidth();   
+    
     this.checkPincodeSub$ = this.deliveryPincodeService.pincodeObs$.pipe(       
         filter(pincode => pincode!==null),
         tap(pincode =>{          
@@ -364,8 +309,7 @@ export class ProductDetailComponent implements OnInit {
     
   }
 
-  ngOnChanges(simpleChanges: SimpleChanges): void {    
-    this.calculateInnerWidth();
+  ngOnChanges(simpleChanges: SimpleChanges): void { 
     this.initData();
     this.productService.getProductReviews(this.product.slug).subscribe(reviews => {			
       this.listReviews = reviews;			
@@ -387,13 +331,13 @@ export class ProductDetailComponent implements OnInit {
   }
   initData() {
     //console.log('product Data',this.product);
-    if(_.isEmpty(this.product.discounts)){
+    if(isEmpty(this.product.discounts)){
       this.discountEnable = false;
     } else {
       this.discountEnable = true;
     } 
    
-    if(_.size(this.product.discounts.quantity_based_discount.discount) > 4){
+    if(size(this.product.discounts.quantity_based_discount.discount) > 4){
       this.isQtyDiscountSlider = true;
     } else {
       this.isQtyDiscountSlider = false;
@@ -444,7 +388,7 @@ export class ProductDetailComponent implements OnInit {
     this.pincodeUpdateQty = true;
     this.qty = $qty;
     const qty = $qty;   
-    if(this.product.shipping.smart_shipping && (this.isPincode !== null && !_.isEmpty(this.isPincode))){
+    if(this.product.shipping.smart_shipping && (this.isPincode !== null && !isEmpty(this.isPincode))){
       this.isLoading.next(true); 
       this.deliveryErrMsg = {data: [], msg: '', status: false};
       this.delivery = {data:[], status:false};  
@@ -494,14 +438,20 @@ export class ProductDetailComponent implements OnInit {
   //   collapse.show = !collapse.show;
   // }
   calculateInnerWidth() {
-   
-    if (isPlatformBrowser(this.platformId)) {
-      this.screenwidth = window.innerWidth;
-    } 
-   
+    
     //.pipe(filter((event) => event.innerWidth <= 768))
     this.resizeSub = this.resizeService.onResize$.subscribe((event) => {      
-      this.screenwidth = event.innerWidth;     
+      this.screenwidth = event.innerWidth;
+      if(this.screenwidth >= 992){
+        this.isDesktop = true;
+      } else {
+        this.isDesktop = false;
+      }
+      if (this.screenwidth <= 992) {
+          this.isMobile = true;      
+        } else {
+          this.isMobile = false;
+        }
       const $imageContainer = this._document.querySelector('.images-gallery');
       if($imageContainer){
         this.isFixed = false;
@@ -519,8 +469,8 @@ export class ProductDetailComponent implements OnInit {
     )
     .subscribe((event: NavigationEnd) => {     
       if(event instanceof NavigationEnd){
-        if (this.screenwidth <= 800) {
-          this.isMobile = this.mobileDetect.isMobile;      
+        if (this.screenwidth <= 992) {
+          this.isMobile = true;      
         } else {
           this.isMobile = false;
         }
@@ -595,84 +545,6 @@ export class ProductDetailComponent implements OnInit {
     }
     
   }
-  addMetaInfo(product: Product) {  
-    
-    this.meta.updateTag({
-      name: 'description',
-      content: product.seo.description,
-    });
-
-    this.meta.updateTag({
-      name: 'keywords',
-      content: product.seo.keywords,
-    });
-    const url = environment.frontEndUrl + '/' + product.slug;
-    let productImages = product.media.front_image as string;
-   
-    this.meta.updateTag({ property: 'og:title', content: product.seo.title });
-    this.meta.updateTag({ property: 'og:site_name', content: environment.config.appName });
-    this.meta.updateTag({ property: 'og:url', content: url });
-    this.meta.updateTag({ property: 'og:description', content: product.seo.description });
-    this.meta.updateTag({ property: 'og:type', content: 'product' });
-    this.meta.updateTag({ property: 'og:image', content: productImages });
-    this.meta.updateTag({ property: 'og:image:width', content: '600' });
-    this.meta.updateTag({ property: 'og:image:height', content: '600' });
-    this.meta.updateTag({ property: 'og:image', content: productImages });
-    this.meta.updateTag({ property: 'og:image:alt', content: product.name });
-
-    this.meta.updateTag({ property: 'twitter:card', content: 'summary_large_image' });
-    this.meta.updateTag({ property: 'twitter:site', content: '@tradesala' });
-    this.meta.updateTag({ property: 'twitter:url', content: url });
-    this.meta.updateTag({ property: 'twitter:title', content: product.seo.title });
-    this.meta.updateTag({ property: 'twitter:description', content: product.seo.description });
-    this.meta.updateTag({ property: 'twitter:image', content: productImages });
-
-    this.title.setTitle(this.product.seo.title);
-
-    if(environment.staging){
-      this.meta.updateTag({
-        name: 'robots',
-        content: 'noindex, nofollow',
-      });
-    }
-  }
-  setJsonSchema(product: Product) {    
-    const stockStatus = (product.stock.stock_status == 'In Stock') ? 'InStock' : 'OutOfStock';
-    this.schema = {
-      '@context': 'https://schema.org',
-      '@type': 'Product',
-      url: isPlatformBrowser(this.platformId) ? location.href : '',
-      itemCondition: 'https://schema.org/NewCondition',
-      brand: {
-        '@type': 'Brand',
-        name: `${product.brand.name}`
-      },      
-      description: product.seo.description,
-      name: product.name,
-      image: product.media.front_image,
-      offers: [
-        {
-          '@type': 'Offer',
-          itemCondition: 'https://schema.org/NewCondition',
-          availability: `https://schema.org/${stockStatus}`,
-          price: product.special_price,
-          priceCurrency: 'INR'
-        }
-      ]
-
-    };
-    if(product.rating_summary.review_count > 0){
-      const review = {
-        aggregateRating: {
-          '@type': 'AggregateRating',
-          ratingValue: product.rating_summary.average_rating,
-          reviewCount: `${product.rating_summary.review_count}`
-        }
-      };
-      this.schema = {...this.schema, ...review}
-    }
-    this.seoService.setJsonLd(this.schema);
-  }
   typePincode(e){    
     const errElement = this._document.getElementById('errPincode');    
     if(e.type === 'keyup'){      
@@ -700,7 +572,7 @@ export class ProductDetailComponent implements OnInit {
   }
   checkPincodeAvailabilty(pincode, product_id, seller_id){
     const errElement = this._document.getElementById('errPincode');
-    if(_.isEmpty(pincode)){      
+    if(isEmpty(pincode)){      
       errElement.innerText = 'Please enter pincode';      
       return false;
     }

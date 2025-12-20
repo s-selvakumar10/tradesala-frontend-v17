@@ -52,7 +52,12 @@ export class ProductService {
       .getAll<{ products: Array<Product> }>('v1/products/special')
       .pipe(map((resp) => resp.products));
   }
- 
+  
+  getOtherProducts(): Observable<any> {
+    return this.api
+      .getAll<any>('v1/products/best')
+      .pipe(map((resp) => resp));
+  }
 
   getRelatedProducts(product_slug: string): Observable<Array<Product>> {
     return this.api

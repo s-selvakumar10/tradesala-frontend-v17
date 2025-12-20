@@ -1,26 +1,10 @@
-
-<!-- <ng-container *ngIf="!sliderEnabled">
-	<div >
-		<div class="slide">
-			<img lazyLoad src="assets/images/home-slider/2.jpg" alt="">
-		</div>
-	</div>
-</ng-container> -->
 <div (window:resize)="onResize($event)" *ngIf="sliderEnabled">
 	<owl-carousel-o #carousel [options]="homeSlideOptions" (translated)="getPassedData($event)" (initialized)="getData($event)" class="slider-main">
-		<!-- <ng-container *ngIf="!loadImage">			
-			<ng-template carouselSlide *ngFor="let image of imagesData" >
-				<div class="slide">
-					<img lazyLoad [src]="image.src" [alt]="image.alt" [title]="image.title">
-				</div>
-			</ng-template>
-		</ng-container> -->
 		<ng-container *ngIf="loadImage">			
 			<ng-template carouselSlide *ngFor="let banner of sliderImages" >
 				<div class="slide">
-					<a 
-						[routerLink]="banner?.banner_type === 'brand' ? ['/brand', banner?.slug] : banner?.banner_type === 'category' ? ['/category', banner?.slug] : ['/', banner?.slug]" target="_blank" [title]="banner?.slug | strReplace: '-' : ' '">
-						<img lazyLoad [src]="banner.image" [alt]="banner?.slug | strReplace: '-' : ' '" [title]="banner?.slug | strReplace: '-' : ' '">
+					<a [routerLink]="banner?.banner_type === 'brand' ? ['/brand', banner?.slug] : banner?.banner_type === 'category' ? ['/category', banner?.slug] : ['/', banner?.slug]" target="_blank" [title]="banner?.slug | strReplace: '-' : ' '">
+						<img lazyLoad ngSrc="{{banner.image}}" width="1250" height="260" sizes="(max-width: 768px) 100vw, 50vw" [alt]="banner?.slug | strReplace: '-' : ' '" [title]="banner?.slug | strReplace: '-' : ' '">
 					</a>
 				</div>
 			</ng-template>

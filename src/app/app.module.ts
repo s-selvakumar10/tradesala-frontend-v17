@@ -1,6 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration, withHttpTransferCacheOptions } from '@angular/platform-browser';
-import { HttpClientModule, HttpClientXsrfModule, provideHttpClient, withFetch } from '@angular/common/http';
+import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 
@@ -17,9 +17,11 @@ import { FooterComponent } from './footer/footer.component';
 import { SharedModule } from './shared/shared.module';
 import { WINDOW_PROVIDERS } from './shared/services/window.service';
 import { AuthInterceptorProvider } from './core/interceptors/auth.interceptor';
-import { LoaderInterceptorProvider } from './core/interceptors/loader.interceptor';
+//import { LoaderInterceptorProvider } from './core/interceptors/loader.interceptor';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgScrollbarModule } from 'ngx-scrollbar';
+import { IMAGE_CONFIG, PRECONNECT_CHECK_BLOCKLIST } from '@angular/common';
+import { environment } from 'src/environments/environment';
 //import { BackendInterceptorProvider } from './core/interceptors/backend.interceptor';
 
 @NgModule({
@@ -68,6 +70,13 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
       //   httpCacheInterceptor(),
       // ])
     ),
+    {provide: PRECONNECT_CHECK_BLOCKLIST, useValue: environment.mediaUrl, multi: true},
+    {
+      provide: IMAGE_CONFIG,
+      useValue: {
+        breakpoints: [16, 48, 96, 128, 384, 640, 750, 828, 1080, 1200, 1920]
+      }
+    },
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

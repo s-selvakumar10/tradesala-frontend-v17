@@ -10,6 +10,7 @@ import { ReturnAndRefundComponent } from './policies/return-and-refund/return-an
 import { ShippingComponent } from './policies/shipping/shipping.component';
 import { PageGuard } from '../shared/common/page.guard';
 import { PageResolver } from '../shared/common/page.resolver';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 
 const routes: Routes = [
@@ -56,6 +57,11 @@ const routes: Routes = [
       component: ShippingComponent, 
       data: { title: 'Shipping Policy', breadcrumb: 'Shipping Policy', page_slug: 'shipping-policy' },
       resolve: {metaInfo: PageResolver},
+    },
+    { 
+      path: '404', 
+      component: PageNotFoundComponent,
+      data: {breadcrumb: '404'}
     },
 ];
 

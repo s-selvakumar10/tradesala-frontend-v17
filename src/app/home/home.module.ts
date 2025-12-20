@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HomeComponent } from './home.component';
 import { HomeSliderComponent } from './home-slider/home-slider.component';
@@ -17,9 +17,9 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    HomeComponent,
     HomeSliderComponent,
-    CategorySliderComponent
+    CategorySliderComponent,
+    HomeComponent,
   ],
   imports: [
     CommonModule,
@@ -28,6 +28,7 @@ const routes: Routes = [
   ],
   exports: [
     RouterModule,    
-  ]
+  ],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class HomeModule { }

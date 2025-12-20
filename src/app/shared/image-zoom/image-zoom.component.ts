@@ -56,8 +56,6 @@ export class ImgZoomComponent implements OnInit, AfterViewInit, OnDestroy {
     _lensStyle;
     @Input() set lensStyle(val) {
       this._lensStyle = val;
-      console.log(this._lensStyle)
-      console.log(this.notFirstTime)
       if (this.notFirstTime) {
         this.imageZoom();
       }

@@ -35,7 +35,7 @@
                                                 <span class="clearfix" *ngIf="product.product.seller.name">Seller: {{product.product.seller.name}}</span>
                                                 <span class="tsid clearfix" *ngIf="product.product.tsid">TSID: {{product.product.tsid}}</span>
                                                 <!-- <span class="hsn-code" *ngIf="product.product.hsn">HSN: {{product.product.hsn}}</span> -->
-                                                <p class="text-muted small" [innerHTML]="product.customVariants" class="variant" *ngIf="product.customVariants"> </p>
+                                                <p class="text-muted small" [innerHTML]="product.customVariants | sanitizeHtml" class="variant" *ngIf="product.customVariants"> </p>
                                                 <!-- <p class="text-muted small">Size: 256 GB  <br> Brand: ADATA </p> -->
 
                                                

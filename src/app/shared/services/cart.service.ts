@@ -6,7 +6,7 @@ import { SessionFlow } from 'src/app/helper/session-flow';
 import { map, take } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { ToastrService } from 'ngx-toastr';
-import * as _ from 'lodash';
+import { isEmpty } from 'lodash-es';
 import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
@@ -336,7 +336,7 @@ export class CartService {
             }
             
           }
-          if(_.isEmpty(product.product?.discounts?.product_based_discount)){
+          if(isEmpty(product.product?.discounts?.product_based_discount)){
             let percentage ={ 
               free_shipping: false,
               has_percentage: false,               

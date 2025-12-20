@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ImgZoomModule } from '../shared/image-zoom/image-zoom.module';
 import { YouTubePlayerModule } from '@angular/youtube-player';
@@ -14,11 +14,13 @@ import { ProductSpecComponent } from './product-spec/product-spec.component';
 import { ProductStickyDirective } from '../shared/sticky-sidebar/product-sticky.directive';
 import { ProductComboOfferComponent } from './product-combo-offer/product-combo-offer.component';
 import { SellerOfferPopupComponent } from './modal-box/seller-offer-popup/seller-offer-popup.component';
+import { ProductImagesSkeletonComponent } from './product-images-skeleton/product-images-skeleton.component';
 
 @NgModule({
   declarations: [
     ProductDetailPageComponent,
     ProductDetailComponent,
+    ProductImagesSkeletonComponent,
     ProductImagesComponent,
     ProductPriceInfoComponent,
     ProductReviewComponent,
@@ -33,7 +35,8 @@ import { SellerOfferPopupComponent } from './modal-box/seller-offer-popup/seller
     ImgZoomModule,
     SharedModule,
     YouTubePlayerModule
-  ]
+  ],  
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class ProductModule {}
 

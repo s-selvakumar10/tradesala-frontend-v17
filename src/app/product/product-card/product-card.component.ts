@@ -1,4 +1,4 @@
-import { Component, EventEmitter, PLATFORM_ID, Inject, Input, Output, ChangeDetectionStrategy, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, EventEmitter, PLATFORM_ID, Inject, Input, Output, ChangeDetectionStrategy, NgZone, ChangeDetectorRef, SimpleChange, afterRender, afterNextRender } from '@angular/core';
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
@@ -69,16 +69,25 @@ export class ProductCardComponent {
 			}
 		}
 	}
-
-	ngAfterViewInit() {
+	ngOnChanges(product: SimpleChange): void {
 		if (isPlatformBrowser(this.platformId)){
-			this.zone.run(() => {
-				setTimeout(() => {	
-					this.contentLoaded = true;
-					this.cd.detectChanges();
-				}, 500);
-			});
+			if(product){
+				this.contentLoaded = true;
+				this.cd.detectChanges();
+			} else {
+				this.zone.run(() => {
+					setTimeout(() => {	
+						this.contentLoaded = true;
+						this.cd.detectChanges();
+					}, 500);
+				});
+			}
+			
 		}
+		
+	}
+	ngAfterViewInit() {
+		
 	}
 
 	addTocart(product): void {		

@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Subject, Subscription } from 'rxjs';
 import { Product } from 'src/app/core/models/product';
 import { CartService } from 'src/app/shared/services/cart.service';
-import _ from 'lodash';
+import {size} from 'lodash-es';
 import { OwlOptions } from 'ngx-owl-carousel-o';
 
 @Component({
@@ -158,7 +158,7 @@ export class ProductComboOfferComponent implements OnInit {
 	}
 	getTotalPrice(product){
 		if(product.combo_offers.length !=0){
-			if(_.size(product.combo_offers) > 3){
+			if(size(product.combo_offers) > 3){
 				this.isComboSlider = true;
 			} else {
 				this.isComboSlider = false;

@@ -2,242 +2,307 @@
 <section class="home-slider">
 	<div class="container">
 		<div class="row">
-			<app-home-slider ngClass="col-md-12" [sliderImages]="bannerImages.top"></app-home-slider>
+			@defer (on timer(500ms)) {						
+				@if(bannerImages?.top?.length > 0){
+					<app-home-slider ngClass="col-md-12" [sliderImages]="bannerImages.top"></app-home-slider>
+				}
+				@else {
+					<article class="col-md-12"> 
+						<div class="bg-loading" style="height:260px; width: 100%; max-width:100%; border-radius:1.5rem" [ngStyle]="{'height': isMobile ? '70px' : '260px'}"></div>
+					</article>
+				}
+			}
+			@placeholder {
+				<article class="col-md-12"> 
+					<div class="bg-loading" style="height:260px; width: 100%; max-width:100%; border-radius:1.5rem" [ngStyle]="{'height': isMobile ? '70px' : '260px'}"></div>
+				</article>
+			}			
+			
 		</div>	
 	</div>
 </section>
-
-<section class="product-block padding-y">
-	<div class="container">
-		<div class="row">
-			<div class="shop-by-cat fullwidth">
-				<div class="col-12 col-md-12 float-left">
-					<h2 class="float-none box-heading">Deals of the Day</h2>
-					<ng-container *ngIf="!isMobile">					
-						<app-product-grid-slider [options]=options1 [products]="featuredproducts$" [isLoading]="isLoading" [width]="178.5"></app-product-grid-slider>
-					</ng-container>
-					<ng-container *ngIf="isMobile">
-						<div class="row">
-							<ng-container *ngFor="let product of featuredproducts$">
-								<app-product-card [product]="product" class="col-6"></app-product-card>
-							</ng-container>
+@defer (on viewport; prefetch on idle) {
+	@if((featuredproducts$|async)?.length > 0){
+		<section class="product-block padding-y">
+			<div class="container">
+				<div class="row">
+					<div class="shop-by-cat fullwidth">
+						<div class="col-12 col-md-12 float-left">
+							<h2 class="float-none box-heading">Deals of the Day</h2>
+							@if(featuredproducts$|async; as featuredProducts){					
+								<ng-template [ngIf]="featuredProducts.length > 0" [ngIfElse]="emptyFeatured">
+									@if(isMobile) {								
+										<div class="row">		
+											@for(product of featuredProducts; track product){
+												<app-product-card [product]="product" class="col-6"></app-product-card>
+												
+											}
+										</div>
+									} @else {
+										<app-product-grid-slider [options]="options1" [products]="featuredProducts" [isLoading]="featuredProducts.length > 0" [setWidth]="178.5"></app-product-grid-slider>
+									}
+								
+								</ng-template>
+								<ng-template #emptyFeatured>
+									<app-empty-products [title]="" [count]="6"></app-empty-products>
+								</ng-template>	
+							}					
 						</div>
-					</ng-container>
+					</div>
 				</div>
 			</div>
-		</div>
-	</div>
-</section>
-
-<section class="product-block padding-y">
-	<div class="container">
-		<div class="row">
-			<div class="shop-by-cat fullwidth">
-				<div class="col-12 col-md-12 float-left">
-					<h2 class="float-none box-heading">Special Product</h2>
-					<ng-container *ngIf="!isMobile">					
-						<app-product-grid-slider [options]=options2 [products]="specialproducts$" [isLoading]="isLoading" [setWidth]="208.3"></app-product-grid-slider>
-					</ng-container>
-					<ng-container *ngIf="isMobile">
-						<div class="row">
-							<ng-container *ngFor="let product of specialproducts$">
-								<app-product-card [product]="product" class="col-6"></app-product-card>
-							</ng-container>
+		</section>
+	} @else {
+	<app-empty-products [title]="'Deals of the Day'" [count]="6"></app-empty-products>
+	}
+} @placeholder {
+	<app-empty-products [title]="" [count]="6"></app-empty-products>
+}
+@defer (on viewport; prefetch on idle) {
+	@if((specialproducts$|async)?.length > 0){
+			
+		<section class="product-block padding-y">
+			<div class="container">
+				<div class="row">
+					<div class="shop-by-cat fullwidth">
+						<div class="col-12 col-md-12 float-left">
+							<h2 class="float-none box-heading">Special Product</h2>
+							@if(specialproducts$|async; as specialProducts){					
+								<ng-template [ngIf]="specialProducts.length > 0" [ngIfElse]="emptySpecial">
+									@if(isMobile) {								
+										<div class="row">							
+											@for(product of specialProducts; track product){									
+													<app-product-card [product]="product" class="col-6"></app-product-card>
+											}
+										</div>
+									} @else {
+										<app-product-grid-slider [options]="options2" [products]="specialProducts" [isLoading]="specialProducts.length > 0" [setWidth]="178.5"></app-product-grid-slider>
+									}
+								
+								</ng-template>
+								<ng-template #emptySpecial>
+									<app-empty-products [title]="" [count]="6"></app-empty-products>
+								</ng-template>	
+							}
+							
 						</div>
-					</ng-container>
-					
+					</div>
 				</div>
 			</div>
-		</div>
-	</div>
-</section>
-
+		</section>
+		
+	} @else {
+	<app-empty-products [title]="'Special Product'" [count]="6"></app-empty-products>
+	}
+} @placeholder {
+	<app-empty-products [title]="" [count]="6"></app-empty-products>
+}
 <section class="category-block padding-y">
 	<div class="container">
 		<div class="row">
 			<div class="all-category-box fullwidth">
 				<div class="col-12 col-md-12 float-left">
 					<h2 class="float-none box-heading">Popular Categories</h2>
-					<app-category-slider></app-category-slider>
+					@defer(prefetch on idle) {
+						<app-category-slider ngSkipHydration></app-category-slider>
+					} @placeholder {
+						@for (item of ''.repeat(9).split(''); track $index) {
+							<article class="col-lg">
+								<div class="bg-loading" style="width: 90px; height:90px;"></div>
+							</article>
+						}
+					}					
 				</div>
 
 			</div>
 		</div>
 	</div>
 </section>
-<ng-container *ngIf="bestProduct.length > 0">
+@defer (on viewport; prefetch on idle) {
+	@if((otherProducts$|async)?.length > 0 && bestProduct?.length > 0){
+		<section class="product-block padding-y" *ngFor="let otherProd of bestProduct; let i = index;">
+				<div class="container">
+					<div class="row">
+						<div class="product-tabs">
+							<div class="col-md-12">
+								<h2 class="float-none box-heading">{{ otherProd.offer }}</h2>						
+								@if(isMobile) {							
+									<div class="row">							
+										@for(product of otherProd.products; track product){									
+												<app-product-card [product]="product" class="col-6"></app-product-card>
+										}
+									</div>
+								} @else {							
+									<app-product-grid-slider [options]="options4" [products]="otherProd.products" [isLoading]="otherProd.products.length > 0" [setWidth]="178.5"></app-product-grid-slider>
+									
+								}						
+							</div>
+						</div>
+					</div>
+				</div>
+		</section>
+	} @else {
+	<app-empty-products [title]="" [count]="6"></app-empty-products>
+	}
+} @placeholder {
+	<app-empty-products [title]="" [count]="6"></app-empty-products>
+}
+@if(bannerImages?.middle?.length > 0){	
+<section class="promo-banner-block">
+	<div class="container">
+		<div class="top-promo-banner"></div>
+		@defer(on timer(2000); prefetch on idle) {
+		<div class="row justify-content-start align-item-start mb-3">
+			<ng-container *ngFor="let banner of bannerImages.middle | slice:0:2; let i =index;">
+			
+				<div class="imgbanner col-4 col-md-4 col-sm-4" *ngIf="banner.position == 'top-left'">
+					<div class=" banner-effect" >							
+						<a [routerLink]="banner?.banner_type === 'brand' ? ['/brand', banner?.slug] : banner?.banner_type === 'category' ? ['/category', banner?.slug] : ['/', banner?.slug]" target="_blank" [title]="banner?.slug | strReplace: '-' : ' '">
+							<img loading="lazy" src="{{banner.image}}" width="397" height="150" disableOptimizedSrcset alt="banner" class="img-fluid ads-banner" *ngIf="banner.image">
+						</a>
+					</div>
+				</div>
 
-	<section class="product-block padding-y" *ngFor="let otherProd of bestProduct; let i = index;">
+				<div class="imgbanner col-8 col-md-8 col-sm-8" *ngIf="banner.position == 'top-right'">
+					<div class="banner-effect">
+						
+						<a [routerLink]="banner?.banner_type === 'brand' ? ['/brand', banner?.slug] : banner?.banner_type === 'category' ? ['/category', banner?.slug] : ['/', banner?.slug]" target="_blank" [title]="banner?.slug | strReplace: '-' : ' '">
+							<img loading="lazy" src="{{banner.image}}" width="824" height="150" disableOptimizedSrcset alt="banner" class="img-fluid ads-banner" *ngIf="banner.image">
+						</a>
+					</div>							
+				</div>	
+				
+			</ng-container>
+		</div>						
+		<div class="row justify-content-start align-item-start">
+			<ng-container *ngFor="let banner of bannerImages.middle | slice:2:4; let i =index;">					
+				<div class="imgbanner col-8 col-md-8 col-sm-8" *ngIf="banner.position == 'bottom-left'">
+					<div class="banner-effect">								
+						<a [routerLink]="banner?.banner_type === 'brand' ? ['/brand', banner?.slug] : banner?.banner_type === 'category' ? ['/category', banner?.slug] : ['/', banner?.slug]" target="_blank" [title]="banner?.slug | strReplace: '-' : ' '">
+							<img loading="lazy" src="{{banner.image}}" width="824" height="150" disableOptimizedSrcset alt="banner" class="img-fluid ads-banner" *ngIf="banner.image">
+						</a>
+					</div>
+					
+				</div>
+				<div class="imgbanner col-4 col-md-4 col-sm-4" *ngIf="banner.position == 'bottom-right'">
+					<div class=" banner-effect">
+						
+						<a [routerLink]="banner?.banner_type === 'brand' ? ['/brand', banner?.slug] : banner?.banner_type === 'category' ? ['/category', banner?.slug] : ['/', banner?.slug]" target="_blank" [title]="banner?.slug | strReplace: '-' : ' '">
+							<img loading="lazy" src="{{banner.image}}" width="397" height="150" disableOptimizedSrcset alt="banner" class="img-fluid ads-banner" *ngIf="banner.image">
+						</a>
+					</div>
+				</div>
+
+			</ng-container>
+		</div>
+		} @placeholder {
+			<div class="row justify-content-start align-item-start mb-3">
+				<div class="imgbanner col-4 col-md-4 col-sm-4">
+					<article> 
+						<div class="bg-loading" style="height:150px; width: 100%; max-width:100%; border-radius:1.5rem"></div>
+					</article>
+				</div>
+				<div class="imgbanner col-8 col-md-8 col-sm-8">
+					<article> 
+						<div class="bg-loading" style="height:150px; width: 100%; max-width:100%; border-radius:1.5rem"></div>
+					</article>
+				</div>
+			</div>
+			<div class="row justify-content-start align-item-start mb-3">				
+				<div class="imgbanner col-8 col-md-8 col-sm-8">
+					<article> 
+						<div class="bg-loading" style="height:150px; width: 100%; max-width:100%; border-radius:1.5rem"></div>
+					</article>
+				</div>
+				<div class="imgbanner col-4 col-md-4 col-sm-4">
+					<article> 
+						<div class="bg-loading" style="height:150px; width: 100%; max-width:100%; border-radius:1.5rem"></div>
+					</article>
+				</div>
+			</div>
+		}
+
+	</div>
+</section>
+}
+@defer (on viewport; prefetch on idle) {
+	@if((newArraivalproducts$|async)?.length > 0){	
+		<section class="product-block padding-y">
+			<div class="container">
+				<div class="row">
+					<div class="shop-by-cat fullwidth">
+						<div class="col-12 col-md-12 float-left">
+							<h2 class="float-none box-heading">New Arrivals</h2>
+							@if(newArraivalproducts$|async; as newArrivalProducts){					
+								<ng-template [ngIf]="newArrivalProducts.length > 0" [ngIfElse]="emptyNewArrivals">
+								@if(isMobile) {
+									<div class="row">							
+										@for(product of newArrivalProducts; track product){
+											@defer () {
+												<app-product-card [product]="product" class="col-6"></app-product-card>
+											}
+										}
+									</div>
+								} @else {
+									@defer () {
+										<app-product-grid-slider [options]="options3" [products]="newArrivalProducts" [isLoading]="newArrivalProducts.length > 0" [setWidth]="178.5"></app-product-grid-slider>
+									}
+								}
+								</ng-template>
+								<ng-template #emptyNewArrivals>
+									<app-empty-products [title]="" [count]="6"></app-empty-products>
+								</ng-template>	
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>	
+	} @else {
+		<app-empty-products [title]="'New Products'" [count]="6"></app-empty-products>
+	}
+} @placeholder {
+	<app-empty-products [title]="" [count]="6"></app-empty-products>
+}
+@defer (on viewport; prefetch on idle) {
+	@if((trendingproducts$|async)?.length > 0){
+	<section class="product-block padding-y">
 		<div class="container">
 			<div class="row">
 				<div class="product-tabs">
 					<div class="col-md-12">
-						<h2 class="float-none box-heading">{{ otherProd.offer }}</h2>
-						
-						<ng-container *ngIf="!isMobile">					
-							<app-product-grid-slider [options]="options4" [products]="otherProd.products" [isLoading]="isLoading" [setWidth]="178.5"></app-product-grid-slider>
-						</ng-container>
-						<ng-container *ngIf="isMobile">
-							<div class="row">
-								<ng-container *ngFor="let product of otherProd.products">
-									<app-product-card [product]="product" class="col-6"></app-product-card>
-								</ng-container>
-							</div>
-						</ng-container>
+						<h2 class="float-none box-heading">Trending Products</h2>
+						@if(trendingproducts$|async; as trendingProducts){
+							<ng-template [ngIf]="trendingProducts.length > 0" [ngIfElse]="emptyTrending">
+							@if(isMobile) {
+								<div class="row">							
+									@for(product of trendingProducts; track product){
+										@defer () {
+											<app-product-card [product]="product" class="col-6"></app-product-card>
+										}
+									}
+								</div>
+							} @else {
+								@defer () {
+									<app-product-grid-slider [options]="options4" [products]="trendingProducts" [isLoading]="trendingProducts.length > 0" [setWidth]="178.5"></app-product-grid-slider>
+								}
+							}
+							</ng-template>
+							<ng-template #emptyTrending>
+								<app-empty-products [title]="" [count]="6" ngSkipHydration></app-empty-products>
+							</ng-template>
+						}
 					</div>
 				</div>
 			</div>
 		</div>
 	</section>
-	
-</ng-container>
-<section class="promo-banner-block">
-	<div class="container">
-		<div class="top-promo-banner" *ngIf="bannerImages?.middle?.length === 0">
-			<div class="row justify-content-start align-item-start mb-3">
-				<div class="imgbanner col-4 col-md-4 col-sm-4">
-					<div class=" banner-effect">
-						<!-- <a href="#"> -->
-							<img loading="lazy" src="assets/images/promo-banner/fashion.png" alt="banner" class="img-fluid ads-banner">
-						<!-- </a> -->
-					</div>
-				</div>
-
-				<div class="imgbanner col-8 col-md-8 col-sm-8">
-					<div class="banner-effect">
-						<!-- <a href="#"> -->
-							<img loading="lazy" src="assets/images/promo-banner/1.png" alt="banner"
-								class="img-fluid ads-banner">
-						<!-- </a> -->
-					</div>
-					
-				</div>
-
-				
-			</div>
-			<div class="row justify-content-start align-item-start">
-				<div class="imgbanner col-8 col-md-8 col-sm-8">
-					<div class="banner-effect">
-						<!-- <a href="#"> -->
-							<img loading="lazy" src="assets/images/promo-banner/2.png" alt="banner"
-								class="img-fluid ads-banner">
-						<!-- </a> -->
-					</div>
-					
-				</div>
-				<div class="imgbanner col-4 col-md-4 col-sm-4">
-					<div class=" banner-effect">
-						<!-- <a href="#"> -->
-							<img loading="lazy" src="assets/images/promo-banner/footware.png" alt="banner" class="img-fluid ads-banner">
-						<!-- </a> -->
-					</div>
-				</div>
-
-			</div>
-		</div>
-		<div class="top-promo-banner" *ngIf="bannerImages?.middle?.length > 0">
-			<div class="row justify-content-start align-item-start mb-3">
-				<ng-container *ngFor="let banner of bannerImages.middle | slice:0:2; let i =index;">
-				
-					<div class="imgbanner col-4 col-md-4 col-sm-4" *ngIf="banner.position == 'top-left'">
-						<div class=" banner-effect" >							
-							<a 
-						[routerLink]="banner?.banner_type === 'brand' ? ['/brand', banner?.slug] : banner?.banner_type === 'category' ? ['/category', banner?.slug] : ['/', banner?.slug]" target="_blank" [title]="banner?.slug | strReplace: '-' : ' '">
-								<img loading="lazy" src="{{banner.image}}" alt="banner" class="img-fluid ads-banner" *ngIf="banner.image">
-							</a>
-						</div>
-					</div>
-	
-					<div class="imgbanner col-8 col-md-8 col-sm-8" *ngIf="banner.position == 'top-right'">
-						<div class="banner-effect">
-							
-							<a 
-						[routerLink]="banner?.banner_type === 'brand' ? ['/brand', banner?.slug] : banner?.banner_type === 'category' ? ['/category', banner?.slug] : ['/', banner?.slug]" target="_blank" [title]="banner?.slug | strReplace: '-' : ' '">
-								<img loading="lazy" src="{{banner.image}}" alt="banner"	class="img-fluid ads-banner" *ngIf="banner.image">
-							</a>
-						</div>
-						
-					</div>
-	
-					
-				</ng-container>
-			</div>
-				
-				
-			<div class="row justify-content-start align-item-start">
-				<ng-container *ngFor="let banner of bannerImages.middle | slice:2:4; let i =index;">					
-					<div class="imgbanner col-8 col-md-8 col-sm-8" *ngIf="banner.position == 'bottom-left'">
-						<div class="banner-effect">
-							
-							<a 
-						[routerLink]="banner?.banner_type === 'brand' ? ['/brand', banner?.slug] : banner?.banner_type === 'category' ? ['/category', banner?.slug] : ['/', banner?.slug]" target="_blank" [title]="banner?.slug | strReplace: '-' : ' '">
-								<img loading="lazy" src="{{banner.image}}" alt="banner" class="img-fluid ads-banner" *ngIf="banner.image">
-							</a>
-						</div>
-						
-					</div>
-					<div class="imgbanner col-4 col-md-4 col-sm-4" *ngIf="banner.position == 'bottom-right'">
-						<div class=" banner-effect">
-							
-							<a 
-						[routerLink]="banner?.banner_type === 'brand' ? ['/brand', banner?.slug] : banner?.banner_type === 'category' ? ['/category', banner?.slug] : ['/', banner?.slug]" target="_blank" [title]="banner?.slug | strReplace: '-' : ' '">
-								<img loading="lazy" src="{{banner.image}}" alt="banner" class="img-fluid ads-banner" *ngIf="banner.image">
-							</a>
-						</div>
-					</div>
-	
-				</ng-container>
-			</div>
-			
-		</div>
-	</div>
-</section>
-
-<section class="product-block padding-y">
-	<div class="container">
-		<div class="row">
-			<div class="shop-by-cat fullwidth">
-				<div class="col-12 col-md-12 float-left">
-					<h2 class="float-none box-heading">New Arrivals</h2>
-					
-					<ng-container *ngIf="!isMobile">					
-						<app-product-grid-slider [options]="options3" [products]="newArraivalproducts$" [isLoading]="isLoading" [setWidth]="178.5"></app-product-grid-slider>
-					</ng-container>
-					<ng-container *ngIf="isMobile">
-						<div class="row">
-							<ng-container *ngFor="let product of newArraivalproducts$">
-								<app-product-card [product]="product" class="col-6"></app-product-card>
-							</ng-container>
-						</div>
-					</ng-container>
-				</div>
-			</div>
-		</div>
-	</div>
-</section>
-
-<section class="product-block padding-y">
-	<div class="container">
-		<div class="row">
-			<div class="product-tabs">
-				<div class="col-md-12">
-					<h2 class="float-none box-heading">Trending Products</h2>
-					
-					<ng-container *ngIf="!isMobile">					
-						<app-product-grid-slider [options]="options4" [products]="trendingproducts$" [isLoading]="isLoading" [setWidth]="178.5"></app-product-grid-slider>
-					</ng-container>
-					<ng-container *ngIf="isMobile">
-						<div class="row">
-							<ng-container *ngFor="let product of trendingproducts$">
-								<app-product-card [product]="product" class="col-6"></app-product-card>
-							</ng-container>
-						</div>
-					</ng-container>
-				</div>
-			</div>
-		</div>
-	</div>
-</section>
+	} @else {
+	<app-empty-products [title]="'Trending Products'" [count]="6" ngSkipHydration></app-empty-products>
+	}
+} @placeholder {
+	<app-empty-products [title]="" [count]="6"></app-empty-products>
+}
 <section class="promo-banner-block">
 	<div class="container">
 		<div class="fullwidth-promo-banner">

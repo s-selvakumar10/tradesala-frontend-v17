@@ -9,7 +9,7 @@
 <section class="main-content padding-y bg-theme-light">
     <div class="container">
         <div class="row">           
-            <aside class="sidebar sidebar-right col-12 order-2 product__sidebar" [class]="{'col-lg-3' : isDesktop} " *ngIf="isDesktop && screenwidth > 1200">
+            <aside class="sidebar sidebar-right col-12 order-2 product__sidebar" [class]="{'col-lg-3' : isDesktop} " *ngIf="isDesktop && screenwidth >= 1024">
                 <div id="sticky-start"></div>               
                 <div class="inner-content inner card-body p-0" [isMobile]="false" [stickyStartId]="'sticky-start'" [stickyClass]="'sticky'" [ieOnly]="false">
                     <app-product-price-info
@@ -25,12 +25,12 @@
             <main class="content col-12 order-1 product__main" [class]="{'col-lg-9' : isDesktop} ">           
                 <div class="inner-content inner card-body p-0">
                     <div class="row mb-4 container-row" >                        
-                        <div class="col-12 images-gallery" [class]="{'col-md-6' : screenwidth > 767, 'fixed-gallery': isFixed && screenwidth > 767}" #target> 
+                        <div class="col-12 images-gallery" [class]="{'col-md-6' : isDesktop, 'fixed-gallery': isFixed && (isDesktop || screenwidth > 767)}" #target> 
                             <div class="product-images" >
                                 <app-product-images [media]="product.media"></app-product-images>
                             </div> 
                         </div>
-                        <div class="col-12 scroll-element product-main-content" #scrollContainer [class]="{'col-md-6' : screenwidth > 767}">
+                        <div class="col-12 scroll-element product-main-content" #scrollContainer [class]="{'col-md-6' : isDesktop}">
                             <article class="card-body p-0 product-content" >
                                 <div class="product-main-info">        
                                     <div class="product-name-info">
@@ -209,7 +209,7 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <div class="price-wrapper" *ngIf="isMobile || isTablet && !isDesktop">
+                                    <div class="price-wrapper" *ngIf="isMobile || isTablet && !isDesktop && screenwidth <=992">
                                         <app-product-price-info
                                         [product]="product"
                                         [subTotal]="totalPrice" 
@@ -256,7 +256,7 @@
                                 <li [ngbNavItem]="1">
                                     <a ngbNavLink>Description</a>
                                     <ng-template ngbNavContent>
-                                        <div *ngIf="product.description" [innerHTML]="product.description"></div>
+                                        <div *ngIf="product.description" [innerHTML]="product.description | sanitizeHtml"></div>
                                         <p *ngIf="!product.description">No Desciption given</p>
                                     </ng-template>
                                 </li>
@@ -334,15 +334,31 @@
         </div>
     </div>
 </section>
+@defer (on viewport; prefetch on idle){
 <section *ngIf="(recommendedProduct$ | async); let recommendedProduct$" class="product-block padding-y">
-    <div *ngIf="recommendedProduct$.length > 0" class="container">
+    <ng-template [ngIf]="recommendedProduct$.length > 0" [ngIfElse]="emptyRelated">
+    <div class="container">
         <div class="row">
             <div class="shop-by-cat fullwidth">
                 <div class="col-12 col-md-12 float-left">
                     <h2 class="float-none box-heading">Related Products</h2>
-                    <app-product-grid-slider [options]="options" [products]="recommendedProduct$" [setWidth]="178.571"></app-product-grid-slider>
+                    <app-product-grid-slider [options]="options" [products]="recommendedProduct$" [isLoading]="recommendedProduct$.length > 0" [setWidth]="178.571"></app-product-grid-slider>
                 </div>
             </div>
         </div>
     </div>
+    </ng-template>
+    <ng-template #emptyRelated>
+        <div class="container">
+            <div class="row">
+                <app-empty-products [title]="'Related Products'" [count]="6"></app-empty-products>
+            </div>
+        </div>
+        
+    </ng-template>
 </section>
+
+} @placeholder {
+    <app-empty-products [title]="'Related Products'" [count]="6"></app-empty-products>
+} 
+

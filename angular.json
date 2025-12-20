@@ -71,17 +71,21 @@
             "namedChunks": true,
             "allowedCommonJsDependencies": [
               "lodash",
-              "@cashfreepayments/cashfree-js"
+              "@cashfreepayments/cashfree-js",
+              "redis",
+              "cors",
+              "compression"
             ],                                  
             "browser": "src/main.ts",
-            "server": "src/main.server.ts",
+             "server": "src/main.server.ts",
             "ssr": {
               "entry": "src/server.ts"
             },
             "prerender": {
               "discoverRoutes": false,
               "routesFile": "./routes.txt"
-            }           
+            }
+                      
           },
           "configurations": {
             "production": {
