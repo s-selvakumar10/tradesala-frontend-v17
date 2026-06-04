@@ -1,7 +1,7 @@
 import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID, NgZone, afterNextRender, inject, Injector, afterRender, runInInjectionContext, AfterViewInit  } from '@angular/core';
 import { isPlatformBrowser, DOCUMENT, isPlatformServer } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { AuthService } from './auth/auth.service';
@@ -57,22 +57,29 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
+        if(event instanceof NavigationStart){
+          this.seoService.removeJsonLd(); 
+        }
         if (isPlatformBrowser(this.platformId)) {
           this.scrollPageToTop();
+          this.setJsonSchema();
           //this.setMetaData();       
         }   
       });
   }
   ngAfterViewInit(): void {   
-    runInInjectionContext(this.injector, () => {
+    //runInInjectionContext(this.injector, () => {
       afterNextRender(() => {
         if(environment.production && isPlatformBrowser(this.platformId)) {
-          this.setGTagManager();
-          this.setGoogleAnalytics();
-          this.zohoCRM();
+          setTimeout(() => {
+            this.setGTagManager();
+            this.setGoogleAnalytics();
+            this.zohoCRM();
+          }, 3500)
+          
         }
-      });
-    })
+      }, {injector: this.injector});
+    //})
     // if(environment.production && isPlatformBrowser(this.platformId)) {
     //   // this.ngZone.run(() => {       
      
@@ -169,6 +176,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     }
     this.seoService.setMetaTags(metaTags);
   }
+  
   setJsonSchema(){
     this.schema = {
       '@context': 'https://schema.org',

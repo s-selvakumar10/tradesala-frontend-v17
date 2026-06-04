@@ -59,9 +59,12 @@ export class InstantsearchComponent implements OnInit, OnChanges {
         
         this.products = resp.products;
         const metaData = resp.meta;
-        this.page = metaData.current_page;
-        this.count = metaData.total;
-        this.pageSize = metaData.per_page;
+        if(metaData){
+          this.page = metaData.current_page;
+          this.count = metaData.total;
+          this.pageSize = metaData.per_page;
+        }
+        
     },
     (err) => {
     });

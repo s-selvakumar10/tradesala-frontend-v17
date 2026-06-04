@@ -14,12 +14,12 @@ export class BreadcrumbComponent {
   breadcrumbs: BehaviorSubject<Breadcrumb[]> = new BehaviorSubject<Breadcrumb[]>([]);
   @Input() category: Breadcrumb[] = [];
   @Input() subcategory: Breadcrumb[] = [];
- 
 
   constructor(private breadcrumbService: BreadcrumbService) {
-    this.breadcrumbService.breadcrumbChanged.subscribe((crumbs: Breadcrumb[]) => {     
+    this.breadcrumbService.breadcrumbChanged.subscribe((crumbs: Breadcrumb[]) => { 
       this.onBreadcrumbChange(crumbs);
-    });   
+    });  
+   
   }
   private onBreadcrumbChange(crumbs: Breadcrumb[]) {
     this.breadcrumbs.next(crumbs);

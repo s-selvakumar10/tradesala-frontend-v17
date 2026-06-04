@@ -1,5 +1,5 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, Inject, Input, OnInit, PLATFORM_ID, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, Inject, Input, OnInit, PLATFORM_ID, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, take, tap } from 'rxjs/operators';
@@ -21,7 +21,8 @@ import {isEmpty, size} from 'lodash-es';
   selector: 'app-product-detail',
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {ngSkipHydration: 'true'},
 })
 export class ProductDetailComponent implements OnInit {
   @Input() product: Product;
@@ -55,8 +56,9 @@ export class ProductDetailComponent implements OnInit {
   isLoading$ = this.isLoading.asObservable();
   isMobile: boolean = false;
   isTablet: boolean = false;
-  isDesktop: boolean = false;
-  screenwidth: any = isPlatformBrowser(this.platformId) ? this.window.innerWidth : 0;
+  isDesktop: boolean = false;  
+  screenwidth: any = isPlatformBrowser(this.platformId) ? this.window.innerWidth : 1366;
+
   breadcrumbData: { displayName: string, route: string, terminal: boolean, url: string } = {
     displayName: '',
     route: '',
@@ -195,12 +197,33 @@ export class ProductDetailComponent implements OnInit {
     private el: ElementRef,
     @Inject(WINDOW) private window: Window,
     @Inject(DOCUMENT) private _document: Document,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    @Inject('isServer') public isServer: boolean
   ) { 
-      this.calculateInnerWidth();
-      this.isMobile =  this.device.isMobile() || this.screenwidth <= 992;
-      this.isTablet = this.device.isTablet();
-      this.isDesktop = this.device.isDesktop() || this.screenwidth >= 1024;
+    const deviceInfo = this.device.getDeviceInfo();
+    //console.log(deviceInfo.platform === 'mobile' + '', (this.screenwidth <= 320 && this.screenwidth >= 767) + '', this.device.isTablet())
+    if((deviceInfo.platform === 'mobile' || (this.screenwidth <= 320 && this.screenwidth <= 767)  || this.device.isMobile()) && isPlatformBrowser(this.platformId)){
+      this.isMobile =  true;
+    } else {
+      this.isMobile =  false;
+    }
+    //console.log(deviceInfo.platform === 'tablet' + '', (this.screenwidth <= 768 && this.screenwidth >= 1199) + '', this.device.isTablet())
+    if((deviceInfo.platform === 'tablet' || (this.screenwidth <= 768 && this.screenwidth <= 1199) || this.device.isTablet()) && isPlatformBrowser(this.platformId)){
+      this.isTablet =  true;
+    } else {
+      this.isTablet =  false;
+    }
+    //console.log(deviceInfo.platform === 'desktop' + '', this.screenwidth >= 1200 + '', this.device.isDesktop())
+    if((deviceInfo.platform === 'desktop' || this.screenwidth >= 1200 || this.device.isDesktop()) && isPlatformBrowser(this.platformId)){
+      this.isDesktop =  true;
+    } else {
+      this.isDesktop =  false;
+    }   
+    this.calculateInnerWidth();
+
+      // this.isMobile =  this.device.isMobile() || this.screenwidth <= 992;
+      // this.isTablet = this.device.isTablet();
+      // this.isDesktop = this.device.isDesktop() || this.screenwidth >= 1024;
       this.modalOptions = {
         backdrop:'static',
         backdropClass:'loginBackdrop',
@@ -309,8 +332,8 @@ export class ProductDetailComponent implements OnInit {
     
   }
 
-  ngOnChanges(simpleChanges: SimpleChanges): void { 
-    this.initData();
+  ngOnChanges(): void {    
+    //this.initData();
     this.productService.getProductReviews(this.product.slug).subscribe(reviews => {			
       this.listReviews = reviews;			
     });   

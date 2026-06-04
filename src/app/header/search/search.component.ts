@@ -71,7 +71,7 @@ export class SearchComponent implements OnInit {
             filter((res) => res.length > 1),
             distinctUntilChanged(),
             tap((text: string) => {
-            
+              console.log('search text',text);
               this.isSearching = true;
   
               this.searchService.getResultList({ search_keywords: text }).subscribe(

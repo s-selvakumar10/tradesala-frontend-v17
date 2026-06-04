@@ -1,21 +1,18 @@
-import { Component, Input, OnInit, OnDestroy, OnChanges, ViewChild, PLATFORM_ID, Inject, NgZone, ChangeDetectionStrategy, HostListener, ElementRef, Renderer2 } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, OnChanges, ViewChild, PLATFORM_ID, Inject, NgZone, SimpleChanges, ChangeDetectionStrategy, afterNextRender, inject, Injector } from '@angular/core';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ImgZoomService } from './../../shared/image-zoom/image-zoom.service';
 import { ImgZoomComponent } from './../../shared/image-zoom/image-zoom.component';
 import { Media } from 'src/app/core/models/product';
 import { SlidesOutputData, OwlOptions } from 'ngx-owl-carousel-o';
-import { SessionFlow } from 'src/app/helper/session-flow';
 import { ResizeService } from 'src/app/core/services/resize.service';
 import { Subscription } from 'rxjs';
-import { filter} from 'rxjs/operators';
-import { WINDOW } from 'src/app/shared/services/window.service';
-import { MobileDeviceDetectorService } from 'src/app/core/services/device-detector.service';
 
 @Component({
   selector: 'app-product-images',
   templateUrl: './product-images.component.html',
   styleUrls: ['./product-images.component.scss'],
+  host: {ngSkipHydration: 'true'},
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger('activeSlide', [
@@ -38,16 +35,20 @@ import { MobileDeviceDetectorService } from 'src/app/core/services/device-detect
 })
 export class ProductImagesComponent implements OnInit, OnDestroy, OnChanges{
   @Input() media: Media;
-  bigImage: string | boolean;
-  images: any = [];
-  isLoadingResults = false;
+  @Input() isMobile: boolean;
+  @Input() isTablet: boolean;
+  @Input() isDesktop: boolean;
+  @Input() screenwidth: number;
   @Input() width: number;
-  @ViewChild('player') player: any;
-  videoId: string;
+  @Input() isServer: boolean;
   @Input()
   set id(id: string) {
     this.videoId = id;
   }
+  bigImage: string | boolean;
+  images: any = [];
+  isLoadingResults = false;
+  videoId: string;
   videos: any = [];
   safeURL: any;
   displayedVideoImg: string;
@@ -61,30 +62,21 @@ export class ProductImagesComponent implements OnInit, OnDestroy, OnChanges{
     containerStyle: string;
     lensStyle: string;
   };
-  isMobile: boolean = false;
-  isTablet: boolean = false;
-  isDesktop: boolean = false;
-  screenwidth: any;
+ 
   resizeSub: Subscription;
-  beforeZoom = false;
-  
-  @ViewChild(ImgZoomComponent) zoom!: ImgZoomComponent;
-  
-  constructor(
-   
-    private render: Renderer2,
-    private ngZone: NgZone,
-    @Inject(DOCUMENT)
-    private _document: Document,
-    @Inject(WINDOW) private window: Window,
-    private ngxImgZoom: ImgZoomService, 
-    private mobileDetect: SessionFlow,
-    private resizeService: ResizeService,
-    @Inject(PLATFORM_ID) private platformId: any,
-    public device: MobileDeviceDetectorService,
-    @Inject('isServer') public isServer: boolean
+  beforeZoom:boolean = true;
 
-  ) {
+  @ViewChild('player') player: any;
+  @ViewChild(ImgZoomComponent) zoom!: ImgZoomComponent;
+  private injector = inject(Injector);
+  constructor(
+    private ngxImgZoom: ImgZoomService,
+    private resizeService: ResizeService,
+    //private ngZone: NgZone,
+    @Inject(DOCUMENT) private _document: Document,
+    @Inject(PLATFORM_ID) private platformId: any,
+
+  ) {   
     this.ngxImgZoom.setZoomBreakPoints([
       { w: 100, h: 100 },
       { w: 150, h: 150 },
@@ -94,9 +86,6 @@ export class ProductImagesComponent implements OnInit, OnDestroy, OnChanges{
     ]);
 
     this.imageGallerySettings();
-    this.isMobile =  this.device.isMobile();
-    this.isTablet = this.device.isTablet();
-    this.isDesktop = this.device.isDesktop();
   }
   
 
@@ -107,20 +96,42 @@ export class ProductImagesComponent implements OnInit, OnDestroy, OnChanges{
 
   }
 
-  ngAfterViewInit(): void {    
-    this.ngZone.run(() => {
-      this.beforeZoom = false;
+  ngAfterViewInit(): void { 
+    
+    afterNextRender(() => {
       if(this.videos.length > 0){
         this.playYoutube();
       }
-    });
+    }, { injector: this.injector })
+    // this.ngZone.runOutsideAngular(() => {
+     
+    //   if(this.videos.length > 0){
+    //     this.playYoutube();
+    //   }
+    // });
 
    
   }
  
 
-  ngOnChanges(): void {
-    this.loadImages();
+  ngOnChanges(changes: SimpleChanges): void {
+    const {media} = changes;
+    if(media.currentValue['videos']?.length > 0){
+      this.videoEnabled = true;
+    } else {
+      this.videoEnabled = false;
+    }
+    if(media.currentValue['images']?.length > 0){
+      this.imageEnabled = true;
+    } else {
+      this.imageEnabled = false;
+    }
+
+    // console.log('desktop',this.isDesktop);
+    // console.log('mobile',this.isMobile);
+    // console.log('tablet',this.isTablet);
+    // console.log('isServer',this.isServer);
+    //this.loadImages();
   }
   calculateInnerWidth() {
     if (isPlatformBrowser(this.platformId)) {

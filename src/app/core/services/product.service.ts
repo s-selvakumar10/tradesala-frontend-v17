@@ -118,4 +118,25 @@ export class ProductService {
       map((resp) => resp.body)
     );
   }
+
+  getCollection(slug): Observable<any>{
+    return this.api.get<{data: any}>(`v1/collection/${slug}`).pipe(      
+      map((resp) => resp.data)
+    );
+  }
+  getCollectionProductList(param): Observable<any>{
+    return this.api.postApi('v1/collection/product-list', param).pipe(
+      map((resp) => resp.body)
+    )
+  }
+  getProductTag(slug): Observable<any>{
+    return this.api.get<{data: any}>(`v1/product-tag/${slug}`).pipe(      
+      map((resp) => resp.data)
+    );
+  }
+  getProductTagList(param): Observable<any>{
+    return this.api.postApi('v1/product-tag/product-list', param).pipe(
+      map((resp) => resp.body)
+    )
+  }
 }

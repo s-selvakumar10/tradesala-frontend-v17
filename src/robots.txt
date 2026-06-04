@@ -1,3 +1,5 @@
 User-agent: *
 Disallow:
 Disallow: /overview
+Disallow: admin.tradesala.com
+Disallow: demo.tradesala.com

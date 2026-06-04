@@ -66,6 +66,7 @@ export class ProductPriceInfoComponent implements OnChanges {
     @Inject(DOCUMENT) private readonly document: any,
     @Inject(PLATFORM_ID) private platformId: any
   ) {
+    this.isAuthenticated = this.authService.isAuth;
     this.modalOptions = {
       backdrop:'static',
       backdropClass:'loginBackdrop',

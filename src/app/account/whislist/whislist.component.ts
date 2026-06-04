@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Product } from '../../core/models/product';
-import { ProductService } from '../../core/services/product.service';
+//import { ProductService } from '../../core/services/product.service';
 import { CartService } from '../../shared/services/cart.service';
 import { Wishlist } from '../../core/models/wishlist';
 import { WishlistService } from 'src/app/shared/services/wishlist.service';
@@ -21,7 +21,7 @@ export class WhislistComponent implements OnInit {
 	@Input() wishlist: Wishlist;
 	data: any;
 	public wishlists$: Array<Wishlist> = [];
-	public featuredproducts$: Array<Product>;
+	//public featuredproducts$: Array<Product>;
 	userId: string;
 	inStock: boolean = true;
 	noReturnAlert: boolean = false;
@@ -38,7 +38,7 @@ export class WhislistComponent implements OnInit {
 		private authService: AuthService,
 		private cartService: CartService,
 		private toast: ToastrService,
-		private productService: ProductService,
+		//private productService: ProductService,
 		private wishlistService: WishlistService,
 		private router: Router
 	) {
@@ -53,9 +53,9 @@ export class WhislistComponent implements OnInit {
 
 	ngOnInit(): void {		
 		this.getWhislistData();
-		this.productService.getFeaturedProducts().subscribe(res => {
-			this.featuredproducts$ = res;
-		});
+		// this.productService.getFeaturedProducts().subscribe(res => {
+		// 	this.featuredproducts$ = res;
+		// });
 	}
 
 	getWhislistData(){

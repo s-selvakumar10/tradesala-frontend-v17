@@ -3,9 +3,28 @@
 		<ng-container *ngIf="loadImage">			
 			<ng-template carouselSlide *ngFor="let banner of sliderImages" >
 				<div class="slide">
-					<a [routerLink]="banner?.banner_type === 'brand' ? ['/brand', banner?.slug] : banner?.banner_type === 'category' ? ['/category', banner?.slug] : ['/', banner?.slug]" target="_blank" [title]="banner?.slug | strReplace: '-' : ' '">
-						<img lazyLoad ngSrc="{{banner.image}}" width="1250" height="260" sizes="(max-width: 768px) 100vw, 50vw" [alt]="banner?.slug | strReplace: '-' : ' '" [title]="banner?.slug | strReplace: '-' : ' '">
-					</a>
+					@if (banner?.banner_type === 'brand') {
+						<a [routerLink]="['/brand', banner?.slug]" target="_blank" [title]="banner?.slug | strReplace: '-' : ' '">
+							<img lazyLoad="eager" priority="high" ngSrc="{{banner.image}}" width="1250" height="260" sizes="(max-width: 768px) 100vw, 100vw" [alt]="banner?.slug | strReplace: '-' : ' '" [title]="banner?.slug | strReplace: '-' : ' '">
+						</a>
+					} @else if (banner?.banner_type === 'category') {
+						<a [routerLink]="['/category', banner?.slug]" target="_blank" [title]="banner?.slug | strReplace: '-' : ' '">
+							<img lazyLoad="eager" priority="high" ngSrc="{{banner.image}}" width="1250" height="260" sizes="(max-width: 768px) 100vw, 100vw" [alt]="banner?.slug | strReplace: '-' : ' '" [title]="banner?.slug | strReplace: '-' : ' '">
+						</a>
+					} @else if (banner?.banner_type === 'product_collection') {
+						<a [routerLink]="['/collection', banner?.slug]" target="_blank" [title]="banner?.slug | strReplace: '-' : ' '">
+							<img lazyLoad="eager" priority="high" ngSrc="{{banner.image}}" width="1250" height="260" sizes="(max-width: 768px) 100vw, 100vw" [alt]="banner?.slug | strReplace: '-' : ' '" [title]="banner?.slug | strReplace: '-' : ' '">
+						</a>
+					} @else if (banner?.banner_type === 'product_tags') {
+						<a [routerLink]="['/product/tags', banner?.slug]" target="_blank" [title]="banner?.slug | strReplace: '-' : ' '">
+							<img lazyLoad="eager" priority="high" ngSrc="{{banner.image}}" width="1250" height="260" sizes="(max-width: 768px) 100vw, 100vw" [alt]="banner?.slug | strReplace: '-' : ' '" [title]="banner?.slug | strReplace: '-' : ' '">
+						</a>
+					} @else {
+						<a [routerLink]="['/', banner?.slug]" target="_blank" [title]="banner?.slug | strReplace: '-' : ' '">
+							<img lazyLoad="eager" priority="high" ngSrc="{{banner.image}}" width="1250" height="260" sizes="(max-width: 768px) 100vw, 100vw" [alt]="banner?.slug | strReplace: '-' : ' '" [title]="banner?.slug | strReplace: '-' : ' '">
+						</a>
+					}
+					
 				</div>
 			</ng-template>
 		</ng-container>

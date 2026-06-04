@@ -69,7 +69,18 @@ const routes: Routes = [
           import('./product/product.module').then((m) => m.ProductModule),
         data: { preload: false, delay: true, page_slug: '' },
       },
-      
+      {
+        path: '',
+        loadChildren: () =>
+          import('./product-collection/product-collection.module').then((m) => m.ProductCollectionModule),
+        data: { preload: false, delay: false, page_slug: '' },
+      },
+      {
+        path: '',
+        loadChildren: () =>
+          import('./product-tags/product-tags.module').then((m) => m.ProductTagsModule),
+        data: { preload: false, delay: false, page_slug: '' },
+      },
     ],
   },
   { path: '',   redirectTo: '', pathMatch: 'full' },

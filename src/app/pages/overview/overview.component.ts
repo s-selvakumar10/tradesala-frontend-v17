@@ -4,7 +4,7 @@ import { Component, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbAccordionConfig, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CarouselComponent, CarouselModule, OwlOptions, SlidesOutputData } from 'ngx-owl-carousel-o';
-import { CarouselService } from 'ngx-owl-carousel-o/lib/services/carousel.service';
+import { CarouselService } from 'node_modules/ngx-owl-carousel-o/lib/services/carousel.service';
 import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SeoService } from 'src/app/shared/services/seo.service';

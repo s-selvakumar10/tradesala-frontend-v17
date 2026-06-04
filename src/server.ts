@@ -18,23 +18,44 @@ if (environment.production || environment.staging) {
 }
 // Setup Redis client if REDIS_URL is provided
 // You can use environment variables for security and flexibility
+const isRedisEnabled = process.env.REDIS_ENABLED === 'true'; 
 const redisHost = process.env.REDIS_HOST || '127.0.0.1'; // Default to localhost
 const redisPort = process.env.REDIS_PORT || 6379; // Default Redis port
 const redisPassword = process.env.REDIS_PASSWORD || ''; // Optional password
 const redisUrl = process.env['REDIS_URL'] || `redis://${redisPassword ? ':' + redisPassword + '@' : ''}${redisHost}:${redisPort}`
+const redisCacheEnabled = process.env.CACHE_ENABLED === 'true';
+let redisClient = null;
+async function connectRedis() {  
+  if (!isRedisEnabled) {
+    //console.log('Redis is disabled, skipping connection.');
+    return; // Exit function if Redis is not enabled
+  }
 
-const redisClient = redis.createClient({ url: redisUrl });
+  try {
+    // createClient() connects to localhost:6379 by default
+    // or you can use a URL: createClient({ url: process.env.REDIS_URL })
+    redisClient = redis.createClient({ url: redisUrl });
 
-redisClient.on('error', (err) => console.error('Redis Client Error', err));
-redisClient.on('connect', () => {
-  console.log('Redis client connected');
-});
-redisClient.connect().then(() => {
-  console.log('Connected to Redis server at', redisUrl);
-})
-redisClient.on('ready', () => { 
-  console.log('Redis client ready to use');
-});
+    // Handle connection errors
+    redisClient.on('error', (err) => console.error('Redis Client Error', err));
+
+    await redisClient.connect();
+    console.log('Connected to Redis successfully!');
+    
+  } catch (e) {
+    console.error('Failed to connect to Redis:', e);
+    // Optional: set client to null or handle the error as needed
+    redisClient = null;
+  }
+}
+// Function to get the client instance, only if it's connected
+function getRedisClient() {
+  if (redisClient && redisClient.isOpen) {
+    return redisClient;
+  }
+  // Return a 'dummy' client or null if not connected, depending on your app's needs
+  return null; 
+}
 
 // Cache configuration
 const CACHE_DURATION = 604800; // 1 week in seconds
@@ -43,18 +64,19 @@ const CACHE_ENABLED = environment.production || environment.staging;
 
 const IGNORED_PARAMS_FOR_CACHE = ['srsltid', 'utm_source', 'utm_medium', 'utm_campaign', 'fbclid', 'utm_content', 'gad_campaignid', 'gad_source', 'gclid', 'vt_adgroup', 'vt_campaign', 'vt_keyword', 'vt_loc_interest', 'vt_matchtype', 'vt_network', 'vt_physical', 'vt_placement', 'gbraid', 'wbraid', 'utm_id', 'utm_term'];
 
-console.log(`Cache configuration: CACHE_ENABLED=${CACHE_ENABLED}, CACHE_DURATION=${CACHE_DURATION}`);
+//console.log(`Cache configuration: CACHE_ENABLED=${CACHE_ENABLED}, CACHE_DURATION=${CACHE_DURATION}`);
 
 // Cache middleware
 const cacheMiddleware = (duration: number = CACHE_DURATION) => {
   return async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    console.log(`Cache middleware called for: ${req.url}, method: ${req.method}`);
+    //console.log(`Cache middleware called for: ${req.url}, method: ${req.method}`);
     const urlPath = req.path || req.url;
     // Define a regex that matches '/user/' OR '/admin/' OR '/profile/' at the start
-    const pathRegex = /^\/(api|v1)\//i;   
+    const pathRegex = /^\/(api|v1)\//i;
+    const extRegex = /\.(php|config|mysql|txt|xml)$/i;   
     // Skip caching for certain routes or conditions
-    if (!CACHE_ENABLED || req.method !== 'GET' || pathRegex.test(urlPath)) {
-      console.log(`Skipping cache for: ${req.url}, enabled: ${CACHE_ENABLED}, method: ${req.method}`);
+    if (!redisCacheEnabled || !CACHE_ENABLED || req.method !== 'GET' || pathRegex.test(urlPath) || extRegex.test(urlPath)) {
+      //console.log(`Skipping cache for: ${req.url}, enabled: ${CACHE_ENABLED}, method: ${req.method}`);
       return next();
     }
 
@@ -62,46 +84,48 @@ const cacheMiddleware = (duration: number = CACHE_DURATION) => {
     const normalizedUrl = normalizeUrl(rawUrl);
     const cacheKey = normalizedUrl == '/true' ? 'ssr:/' : `ssr:${normalizedUrl}`;
     // const cacheKey = `ssr:${req.url}`;
-    console.log(`Cache key: ${cacheKey}`);
+    //console.log(`Cache key: ${cacheKey}`);
     
-    try {
+    try {      
+      const client = getRedisClient();
       // Check Redis connection
-      if (!redisClient.isOpen) {
-        console.log('Redis client not connected, skipping cache');
+      if (client && !client.isOpen) {
+        //console.log('Redis client not connected, skipping cache');
         return next();
       }
-      
-      // Check if page exists in cache
-      const cachedPage = await redisClient.get(cacheKey);
-      
-      if (cachedPage) {
-        console.log(`Cache hit for: ${req.url}`);
-        res.setHeader('X-Cache', 'HIT');
-        return res.send(cachedPage);
-      }
-      
-      console.log(`Cache miss for: ${req.url}`);
-      
-      // Override res.send to cache the response
-      const originalSend = res.send.bind(res);
-      res.send = (body: any) => {
-        console.log(`Response for ${req.url}: status=${res.statusCode}, type=${typeof body}, hasHTML=${typeof body === 'string' && body.includes('<!DOCTYPE html>')}`);
-        
-        // Only cache successful HTML responses
-        if (res.statusCode === 200 && typeof body === 'string' && body.includes('<!DOCTYPE html>')) {
-          console.log(`Attempting to cache: ${cacheKey}`);
-          redisClient.setEx(cacheKey, duration, body)
-            .then(() => {
-              console.log(`Successfully cached page: ${req.url}`);
-            })
-            .catch((err) => {
-              console.error(`Failed to cache page: ${req.url}`, err);
-            });
+      if(client){
+        // Check if page exists in cache
+        const cachedPage = await client.get(cacheKey);        
+        if (cachedPage) {
+          //console.log(`Cache hit for: ${req.url}`);
+          res.setHeader('X-Cache', 'HIT');
+          return res.send(cachedPage);
         }
-        res.setHeader('X-Cache', 'MISS');
-        return originalSend(body);
-      };
-      
+        
+        //console.log(`Cache miss for: ${req.url}`);
+        
+        // Override res.send to cache the response
+        const originalSend = res.send.bind(res);
+        res.send = (body: any) => {
+          //console.log(`Response for ${req.url}: status=${res.statusCode}, type=${typeof body}, hasHTML=${typeof body === 'string' && body.includes('<!DOCTYPE html>')}`);
+          
+          // Only cache successful HTML responses
+          if (res.statusCode === 200 && typeof body === 'string' && body.includes('<!DOCTYPE html>')) {
+            //console.log(`Attempting to cache: ${cacheKey}`);
+            client.setEx(cacheKey, duration, body)
+              .then(() => {
+                console.log(`Successfully cached page: ${req.url}`);
+              })
+              .catch((err) => {
+                console.error(`Failed to cache page: ${req.url}`, err);
+              });
+          }
+          res.setHeader('X-Cache', 'MISS');
+          return originalSend(body);
+        };
+      } else {
+        //console.log('Cannot perform Redis operations: client not available.');
+      }
       next();
     } catch (error) {
       console.error('Cache middleware error:', error);
@@ -133,18 +157,20 @@ const normalizeUrl = (url: string): string => {
 // Cache invalidation helper
 const invalidateCache = (pattern: string = 'ssr:*') => {
   return new Promise((resolve, reject) => {
-    redisClient.keys(pattern)
-      .then((keys: string[]) => {
-        if (keys.length > 0) {
-          return redisClient.del(keys);
-        }
-        return 0;
-      })
-      .then((result: number) => {
-        console.log(`Invalidated ${result} cache entries`);
-        resolve(result);
-      })
-      .catch(reject);
+    if(redisClient && redisClient.isOpen){
+      redisClient.keys(pattern)
+        .then((keys: string[]) => {
+          if (keys.length > 0) {
+            return redisClient.del(keys);
+          }
+          return 0;
+        })
+        .then((result: number) => {
+          console.log(`Invalidated ${result} cache entries`);
+          resolve(result);
+        })
+        .catch(reject);
+    }
   });
 };
 
@@ -186,9 +212,22 @@ export function app(): express.Express {
   let crawlableRobotsTxt;
   
   if(environment.staging){
-    crawlableRobotsTxt = `User-agent: *\nDisallow: / \n\nUser-agent: Googlebot\nDisallow: /\n\nUser-agent: Googlebot-Image\nDisallow: /`;    
+    crawlableRobotsTxt = `
+    User-agent: *\n
+    Disallow: / \n\n
+    Disallow: uat.tradesale.com \n\n
+    Disallow: uat-admin.tradesale.com \n\n
+    Disallow: uat-vendor.tradesale.com \n\n
+    User-agent: Googlebot\n
+    Disallow: /\n\n
+    User-agent: Googlebot-Image\n
+    Disallow: /`;    
   } else {
-    crawlableRobotsTxt = `User-agent: *\nDisallow: \n`;
+    crawlableRobotsTxt = `
+    User-agent: *\n
+    Disallow: \n
+    Disallow: admin.tradesale.com \n\n
+    Disallow: vendor.tradesale.com \n\n`;
   }  
 
   server.use('/robots.txt', function (req, res) {
@@ -244,5 +283,21 @@ function run(): void {
     console.log(`Node Express server listening on http://localhost:${port}`);
   });
 }
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully');
+  if(redisClient && redisClient.isOpen){
+     redisClient.quit();
+  } 
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  console.log('SIGINT received, shutting down gracefully');
+  if(redisClient && redisClient.isOpen){
+     redisClient.quit();
+  } 
+  process.exit(0);
+});
 
 run();

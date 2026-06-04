@@ -1,7 +1,7 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ChangeDetectionStrategy, Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { CarouselComponent, SlidesOutputData, OwlOptions } from 'ngx-owl-carousel-o';
-import { CarouselService } from 'ngx-owl-carousel-o/lib/services/carousel.service';
+import { CarouselService } from 'node_modules/ngx-owl-carousel-o/lib/services/carousel.service';
 import { Subscription } from 'rxjs';
 import { delay, filter } from 'rxjs/operators';
 import { Product } from 'src/app/core/models/product';

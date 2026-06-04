@@ -47,15 +47,17 @@
               "src/assets",
               "src/.htaccess"
             ],
-            "styles": [
-              "src/styles.scss",
-              "src/assets/fonts/fontawesome/css/fontawesome-all.min.css",
-              "src/assets/fonts/line-awesome/css/line-awesome.css",
-              "node_modules/animate.css/animate.min.css",
-              "node_modules/ngx-toastr/toastr.css",
-              "node_modules/ngx-sharebuttons/themes/default.scss",
-              "node_modules/ngx-sharebuttons/themes/modern.scss",
-              "src/responsive.scss"
+            "styles": [              
+              {
+                "bundleName": "styles",
+                "input":  "src/styles.scss",
+                "inject": false
+              },
+              {
+                "bundleName": "vendor",
+                "input":  "src/assets/css/vendor.scss",
+                "inject": false
+              }
             ],
             "scripts": [
               

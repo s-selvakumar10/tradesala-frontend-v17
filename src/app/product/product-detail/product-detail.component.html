@@ -9,7 +9,7 @@
 <section class="main-content padding-y bg-theme-light">
     <div class="container">
         <div class="row">           
-            <aside class="sidebar sidebar-right col-12 order-2 product__sidebar" [class]="{'col-lg-3' : isDesktop} " *ngIf="isDesktop && screenwidth >= 1024">
+            <aside class="sidebar sidebar-right col-12 order-2 product__sidebar" [class]="{'col-lg-3' : isDesktop || screenwidth >= 1024} " *ngIf="isDesktop || screenwidth >= 1024">
                 <div id="sticky-start"></div>               
                 <div class="inner-content inner card-body p-0" [isMobile]="false" [stickyStartId]="'sticky-start'" [stickyClass]="'sticky'" [ieOnly]="false">
                     <app-product-price-info
@@ -19,18 +19,26 @@
                     (stockStatus)="updateStockStatus($event)"
                     (checkCoupon)="updateCoupon($event)"
                     (quantityEmit)="updateQty($event)"
+                    ngSkipHydration
                     ></app-product-price-info>
                 </div>                
             </aside>
-            <main class="content col-12 order-1 product__main" [class]="{'col-lg-9' : isDesktop} ">           
+            <main class="content col-12 order-1 product__main" [class]="{'col-lg-9' : isDesktop || screenwidth >= 1024} ">           
                 <div class="inner-content inner card-body p-0">
                     <div class="row mb-4 container-row" >                        
-                        <div class="col-12 images-gallery" [class]="{'col-md-6' : isDesktop, 'fixed-gallery': isFixed && (isDesktop || screenwidth > 767)}" #target> 
+                        <div class="col-12 images-gallery" [class]="{'col-md-6' : isDesktop || screenwidth >= 1024, 'fixed-gallery': isFixed && (isDesktop || screenwidth > 767)}" #target> 
                             <div class="product-images" >
-                                <app-product-images [media]="product.media"></app-product-images>
+                                <app-product-images 
+                                [media]="product.media"
+                                [isMobile]="isMobile"
+                                [isTablet]="isTablet"
+                                [isDesktop]="isDesktop"
+                                [isServer]="isServer"
+                                ngSkipHydration
+                                ></app-product-images>
                             </div> 
                         </div>
-                        <div class="col-12 scroll-element product-main-content" #scrollContainer [class]="{'col-md-6' : isDesktop}">
+                        <div class="col-12 scroll-element product-main-content" #scrollContainer [class]="{'col-md-6' : isDesktop || screenwidth >= 1024}">
                             <article class="card-body p-0 product-content" >
                                 <div class="product-main-info">        
                                     <div class="product-name-info">
@@ -184,7 +192,7 @@
                                                     
                                                 </ng-container>
                                                 <ng-container *ngIf="isQtyDiscountSlider">
-                                                    <owl-carousel-o [options]="discountOpt">
+                                                    <owl-carousel-o [options]="discountOpt" ngSkipHydration>
                                                         <ng-template carouselSlide *ngFor="let qtyDiscount of product.discounts.quantity_based_discount.discount" [width]="100">
                                                             <div class="discount-item">
                                                                 <div class="discount-label " >                                                        
@@ -217,15 +225,23 @@
                                         (stockStatus)="updateStockStatus($event)"
                                         (checkCoupon)="updateCoupon($event)"
                                         (quantityEmit)="updateQty($event)"
+                                        ngSkipHydration
                                         ></app-product-price-info>
                                     </div>
-                                    <div class="short_desc pt-3 mb-2" [innerHTML]="product.summary"></div>  
+                                    <div class="short_desc pt-3 mb-2" [innerHTML]="product.summary | sanitizeHtml"></div>
+                                    @if(product.key_points.length > 0)  {
+                                        <ul class="key_points mb-3">
+                                            @for(key_point of product.key_points; track key_point){
+                                                <li class="mb-2">{{key_point}}</li>
+                                            }
+                                        </ul>
+                                    }
                                     <div class="benefits">
                                         <h3 class="h6">Benefits</h3>
                                         <div class="clearfix"></div>
                                         <div class="benefit-box">
                                             <div class="benefit-brd">
-                                                <owl-carousel-o [options]="benefitOpt">
+                                                <owl-carousel-o [options]="benefitOpt" ngSkipHydration>
                                                     <ng-container *ngFor="let item of benefitsData">
                                                         <ng-template carouselSlide [id]="item.id" [width]="100">
                                                             <div class="icon-box">
@@ -242,8 +258,14 @@
                                             </div>
                                         </div>
                                         
-                                        
                                     </div> 
+                                    <div class="product_badges mt-3" *ngIf="product.product_badges.length > 0">
+                                        <ul class="d-flex wrap">
+                                            @for(badge of product.product_badges; track badge){
+                                                <li class="col-2"><img src="{{badge.image}}" width="50" height="50" class="img-fluid"></li>
+                                            }
+                                        </ul>
+                                    </div>
                                     
                                 </div>
                             </article>
@@ -263,7 +285,7 @@
                                 <li [ngbNavItem]="2" *ngIf="product.dimensions.length_unit.length > 0 && product.dimensions.weight_unit.weight > 0">
                                     <a ngbNavLink>Dimension</a>
                                     <ng-template ngbNavContent>
-                                        <app-product-spec [product]="product"></app-product-spec>
+                                        <app-product-spec [product]="product" ngSkipHydration></app-product-spec>
                                     </ng-template>
                                 </li>
                                 <li [ngbNavItem]="3" *ngIf="product.specification">
@@ -304,6 +326,7 @@
                             [averageRating]="productAvgRating" 
                             [totalReviews]="product.rating_summary.review_count"
                             [reviews]="listReviews"
+                            ngSkipHydration
                             ></app-product-review>
                         </div>
                     </div>
@@ -326,7 +349,7 @@
                             <h2 class="box-heading mt-3 pl-3 text-uppercase">Buy together & save more</h2>
                         </div>
                     </div>
-                    <app-product-combo-offer [product]="product" [option]="productOption" [showPopup]="false"></app-product-combo-offer>
+                    <app-product-combo-offer ngSkipHydration [product]="product" [option]="productOption" [showPopup]="false"></app-product-combo-offer>
                 </div>
             </div>
             
@@ -342,7 +365,7 @@
             <div class="shop-by-cat fullwidth">
                 <div class="col-12 col-md-12 float-left">
                     <h2 class="float-none box-heading">Related Products</h2>
-                    <app-product-grid-slider [options]="options" [products]="recommendedProduct$" [isLoading]="recommendedProduct$.length > 0" [setWidth]="178.571"></app-product-grid-slider>
+                    <app-product-grid-slider ngSkipHydration [options]="options" [products]="recommendedProduct$" [isLoading]="recommendedProduct$.length > 0" [setWidth]="178.571"></app-product-grid-slider>
                 </div>
             </div>
         </div>

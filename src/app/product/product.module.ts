@@ -35,7 +35,10 @@ import { ProductImagesSkeletonComponent } from './product-images-skeleton/produc
     ImgZoomModule,
     SharedModule,
     YouTubePlayerModule
-  ],  
+  ],
+  exports:[
+    ImgZoomModule,
+  ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class ProductModule {}

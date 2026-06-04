@@ -7,9 +7,9 @@ import { DEFAULT_CONFIG } from "src/config/default/default";
 export const environment = {
   production: false,
   staging: false,
-  baseUrl: 'https://api.tradesala.com',
-  mediaUrl: 'https://admin.tradesala.com',
-  //baseUrl: 'https://uat-api.tradesala.com',
+  //baseUrl: 'http://api.tradesala.local',
+  mediaUrl: 'http://admin.tradesala.local',
+  baseUrl: 'https://uat-api.tradesala.com',
   frontEndUrl: 'https://tradesala.com',
   appName: 'Tradesala',
   config: DEFAULT_CONFIG,

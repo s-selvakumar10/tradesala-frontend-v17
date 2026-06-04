@@ -1,5 +1,5 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { Router, ActivatedRouteSnapshot, Event, Data, NavigationEnd } from '@angular/router';
+import { Router, ActivatedRouteSnapshot, Event, Data, NavigationEnd, Scroll } from '@angular/router';
 import { Breadcrumb } from './breadcrumb.model';
 
 @Injectable()
@@ -13,22 +13,22 @@ export class BreadcrumbService {
     }
 
     public changeBreadcrumb(route: ActivatedRouteSnapshot, name: string) { 
-        const rootUrl = this.createRootUrl(route);       
-        const breadcrumb = this.breadcrumbs.find(function (bc) { return bc.url === rootUrl; });            
+        const rootUrl = this.createRootUrl(route);      
+        const breadcrumb = this.breadcrumbs.find(function (bc) { return bc.url === rootUrl; });
         if (!breadcrumb) { return; }
         breadcrumb.displayName = this.getLabel(route.data) ?? name;
         this.breadcrumbChanged.emit(this.breadcrumbs);
     }
 
     private onRouteEvent(routeEvent: Event) {
-        if (!(routeEvent instanceof NavigationEnd)) { return; }
+        
+        if (!(routeEvent instanceof Scroll)) { return; }
 
         let route = this.router.routerState.root.snapshot;
         let url = '';
 
         var breadCrumbIndex = 0;
         var newCrumbs = [];
-
         while (route.firstChild != null) {
             route = route.firstChild;
 

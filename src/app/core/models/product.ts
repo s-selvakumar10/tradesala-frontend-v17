@@ -89,6 +89,8 @@ export class Product {
   shipping: Shipping;
   static id: any;
   static qnt: any;
+  product_badges: Array<any>[];
+  key_points: Array<any>[];
   
 }
 export class Shipping{

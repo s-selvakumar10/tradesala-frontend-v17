@@ -1,14 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, HostListener, Output, OnDestroy, ViewChild, ElementRef, Inject, PLATFORM_ID} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, HostListener, Output, OnDestroy, ElementRef, afterRender, ChangeDetectionStrategy, ChangeDetectorRef, PLATFORM_ID, Inject, afterNextRender} from '@angular/core';
 import { trigger, state, transition, style, animate } from '@angular/animations';
 import { Title } from '@angular/platform-browser';
 import { CartService } from 'src/app/shared/services/cart.service'
 
 import { CollapseCatMenuService } from './collapse-cat-menu/collapse-cat-menu.service';
 import { AuthService } from '../auth/auth.service';
-import { fromEvent, Observable, Subject, Subscription} from 'rxjs';
+import { Subscription} from 'rxjs';
 import { ApiService } from '../shared/services/api.service';
 import { SessionFlow } from 'src/app/helper/session-flow';
-import { CategoryService } from '../core/services/category.service';
 import { Wishlist } from 'src/app/core/models/wishlist';
 import { WishlistService } from 'src/app/shared/services/wishlist.service';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
@@ -20,11 +19,14 @@ import { debounceTime, distinctUntilChanged, filter, tap } from 'rxjs/operators'
 import { ResizeService } from 'src/app/core/services/resize.service';
 import { DeliveryPincodeService } from '../shared/delivery-pincode.service';
 import { DeliveryPincodeModalComponent } from '../shared/delivery-pincode-modal/delivery-pincode-modal.component';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {ngSkipHydration: 'true'},
   animations: [
     trigger('fade', [
       state('void', style({ opacity: 0 })),
@@ -44,9 +46,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isSearchCollapsed: boolean = true;
 
   categories: Array<Category>;
-  private categoriesSubs: Subscription;
   private userSub: Subscription;
-  private searchSubcription: Subscription;
   private resizeSub: Subscription;
   private routerSub: Subscription;
   isAuthenticated: Boolean = false;
@@ -71,7 +71,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private titleService: Title,
     private collapseCatMenuService: CollapseCatMenuService,
     private authService: AuthService,
-    private categoryService: CategoryService,
     private cartService: CartService,
     private wishlistService: WishlistService,
     public ApiServices: ApiService,
@@ -79,11 +78,44 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private router: Router,
     private resizeService: ResizeService,
-    private deliveryPincodeService: DeliveryPincodeService
+    private deliveryPincodeService: DeliveryPincodeService,
+    private cdref: ChangeDetectorRef,
+    @Inject(PLATFORM_ID) private platformId: object
   ) {
-    this.cartService.products.subscribe((products) => {
-      this.totalCartItem = this.cartService.totalItems;
-    });
+    afterRender(() => {
+      this.isMobile = this.mobileDevice.isMobile;
+      this.isAuthenticated = this.authService.isAuth;
+      this.cartService.products.subscribe((products) => {
+        this.totalCartItem = this.cartService.totalItems;
+      });
+      if (this.isAuthenticated) {
+        this.wishlistService.wishListItems$.subscribe(response => { 
+          //console.log('wishlist', response)      
+          this.totalWishlistItems = response.length;       
+        }, err => {
+          this.totalWishlistItems = 0;
+        });
+      } 
+      this.cdref.detectChanges();
+    });  
+    afterNextRender(() => {
+      this.wishlistService.getWishlist(this.userId).subscribe(res => {
+        this.wishlistService.updateWishListItems(res);
+      });
+      this.deliveryPincodeService.getPincode().subscribe();  
+      this.deliveryPincodeService.pincodeObs$.pipe(
+        filter(pincode => pincode!=null),
+        tap(pincode => {
+          if(pincode != ''){
+            this.emptyPincode =  false;
+            this.deliveryPincode = pincode;
+          } else {
+            this.emptyPincode =  true;
+          }
+        })
+      ).subscribe();
+    })
+    
     this.modalOptions = {
       backdrop:'static',
       backdropClass:'loginBackdrop',
@@ -91,19 +123,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       centered: true
     }
 
-    this.isMobile = this.mobileDevice.isMobile; 
-    this.deliveryPincodeService.getPincode().subscribe();  
-    this.deliveryPincodeService.pincodeObs$.pipe(
-      filter(pincode => pincode!=null),
-      tap(pincode => {
-        if(pincode != ''){
-          this.emptyPincode =  false;
-          this.deliveryPincode = pincode;
-        } else {
-          this.emptyPincode =  true;
-        }
-      })
-    ).subscribe();
+     
+    
   }
 
   @HostListener('window:scroll', ['$event'])
@@ -131,14 +152,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
     });
     this.userSub = this.authService.user.subscribe((user) => {
-      this.isAuthenticated = !!user;
+      //this.isAuthenticated = !!user;
       const isAuth = !!user;
       if(isAuth) {
           this.userId = user.id;
       }
       
     });
-
+    
     // this.categoryService.fetchAll();
 
     // this.categoriesSubs = this.categoryService.categories.subscribe(
@@ -147,17 +168,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     //   }
     // );
     
-    if (this.isAuthenticated == true) { 
-      this.wishlistService.getWishlist(this.userId).subscribe(res => {
-        this.wishlistService.updateWishListItems(res);
-      });
-      this.wishlistService.wishListItems$.subscribe(response => { 
-        //console.log('wishlist', response)      
-        this.totalWishlistItems = response.length;       
-      }, err => {
-        this.totalWishlistItems = 0;
-      });
-    } 
+    
     
     this.routerSub = this.router.events
     .pipe(
@@ -187,7 +198,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     });
     
   }
-
+  
   ngOnDestroy() {
     this.userSub.unsubscribe();
     //this.categoriesSubs.unsubscribe();
@@ -201,15 +212,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
   
 
   showWishlist(event): void {
-    localStorage.setItem('showWishlist', "true");
-    if (location.href?.includes('account/dashboard')) {
-      let currentUrl = this.router.url;
-      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-        this.router.navigate([currentUrl]);
-      });
-    } else {
-      this.router.navigate(['/account/dashboard']);
+    if(isPlatformBrowser(this.platformId)){
+      localStorage.setItem('showWishlist', "true");
+      if (location.href?.includes('account/dashboard')) {
+        let currentUrl = this.router.url;
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+          this.router.navigate([currentUrl]);
+        });
+      } else {
+        this.router.navigate(['/account/dashboard']);
+      }
     }
+    
+    
   }
 
   openSearchBox(element: HTMLElement){    

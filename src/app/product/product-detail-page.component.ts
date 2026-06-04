@@ -15,6 +15,7 @@ import { SeoService } from '../shared/services/seo.service';
     <app-product-detail [product]="product$ | async"></app-product-detail>
   `,
   styleUrls: [],
+  host: {ngSkipHydration: 'true'},
 })
 export class ProductDetailPageComponent implements OnInit {
   product$: Observable<Product>;

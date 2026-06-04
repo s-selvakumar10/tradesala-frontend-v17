@@ -2,11 +2,11 @@
     <div class="vertical-gallery">
         <div id="vertical-thumbnail-wrapper" class="thumbs-wrap">
             
-            <owl-carousel-o [options]="verticalImages" (change)="getData($event)" (translated)="getPassedData($event)">
+            <owl-carousel-o [options]="verticalImages" (change)="getData($event)" (translated)="getPassedData($event)" ngSkipHydration>
                 <ng-container *ngFor="let image of images" >                
                     <ng-template class="slide" carouselSlide [width]="60">
                         <div class="slide" >
-                            <a *ngIf="image" (click)="bigImages(bigImage, image); videoEnabled == false" class="item-thumb">
+                            <a *ngIf="image" (click)="bigImages(bigImage, image);" class="item-thumb">
                                 <img [src]='image' class="img-fluid">
                             </a>
                         </div>                  
@@ -15,7 +15,7 @@
                 <ng-container *ngFor="let video of videos;">
                     <ng-template class="slide" carouselSlide [width]="60"> 
                         <div class="slide">
-                            <a *ngIf="video" (click)="bigVideo(video.url); videoEnabled == true" class="item-thumb">
+                            <a *ngIf="video" (click)="bigVideo(video.url);" class="item-thumb">
                                 <img [src]="video.thumbnail" class="img-fluid"/>
                             </a>
                         </div>                       
@@ -27,18 +27,17 @@
         
         <div class="gallery-vertical">
             <ng-container *ngIf="!videoEnabled && isDesktop">
-                <img [src]="bigImage" *ngIf="beforeZoom"/>
-                <ng-container *ngIf="!beforeZoom && !isServer">
-                    <lib-img-zoom 
+                <!-- <img [src]="bigImage" *ngIf="beforeZoom"/ > *ngIf="!beforeZoom" -->
+                <lib-img-zoom 
                     [zoomImageSrc]="bigImage"
                     [previewImageSrc]="bigImage"
                     [imgStyle]="imgZoomOptions.imageStyle"
                     [resultStyle]="imgZoomOptions.resultStyle"
                     [enableZoom]="imgZoomOptions.enableZoom"
                     [containerStyle]=""
+                    ngSkipHydration
                     >
-                    </lib-img-zoom>
-                </ng-container>
+                </lib-img-zoom>
             </ng-container>
             <ng-container *ngIf="!videoEnabled && (isMobile || isTablet)">
                 <img [src]="bigImage" alt="">
@@ -52,6 +51,7 @@
                 [height]="360"
                 (ready)="onReady($event)"
                 (stateChange)="onStateChange($event)"
+                ngSkipHydration
                 ></youtube-player>
             </ng-container>
             

@@ -11,7 +11,7 @@ import { ApiService } from 'src/app/shared/services/api.service';
 import { CartService } from '../shared/services/cart.service';
 import { AddressService } from '../core/services/address.service';
 import { DeliveryPincodeService } from './../shared/delivery-pincode.service';
-
+const userSession = isPlatformBrowser(PLATFORM_ID) ? JSON.parse(localStorage.getItem('userData') || '{}') : null;
 @Injectable({
   providedIn: 'root'
 })
@@ -21,6 +21,7 @@ export class AuthService {
   shipping_address = new BehaviorSubject<any>(null);
   cartService: CartService;
   private tokenExpirationTimer: any;
+  public isAuth: boolean = userSession ? true : false;
 
   constructor(
     private http: HttpClient, 
@@ -32,6 +33,9 @@ export class AuthService {
     @Inject(PLATFORM_ID) private platformId: Object
   ) { 
     //this.deliveryPincodeService.getPincode().subscribe();
+    this.user.subscribe(user => {
+      this.isAuth = !!user;
+    })
   }
 
   getAuthorizationToken(){
