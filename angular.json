@@ -51,12 +51,12 @@
               {
                 "bundleName": "styles",
                 "input":  "src/styles.scss",
-                "inject": false
+                "inject": true
               },
               {
                 "bundleName": "vendor",
                 "input":  "src/assets/css/vendor.scss",
-                "inject": false
+                "inject": true
               }
             ],
             "scripts": [
