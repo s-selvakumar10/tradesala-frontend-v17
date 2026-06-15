@@ -1,5 +1,6 @@
 import { OnInit, ElementRef, Input, Directive, Inject, HostListener, Renderer2 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { WINDOW } from '../services/window.service';
 
 @Directive({
   selector: '[stickyClass]'
@@ -20,7 +21,9 @@ export class ProductStickyDirective implements OnInit {
       @Inject(DOCUMENT)
       private _document: Document,
       private _element: ElementRef,
-      private _renderer: Renderer2) {
+      private _renderer: Renderer2,
+      @Inject(WINDOW) private window: Window
+    ) {
   }
 
   ngOnInit() {
@@ -31,14 +34,14 @@ export class ProductStickyDirective implements OnInit {
   @HostListener('window:scroll', [])
   onWindowScroll() {
 
-    let agent = window.navigator.userAgent;
+    let agent = this.window.navigator.userAgent;
     let ie = agent.indexOf('MSIE') > 0 || agent.indexOf('Trident/') > 0;
     let isMobile = document.documentElement.clientWidth > 767;
     let enabled = ie || !this.ieOnly;
 
     if (this._topMarker && this._bottomMarker && enabled && isMobile) {
 
-      var y = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+      var y = this.window.scrollY || this.window.pageYOffset || document.documentElement.scrollTop;
       
       let startPosition = this._topMarker.getBoundingClientRect().top - document.body.getBoundingClientRect().top;
       let bottomPos = this._bottomMarker.getBoundingClientRect().top - document.body.getBoundingClientRect().top;

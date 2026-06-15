@@ -3,9 +3,9 @@ import { DEFAULT_CONFIG } from "src/config/default/default";
 export const environment = {
   production: true,
   staging: false,
-  baseUrl: 'https://api.tradesala.com',
-  mediaUrl: 'https://admin.tradesala.com',
-  frontEndUrl: 'https://tradesala.com',
+  baseUrl: 'http://api.tradesala.local',
+  mediaUrl: 'http://admin.tradesala.local',
+  frontEndUrl: 'http://localhost:4000',
   appName: 'Tradesala',
   config: DEFAULT_CONFIG,
   GA_TRACKING_ID: 'UA-228088974-1',

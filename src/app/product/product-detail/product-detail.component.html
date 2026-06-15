@@ -229,7 +229,7 @@
                                         ></app-product-price-info>
                                     </div>
                                     <div class="short_desc pt-3 mb-2" [innerHTML]="product.summary | sanitizeHtml"></div>
-                                    @if(product.key_points.length > 0)  {
+                                    @if(product?.key_points?.length > 0)  {
                                         <ul class="key_points mb-3">
                                             @for(key_point of product.key_points; track key_point){
                                                 <li class="mb-2">{{key_point}}</li>
@@ -259,7 +259,7 @@
                                         </div>
                                         
                                     </div> 
-                                    <div class="product_badges mt-3" *ngIf="product.product_badges.length > 0">
+                                    <div class="product_badges mt-3" *ngIf="product?.product_badges?.length > 0">
                                         <ul class="d-flex wrap">
                                             @for(badge of product.product_badges; track badge){
                                                 <li class="col-2"><img src="{{badge.image}}" width="50" height="50" class="img-fluid"></li>

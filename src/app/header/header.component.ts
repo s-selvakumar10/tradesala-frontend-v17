@@ -20,6 +20,7 @@ import { ResizeService } from 'src/app/core/services/resize.service';
 import { DeliveryPincodeService } from '../shared/delivery-pincode.service';
 import { DeliveryPincodeModalComponent } from '../shared/delivery-pincode-modal/delivery-pincode-modal.component';
 import { isPlatformBrowser } from '@angular/common';
+import { WINDOW } from '../shared/services/window.service';
 
 @Component({
   selector: 'app-header',
@@ -80,7 +81,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private resizeService: ResizeService,
     private deliveryPincodeService: DeliveryPincodeService,
     private cdref: ChangeDetectorRef,
-    @Inject(PLATFORM_ID) private platformId: object
+    @Inject(PLATFORM_ID) private platformId: object,
+    @Inject(WINDOW) private window: Window
   ) {
     afterRender(() => {
       this.isMobile = this.mobileDevice.isMobile;
@@ -131,7 +133,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   onWindowScroll(e) {
     let headerHeight = document.getElementsByClassName('section-header');
 
-    if (window.pageYOffset > headerHeight[0].clientHeight) {
+    if (this.window.pageYOffset > headerHeight[0].clientHeight) {
       let element = document.getElementById('navbar');
       element.classList.add('sticky');
     } else {
