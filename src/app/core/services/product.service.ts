@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { delay, filter, map } from 'rxjs/operators';
+import { delay, filter, map, shareReplay } from 'rxjs/operators';
 
 import { Product, Review, Attributes, PriceRange } from '../models/product';
 import { ApiService } from 'src/app/shared/services/api.service';
@@ -32,43 +32,44 @@ export class ProductService {
   getTrendingProducts(): Observable<Array<Product>> {
     return this.api
       .getAll<{ products: Array<Product> }>('v1/products/trending')
-      .pipe(map((resp) => resp.products));
+      .pipe(shareReplay(1), map((resp) => resp.products));
   }
 
   getFeaturedProducts(): Observable<Array<Product>> {
     return this.api
       .getAll<{ products: Array<Product> }>('v1/products/featured')
-      .pipe(map((resp) => resp.products));
+      .pipe(shareReplay(1), map((resp) => resp.products));
   }
 
   getNewArraivalProducts(): Observable<Array<Product>> {
     return this.api
       .getAll<{ products: Array<Product> }>('v1/products/latest')
-      .pipe(map((resp) => resp.products));
+      .pipe(shareReplay(1), map((resp) => resp.products));
   }
 
   getSpecialProducts(): Observable<Array<Product>> {
     return this.api
       .getAll<{ products: Array<Product> }>('v1/products/special')
-      .pipe(map((resp) => resp.products));
+      .pipe(shareReplay(1), map((resp) => resp.products));
   }
   
   getOtherProducts(): Observable<any> {
     return this.api
       .getAll<any>('v1/products/best')
-      .pipe(map((resp) => resp));
+      .pipe(shareReplay(1), map((resp) => resp));
   }
 
   getRelatedProducts(product_slug: string): Observable<Array<Product>> {
     return this.api
       .getAll<{ products: Array<Product> }>(`v1/products/${product_slug}/related`)
-      .pipe(map((resp) => resp.products));
+      .pipe(shareReplay(1), map((resp) => resp.products));
   }
 
   getRecommendedProducts(product_slug: string): Observable<Array<Product>> {
     return this.api
       .getAll<{ products: Array<Product> }>(`v1/products/${product_slug}/recommended`)
       .pipe(
+        shareReplay(1), 
         delay(0),
         map((resp) => resp.products)
       );

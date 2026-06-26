@@ -1,5 +1,7 @@
 import {
 	Component,
+	DestroyRef,
+	inject,
 	Inject,
 	NgZone,
 	OnDestroy,
@@ -9,6 +11,7 @@ import {
 import { OwlOptions } from 'ngx-owl-carousel-o';
 import { Observable, Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Product } from '../core/models/product';
 import { ProductService } from '../core/services/product.service';
 import { CollapseCatMenuService } from '../header/collapse-cat-menu/collapse-cat-menu.service';
@@ -31,6 +34,7 @@ import { DeliveryPincodeModalComponent } from '../shared/delivery-pincode-modal/
 	styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit, OnDestroy {
+	private destroyRef = inject(DestroyRef); 
 	public allCategoryMenuOpen: boolean = true;
 
 	public trendingproducts$: Observable<Product[]>;
@@ -161,6 +165,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
 
 		this.trendingproducts$ = this.productService.getTrendingProducts();
+		this.trendingproducts$.pipe(
+        takeUntilDestroyed(this.destroyRef) 
+      );
 		this.featuredproducts$ = this.productService.getFeaturedProducts();
 		this.newArraivalproducts$ = this.productService.getNewArraivalProducts();
 		this.specialproducts$ = this.productService.getSpecialProducts()

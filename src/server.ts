@@ -73,7 +73,15 @@ const cacheMiddleware = (duration: number = CACHE_DURATION) => {
     const urlPath = req.path || req.url;
     // Define a regex that matches '/user/' OR '/admin/' OR '/profile/' at the start
     const pathRegex = /^\/(api|v1)\//i;
-    const extRegex = /\.(php|config|mysql|txt|xml)$/i;   
+    const extRegex = /\.(php|config|mysql|txt|xml)$/i;
+    
+    const blockedExtensions = ['.yml', '.yaml', '.properties', '.ini', '.config', '.php', '.config', '.zip', '.tar.gz', '.tgz', '.tar', '.tar.bz2', '.tar.xz', '.7z', '.rar', '.gz', '.bz2', '.zst', '.sql.gz', '.sql.bz2', '.sql', '.bak', '.env'];
+    const url = req.originalUrl.toLowerCase();
+
+    if (blockedExtensions.some(ext => url.endsWith(ext)) || (/^\/(env|config)\//i).test(urlPath)) {
+      return res.status(403).send('Forbidden');
+    }
+
     // Skip caching for certain routes or conditions
     if (!redisCacheEnabled || !CACHE_ENABLED || req.method !== 'GET' || pathRegex.test(urlPath) || extRegex.test(urlPath)) {
       //console.log(`Skipping cache for: ${req.url}, enabled: ${CACHE_ENABLED}, method: ${req.method}`);
