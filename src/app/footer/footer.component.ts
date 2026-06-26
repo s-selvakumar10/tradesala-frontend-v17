@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Event, NavigationEnd, Router } from '@angular/router';
 import { CategoryService } from '../core/services/category.service';
@@ -6,6 +6,7 @@ import { Observable, Subscription } from 'rxjs';
 import { Category } from '../category/models/category';
 import { isPlatformBrowser } from '@angular/common';
 import { ApiService } from '../shared/services/api.service';
+import { WINDOW } from '../shared/services/window.service';
 
 @Component({
   selector: 'app-footer',
@@ -27,7 +28,8 @@ export class FooterComponent implements OnInit{
     private router: Router,
     private categoryService: CategoryService,
     private apiService: ApiService,
-    @Inject(PLATFORM_ID) private platform
+    @Inject(PLATFORM_ID) private platform,
+    @Inject(WINDOW) private window: Window
   ) {
    this.isBrowser = isPlatformBrowser(this.platform);
   }
@@ -64,13 +66,13 @@ export class FooterComponent implements OnInit{
   @HostListener('window:scroll', [])
   onWindowScroll() {
     if (
-      window.pageYOffset ||
+      this.window.pageYOffset ||
       document.documentElement.scrollTop ||
       document.body.scrollTop > 150
     ) {
       this.windowScrolled = true;
     } else if (
-      (this.windowScrolled && window.pageYOffset) ||
+      (this.windowScrolled && this.window.pageYOffset) ||
       document.documentElement.scrollTop ||
       document.body.scrollTop < 10
     ) {
